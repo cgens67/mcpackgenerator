@@ -26,7 +26,7 @@ textarea{resize:vertical}
 input::placeholder,textarea::placeholder{color:#9ca3af;opacity:1}
 [role=button],button{cursor:pointer}
 *,:after,:before{--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;}
-.container{margin-left:auto;margin-right:auto;padding-left:1.5rem;padding-right:1.5rem;width:100%; max-width: 800px;}
+.container{margin-left:auto;margin-right:auto;padding-left:1.5rem;padding-right:1.5rem;width:100%; max-width: 800px; padding-top: 5rem; padding-bottom: 5rem;}
 .children-spacing{display:flex;flex-direction:column;gap:1rem;width:100%}
 
 /* Custom GitHub Fonts */
@@ -40,7 +40,7 @@ html{scroll-behavior:smooth}
 ::selection{background-color:#00ffba;color:#000}
 ::-moz-selection{background-color:#00ffba;color:#000}
 
-.input-wrap input,.pack-type__input,textarea, select{border-top:4px solid var(--clr-darkGray);caret-color:#6cc349;height:40px;outline:3px solid #1e1e1f;border-left:none;border-right:none;border-bottom:none;}
+.input-wrap input, textarea{border-top:4px solid var(--clr-darkGray);caret-color:#6cc349;height:40px;outline:3px solid #1e1e1f;border-left:none;border-right:none;border-bottom:none;}
 .button-container{align-items:flex-end;display:flex;height:60px;justify-content:center;width:100%}
 .button-container:last-child{margin:20px 0}
 .button-container .mc-button{align-items:center;cursor:pointer;display:flex;flex-direction:column-reverse;height:60px;justify-content:flex-end;outline:3px solid #1e1e1f;width:100%}
@@ -62,52 +62,85 @@ html{scroll-behavior:smooth}
 .button-container .mc-button .mc-btn-con p{font-family:"RFB Store set Loud",unifont;font-weight:400; font-size: 1.25rem;}
 .input-wrap{display:flex;flex-direction:column;width:100%}
 .input-wrap p{font-size:.875rem;line-height:1.25rem;margin-bottom:5px;margin-left:-1px}
-.input-wrap input, .input-wrap select{background-color:#313233;color:#fff;font-family:Minecraftia,unifont;font-size:.85rem;line-height:1rem;padding:5px .7rem}
+.input-wrap input{background-color:#313233;color:#fff;font-family:Minecraftia,unifont;font-size:.85rem;line-height:1rem;padding:5px .7rem}
 .input-wrap input::placeholder{color:#b1b2b5d2}
 textarea{background-color:#313233;color:#fff;margin-bottom:1.7rem;min-height:600px;padding:15px;scrollbar-color:#272727 #313233;width:100%}
 textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-height:1rem}
 
 .section-title { font-family: "RFB Store set Loud"; font-size: 1.5rem; border-bottom: 2px solid #444; padding-bottom: 5px; margin-top: 1.5rem; color: #00ffba; }
 .card { background-color: #313233; border: 3px solid #1e1e1f; padding: 15px; border-radius: 2px; position: relative; margin-bottom: 10px; }
-.delete-btn { position: absolute; right: 10px; top: 10px; background: #ff5555; color: white; border: 2px solid #cc0000; font-family: Minecraftia; padding: 5px 10px; cursor: pointer; }
+.delete-btn { position: absolute; right: 10px; top: 10px; background: #ff5555; color: white; border: 2px solid #cc0000; font-family: Minecraftia; padding: 4px; cursor: pointer; display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; }
 .delete-btn:hover { background: #ff3333; }
 .delete-btn:active { transform: translateY(2px); }
-.small-btn { background: #3c8527; color: white; border: 2px solid #4f913c; padding: 5px 10px; cursor: pointer; font-family: Minecraftia; font-size: 0.75rem; }
+.small-btn { background: #3c8527; color: white; border: 2px solid #4f913c; padding: 5px 10px; cursor: pointer; font-family: Minecraftia; font-size: 0.75rem; margin-top: 5px; }
 .small-btn:hover { background: #2a641c; }
-select option { background: #313233; color: white; }
+
+/* Custom Dropdown UI */
+.custom-dropdown { position: relative; width: 100%; background-color: #313233; color: #fff; border-top: 4px solid var(--clr-darkGray); outline: 3px solid #1e1e1f; height: 40px; font-family: Minecraftia, unifont; font-size: .85rem; cursor: pointer; user-select: none; }
+.dropdown-header { display: flex; justify-content: space-between; align-items: center; padding: 0 .7rem; height: 100%; }
+.dropdown-arrow { transform: scaleY(0.7); font-size: 14px; }
+.dropdown-options { display: none; position: absolute; top: calc(100% + 3px); left: -3px; width: calc(100% + 6px); background-color: #313233; outline: 3px solid #1e1e1f; z-index: 100; max-height: 250px; overflow-y: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+.custom-dropdown.active .dropdown-options { display: block; }
+.dropdown-option { padding: 10px .7rem; border-bottom: 2px solid #242425; }
+.dropdown-option:last-child { border-bottom: none; }
+.dropdown-option:hover { background-color: #484d4a; }
 
 /* Minecraft-style Toast Notification */
-.mc-toast {
-    position: fixed;
-    top: 20px;
-    right: -350px;
-    width: 300px;
-    background-color: #212121;
-    border: 3px solid #000;
-    border-top-color: #555;
-    border-left-color: #555;
-    color: #fff;
-    padding: 12px 15px;
-    font-family: Minecraftia, unifont;
-    font-size: 0.85rem;
-    z-index: 9999;
-    transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-.mc-toast.show {
-    right: 20px;
-}
-.mc-toast-title {
-    color: #ffff55; /* Minecraft Yellow */
-    margin-bottom: 2px;
-}
+.mc-toast { position: fixed; top: 20px; right: -350px; width: 300px; background-color: #212121; border: 3px solid #000; border-top-color: #555; border-left-color: #555; color: #fff; padding: 12px 15px; font-family: Minecraftia, unifont; font-size: 0.85rem; z-index: 9999; transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 4px 4px 0px rgba(0,0,0,0.5); pointer-events: none; display: flex; align-items: center; gap: 15px; }
+.mc-toast.show { right: 20px; }
+.mc-toast-title { color: #ffff55; margin-bottom: 2px; }
+
+/* Hamburger Menu & Sidebar */
+.header-nav { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background-color: #212121; border-bottom: 3px solid #1e1e1f; display: flex; align-items: center; padding: 0 20px; z-index: 500; }
+.menu-btn { background: none; border: none; color: white; font-size: 32px; cursor: pointer; display: flex; align-items: center; padding: 5px; margin-right: 15px; font-family: 'RFB Store set Loud', unifont; }
+.menu-btn:hover { color: #00ffba; }
+.header-title { font-family: 'RFB Store set Loud'; font-size: 1.5rem; color: white; }
+
+.sidebar-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s; }
+.sidebar-overlay.active { display: block; opacity: 1; }
+.sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background-color: #272727; border-right: 4px solid #1e1e1f; z-index: 1001; transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; }
+.sidebar.active { left: 0; }
+.sidebar-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1e1e1f; background-color: #212121; }
+.sidebar-header h2 { font-family: 'RFB Store set Loud'; font-size: 1.5rem; color: #00ffba; }
+.sidebar-close { background: none; border: none; cursor: pointer; padding: 5px; }
+.sidebar-links { display: flex; flex-direction: column; padding: 15px 0; }
+.sidebar-link { padding: 15px 20px; color: white; font-family: 'RFB Store set Loud'; font-size: 1.25rem; cursor: pointer; transition: background 0.2s; border-bottom: 2px solid #313233; }
+.sidebar-link:hover { background-color: #313233; color: #00ffba; }
+
+/* View Switching */
+.view-section { display: none; }
+.view-section.active { display: flex; }
+
+/* Typography for FAQ and About */
+.info-heading { font-family: Minecraftia; color: #00ffba; margin-bottom: 10px; margin-top: 20px; font-size: 1rem; }
+.info-text { font-size: 0.85rem; color: #ccc; line-height: 1.6; margin-bottom: 15px; }
 </style>
 </head>
 <body>
+
+    <!-- Header / Navbar -->
+    <div class="header-nav">
+        <button class="menu-btn" onclick="openSidebar()">≡</button>
+        <div class="header-title">mcpack generator</div>
+    </div>
+
+    <!-- Sidebar & Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Menu</h2>
+            <button class="sidebar-close" onclick="closeSidebar(); playSfx('release');">
+                <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:20px; height:20px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+            </button>
+        </div>
+        <div class="sidebar-links">
+            <div class="sidebar-link" onclick="switchView('generatorView')">Generator</div>
+            <div class="sidebar-link" onclick="switchView('faqView')">FAQ</div>
+            <div class="sidebar-link" onclick="switchView('aboutView')">About</div>
+        </div>
+    </div>
+
+    <!-- Toast -->
     <div id="toast" class="mc-toast">
         <div>
             <div class="mc-toast-title">Success!</div>
@@ -115,29 +148,37 @@ select option { background: #313233; color: white; }
         </div>
     </div>
 
-    <div class="container children-spacing" style="padding-top: 3rem; padding-bottom: 5rem;">
+    <!-- GENERATOR VIEW -->
+    <div id="generatorView" class="container children-spacing view-section active">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">mcpack generator</h1>
         
         <!-- Header Configuration -->
         <h2 class="section-title">Header Configuration</h2>
         
         <div class="input-wrap">
-            <p>Pack Type</p>
-            <select id="packType" onchange="updateManifest()">
-                <option value="resources">Resource Pack (resources)</option>
-                <option value="data">Behavior Pack (data)</option>
-                <option value="skin_pack">Skin Pack (skin_pack)</option>
-                <option value="world_template">World Template (world_template)</option>
-                <option value="client_data">Client Data (client_data)</option>
-            </select>
+            <p>Pack type</p>
+            <div class="custom-dropdown" id="packTypeDropdown" onclick="toggleDropdown(this)">
+                <div class="dropdown-header">
+                    <span id="packTypeDisplay">Resource Pack (resources)</span>
+                    <span class="dropdown-arrow">▼</span>
+                </div>
+                <div class="dropdown-options">
+                    <div class="dropdown-option" onclick="setPackType('resources', 'Resource Pack (resources)')">Resource Pack (resources)</div>
+                    <div class="dropdown-option" onclick="setPackType('data', 'Behavior Pack (data)')">Behavior Pack (data)</div>
+                    <div class="dropdown-option" onclick="setPackType('skin_pack', 'Skin Pack (skin_pack)')">Skin Pack (skin_pack)</div>
+                    <div class="dropdown-option" onclick="setPackType('world_template', 'World Template (world_template)')">World Template (world_template)</div>
+                    <div class="dropdown-option" onclick="setPackType('client_data', 'Client Data (client_data)')">Client Data (client_data)</div>
+                </div>
+            </div>
+            <input type="hidden" id="packTypeVal" value="resources">
         </div>
 
         <div class="input-wrap">
-            <p>Pack Name</p>
+            <p>Pack name</p>
             <input type="text" id="packName" placeholder="pack.name" oninput="updateManifest()">
         </div>
         <div class="input-wrap">
-            <p>Pack Description</p>
+            <p>Pack description</p>
             <input type="text" id="packDesc" placeholder="pack.description" oninput="updateManifest()">
         </div>
         <div class="input-wrap">
@@ -145,22 +186,22 @@ select option { background: #313233; color: white; }
             <input type="text" id="packVersion" placeholder="1.0.0" oninput="updateManifest()">
         </div>
         <div class="input-wrap">
-            <p>Min Engine Version</p>
+            <p>Min engine version</p>
             <input type="text" id="minEngine" placeholder="1.26.10" oninput="updateManifest()">
         </div>
         <div class="input-wrap">
-            <p>Pack Optimization Version (Optional)</p>
+            <p>Pack optimization version (optional)</p>
             <input type="text" id="packOpt" placeholder="0.1.0" oninput="updateManifest()">
         </div>
 
         <!-- Arrays / Metadata -->
         <h2 class="section-title">Metadata & Capabilities</h2>
         <div class="input-wrap">
-            <p>Capabilities (Comma separated)</p>
+            <p>Capabilities (comma separated)</p>
             <input type="text" id="capabilities" placeholder="pbr" oninput="updateManifest()">
         </div>
         <div class="input-wrap">
-            <p>Authors (Comma separated)</p>
+            <p>Authors (comma separated)</p>
             <input type="text" id="authors" placeholder="Oreville Studios Ltd" oninput="updateManifest()">
         </div>
 
@@ -195,7 +236,87 @@ select option { background: #313233; color: white; }
         </div>
     </div>
 
+    <!-- FAQ VIEW -->
+    <div id="faqView" class="container children-spacing view-section">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">FAQ</h1>
+        
+        <div class="card" style="margin-top: 20px;">
+            <h3 class="info-heading" style="margin-top: 0;">What is the difference between format_version 2 and 3?</h3>
+            <p class="info-text">
+                <code>format_version 3</code> introduces support for newer and more advanced pack features like <b>Pack Settings</b> (toggles and dropdowns in the UI) and advanced <b>Subpacks</b>. Using version 3 typically requires a higher <code>min_engine_version</code> (usually 1.26.0 or newer) to function correctly in-game. Version 2 is the legacy format used for simpler packs.
+            </p>
+
+            <h3 class="info-heading">What is memory tier?</h3>
+            <p class="info-text">
+                The <code>memory_performance_tier</code> property is used within subpacks to define the hardware requirements for that specific subpack configuration. Higher tiers will automatically disable the subpack on lower-end devices (like older mobile phones) with limited RAM, which prevents the game from crashing due to high-resolution textures or heavy models. 0 is the default/lowest tier.
+            </p>
+        </div>
+    </div>
+
+    <!-- ABOUT VIEW -->
+    <div id="aboutView" class="container children-spacing view-section">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">About</h1>
+        
+        <div class="card" style="margin-top: 20px;">
+            <h3 class="info-heading" style="margin-top: 0;">mcpack generator</h3>
+            <p class="info-text">
+                A rapid, web-based tool designed to easily generate valid <code>manifest.json</code> files for your Minecraft Bedrock Add-Ons, without requiring you to manually write a single line of JSON code.
+            </p>
+            <p class="info-text">
+                It supports all modern pack types including Resource Packs, Behavior Packs, Skin Packs, World Templates, and Client Data, alongside complex configurations like Pack Settings and Subpacks.
+            </p>
+        </div>
+    </div>
+
     <script>
+        // --- Sidebar & Views Logic ---
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('active');
+            document.getElementById('sidebarOverlay').classList.add('active');
+            playSfx('click');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            closeSidebar();
+            playSfx('click');
+            window.scrollTo(0,0);
+        }
+
+        // --- Custom Dropdown Logic ---
+        function toggleDropdown(el) {
+            // Close others first
+            document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+                if (dropdown !== el) dropdown.classList.remove('active');
+            });
+            el.classList.toggle('active');
+        }
+
+        function setPackType(val, displayVal) {
+            document.getElementById('packTypeVal').value = val;
+            document.getElementById('packTypeDisplay').innerText = displayVal;
+            updateManifest();
+        }
+
+        function setSettingType(index, val, displayVal) {
+            state.settings[index].type = val;
+            if (val === 'toggle') {
+                delete state.settings[index].options;
+                state.settings[index].default = true;
+            } else {
+                state.settings[index].options = [];
+                state.settings[index].default = "";
+            }
+            renderSettings();
+            updateManifest();
+        }
+
         // --- UI Sounds Setup ---
         const sfx = {
             click: new Audio('https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/audios/ui/Click_stereo.ogg%20(1).ogg'),
@@ -203,19 +324,15 @@ select option { background: #313233; color: white; }
             toast: new Audio('https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/audios/ui/Toast.ogg')
         };
 
-        // Enable preloading for faster response
         Object.values(sfx).forEach(audio => { audio.preload = "auto"; });
-
         let lastOtherSoundTime = 0;
 
-        // Exact debounce implementation from friend's code to prevent double-audio glitches
         function playSfx(key) {
             if (key !== 'click') {
                 lastOtherSoundTime = Date.now();
             } else if (Date.now() - lastOtherSoundTime < 300) {
-                return; // Suppress click sound if another sound effect plays rapidly
+                return;
             }
-
             try {
                 if (sfx[key]) {
                     const clone = sfx[key].cloneNode();
@@ -225,9 +342,14 @@ select option { background: #313233; color: white; }
             } catch(e) {}
         }
 
-        // Single global click listener native to browsers (perfectly handles mobile touch-to-click mapping)
         document.addEventListener('click', (e) => {
-            if (e.target.closest('button, .mc-button, select, .small-btn, .delete-btn')) {
+            // Dropdown closing logic when clicking outside
+            if (!e.target.closest('.custom-dropdown')) {
+                document.querySelectorAll('.custom-dropdown.active').forEach(el => el.classList.remove('active'));
+            }
+
+            // Audio logic
+            if (e.target.closest('button, .mc-button, .sidebar-link, .small-btn, .delete-btn, .dropdown-option, .dropdown-header')) {
                 playSfx('click');
             }
         });
@@ -236,12 +358,8 @@ select option { background: #313233; color: white; }
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').innerText = message;
             toast.classList.add('show');
-            
             playSfx('toast');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
 
         // --- Manifest Logic ---
@@ -252,28 +370,27 @@ select option { background: #313233; color: white; }
             });
         }
 
-        const state = {
-            subpacks: [],
-            settings: []
-        };
+        const state = { subpacks: [], settings: [] };
 
         function renderSubpacks() {
             const container = document.getElementById('subpacksList');
             container.innerHTML = state.subpacks.map((sp, i) => `
                 <div class="card">
                     <h3 style="font-family: Minecraftia; margin-bottom: 10px; color: #fff;">Subpack ${i + 1}</h3>
-                    <button class="delete-btn" onclick="removeSubpack(${i}); playSfx('release');">X</button>
+                    <button class="delete-btn" onclick="removeSubpack(${i}); playSfx('release');">
+                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                    </button>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
-                        <p>Folder Name</p>
+                        <p>Folder name</p>
                         <input type="text" placeholder="e.g. SP0" value="${sp.folder_name}" oninput="state.subpacks[${i}].folder_name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
-                        <p>Name & Description (Supports § color codes)</p>
+                        <p>Name & description (supports § color codes)</p>
                         <input type="text" placeholder="e.g. Custom Experience §8..." value="${sp.name}" oninput="state.subpacks[${i}].name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap">
-                        <p>Memory Performance Tier</p>
+                        <p>Memory performance tier</p>
                         <input type="number" placeholder="0" value="${sp.memory_performance_tier}" oninput="state.subpacks[${i}].memory_performance_tier=parseInt(this.value)||0; updateManifest()">
                     </div>
                 </div>
@@ -294,60 +411,60 @@ select option { background: #313233; color: white; }
 
         function renderSettings() {
             const container = document.getElementById('settingsList');
-            container.innerHTML = state.settings.map((set, i) => `
+            container.innerHTML = state.settings.map((set, i) => {
+                const isToggle = set.type === 'toggle';
+                const displayType = isToggle ? 'Toggle' : 'Dropdown';
+                return `
                 <div class="card">
                     <h3 style="font-family: Minecraftia; margin-bottom: 10px; color: #fff;">Setting ${i + 1}</h3>
-                    <button class="delete-btn" onclick="removeSetting(${i}); playSfx('release');">X</button>
+                    <button class="delete-btn" onclick="removeSetting(${i}); playSfx('release');">
+                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                    </button>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
-                        <p>Setting Type</p>
-                        <select onchange="changeSettingType(${i}, this.value)">
-                            <option value="dropdown" ${set.type === 'dropdown' ? 'selected' : ''}>Dropdown</option>
-                            <option value="toggle" ${set.type === 'toggle' ? 'selected' : ''}>Toggle</option>
-                        </select>
+                        <p>Setting type</p>
+                        <div class="custom-dropdown" onclick="toggleDropdown(this)">
+                            <div class="dropdown-header">
+                                <span>${displayType}</span>
+                                <span class="dropdown-arrow">▼</span>
+                            </div>
+                            <div class="dropdown-options">
+                                <div class="dropdown-option" onclick="setSettingType(${i}, 'dropdown', 'Dropdown')">Dropdown</div>
+                                <div class="dropdown-option" onclick="setSettingType(${i}, 'toggle', 'Toggle')">Toggle</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Name (ID)</p>
                         <input type="text" placeholder="e.g. namespace:id" value="${set.name}" oninput="state.settings[${i}].name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
-                        <p>Text (Language Key)</p>
+                        <p>Text (language key)</p>
                         <input type="text" placeholder="e.g. text.namespace.id" value="${set.text}" oninput="state.settings[${i}].text=this.value; updateManifest()">
                     </div>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
-                        <p>Default Value ${set.type === 'toggle' ? '(true / false)' : ''}</p>
+                        <p>Default value ${isToggle ? '(true / false)' : ''}</p>
                         <input type="text" placeholder="e.g. true" value="${set.default}" oninput="handleDefaultInput(${i}, this.value)">
                     </div>
 
-                    ${set.type === 'dropdown' ? `
+                    ${!isToggle ? `
                         <div style="background: #242425; padding: 10px; margin-top: 15px; border-radius: 4px;">
-                            <p style="font-family: Minecraftia; font-size: 0.8rem; margin-bottom: 10px; color: #00ffba;">Options for Dropdown:</p>
+                            <p style="font-family: Minecraftia; font-size: 0.8rem; margin-bottom: 10px; color: #00ffba;">Options for dropdown:</p>
                             ${set.options.map((opt, optIdx) => `
                                 <div style="display: flex; gap: 10px; margin-bottom: 8px;">
                                     <div class="input-wrap" style="flex: 1;"><input type="text" placeholder="Name" value="${opt.name}" oninput="state.settings[${i}].options[${optIdx}].name=this.value; updateManifest()"></div>
-                                    <div class="input-wrap" style="flex: 1;"><input type="text" placeholder="Text (Lang Key)" value="${opt.text}" oninput="state.settings[${i}].options[${optIdx}].text=this.value; updateManifest()"></div>
-                                    <button class="delete-btn" style="position: relative; right: 0; top: 0;" onclick="removeOption(${i}, ${optIdx}); playSfx('release');">X</button>
+                                    <div class="input-wrap" style="flex: 1;"><input type="text" placeholder="Text (lang key)" value="${opt.text}" oninput="state.settings[${i}].options[${optIdx}].text=this.value; updateManifest()"></div>
+                                    <button class="delete-btn" style="position: relative; right: 0; top: 0;" onclick="removeOption(${i}, ${optIdx}); playSfx('release');">
+                                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                                    </button>
                                 </div>
                             `).join('')}
                             <button class="small-btn" onclick="addOption(${i})">+ Add Option</button>
                         </div>
                     ` : ''}
                 </div>
-            `).join('');
-        }
-
-        function changeSettingType(index, newType) {
-            state.settings[index].type = newType;
-            if (newType === 'toggle') {
-                delete state.settings[index].options;
-                state.settings[index].default = true;
-            } else {
-                state.settings[index].options = [];
-                state.settings[index].default = "";
-            }
-            renderSettings();
-            updateManifest();
+            `}).join('');
         }
 
         function handleDefaultInput(index, val) {
@@ -382,7 +499,7 @@ select option { background: #313233; color: white; }
         }
 
         function updateManifest() {
-            const packType = document.getElementById('packType').value;
+            const packType = document.getElementById('packTypeVal').value;
             const name = document.getElementById('packName').value || "";
             const desc = document.getElementById('packDesc').value || "";
             const version = document.getElementById('packVersion').value || "";
@@ -395,7 +512,6 @@ select option { background: #313233; color: white; }
             const authVal = document.getElementById('authors').value;
             const authorsList = authVal ? authVal.split(',').map(s => s.trim()).filter(s => s) : [];
 
-            // Regenerates new UUIDs automatically upon any modification
             const freshHeaderUuid = uuidv4();
             const freshModuleUuid = uuidv4();
 
