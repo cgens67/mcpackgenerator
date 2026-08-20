@@ -203,34 +203,32 @@ select option { background: #313233; color: white; }
             toast: new Audio('https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/audios/ui/Toast.ogg')
         };
 
-        let lastSoundTime = 0;
+        // Enable preloading for faster response
+        Object.values(sfx).forEach(audio => { audio.preload = "auto"; });
 
-        function playSfx(type) {
-            const now = Date.now();
-            
-            // Debounce: Prevents the same interaction from playing sounds rapidly (fixes double sound on mobile tap)
-            if (now - lastSoundTime < 100) {
-                return;
-            }
-            lastSoundTime = now;
+        let lastOtherSoundTime = 0;
 
-            if (sfx[type]) {
-                const clone = sfx[type].cloneNode();
-                clone.volume = 0.5;
-                clone.play().catch(e => {}); 
+        // Exact debounce implementation from friend's code to prevent double-audio glitches
+        function playSfx(key) {
+            if (key !== 'click') {
+                lastOtherSoundTime = Date.now();
+            } else if (Date.now() - lastOtherSoundTime < 300) {
+                return; // Suppress click sound if another sound effect plays rapidly
             }
+
+            try {
+                if (sfx[key]) {
+                    const clone = sfx[key].cloneNode();
+                    clone.volume = 0.5;
+                    clone.play().catch(e => {}); 
+                }
+            } catch(e) {}
         }
 
-        // Use pointer events for interaction sounds
-        document.addEventListener('pointerdown', (e) => {
+        // Single global click listener native to browsers (perfectly handles mobile touch-to-click mapping)
+        document.addEventListener('click', (e) => {
             if (e.target.closest('button, .mc-button, select, .small-btn, .delete-btn')) {
                 playSfx('click');
-            }
-        });
-
-        document.addEventListener('pointerup', (e) => {
-            if (e.target.closest('button, .mc-button, select, .small-btn, .delete-btn')) {
-                playSfx('release');
             }
         });
 
@@ -239,10 +237,7 @@ select option { background: #313233; color: white; }
             document.getElementById('toast-message').innerText = message;
             toast.classList.add('show');
             
-            // Bypass the interaction debounce strictly for toasts
-            const toastAudio = sfx.toast.cloneNode();
-            toastAudio.volume = 0.5;
-            toastAudio.play().catch(e => {});
+            playSfx('toast');
             
             setTimeout(() => {
                 toast.classList.remove('show');
@@ -267,7 +262,7 @@ select option { background: #313233; color: white; }
             container.innerHTML = state.subpacks.map((sp, i) => `
                 <div class="card">
                     <h3 style="font-family: Minecraftia; margin-bottom: 10px; color: #fff;">Subpack ${i + 1}</h3>
-                    <button class="delete-btn" onclick="removeSubpack(${i})">X</button>
+                    <button class="delete-btn" onclick="removeSubpack(${i}); playSfx('release');">X</button>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Folder Name</p>
@@ -302,7 +297,7 @@ select option { background: #313233; color: white; }
             container.innerHTML = state.settings.map((set, i) => `
                 <div class="card">
                     <h3 style="font-family: Minecraftia; margin-bottom: 10px; color: #fff;">Setting ${i + 1}</h3>
-                    <button class="delete-btn" onclick="removeSetting(${i})">X</button>
+                    <button class="delete-btn" onclick="removeSetting(${i}); playSfx('release');">X</button>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Setting Type</p>
@@ -332,7 +327,7 @@ select option { background: #313233; color: white; }
                                 <div style="display: flex; gap: 10px; margin-bottom: 8px;">
                                     <div class="input-wrap" style="flex: 1;"><input type="text" placeholder="Name" value="${opt.name}" oninput="state.settings[${i}].options[${optIdx}].name=this.value; updateManifest()"></div>
                                     <div class="input-wrap" style="flex: 1;"><input type="text" placeholder="Text (Lang Key)" value="${opt.text}" oninput="state.settings[${i}].options[${optIdx}].text=this.value; updateManifest()"></div>
-                                    <button class="delete-btn" style="position: relative; right: 0; top: 0;" onclick="removeOption(${i}, ${optIdx})">X</button>
+                                    <button class="delete-btn" style="position: relative; right: 0; top: 0;" onclick="removeOption(${i}, ${optIdx}); playSfx('release');">X</button>
                                 </div>
                             `).join('')}
                             <button class="small-btn" onclick="addOption(${i})">+ Add Option</button>
