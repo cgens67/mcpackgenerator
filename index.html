@@ -197,42 +197,46 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <p>Version</p>
             <input type="text" id="packVersion" placeholder="1.0.0" oninput="updateManifest()">
         </div>
-        <div class="input-wrap">
+        <div class="input-wrap" id="minEngineWrap">
             <p>Min engine version</p>
             <input type="text" id="minEngine" placeholder="1.26.10" oninput="updateManifest()">
         </div>
-        <div class="input-wrap">
+        <div class="input-wrap" id="packOptWrap">
             <p>Pack optimization version (optional)</p>
             <input type="text" id="packOpt" placeholder="0.1.0" oninput="updateManifest()">
         </div>
 
         <!-- Arrays / Metadata -->
         <h2 class="section-title">Metadata & Capabilities</h2>
-        <div class="input-wrap">
+        <div class="input-wrap" id="capabilitiesWrap">
             <p>Capabilities (comma separated)</p>
             <input type="text" id="capabilities" placeholder="pbr" oninput="updateManifest()">
         </div>
-        <div class="input-wrap">
+        <div class="input-wrap" id="authorsWrap">
             <p>Authors (comma separated)</p>
             <input type="text" id="authors" placeholder="Oreville Studios Ltd" oninput="updateManifest()">
         </div>
 
-        <!-- Subpacks -->
-        <h2 class="section-title">Subpacks</h2>
-        <div id="subpacksList" class="children-spacing"></div>
-        <div class="button-container" style="height: 40px; margin-top: 5px;">
-            <button class="mc-button mc-btn-wh" onclick="addSubpack()" style="height: 40px;">
-                <div class="mc-btn-con"><p>+ ADD SUBPACK</p></div>
-            </button>
+        <!-- Subpacks (Dynamically shown only for supported types) -->
+        <div id="subpacksSectionWrap">
+            <h2 class="section-title">Subpacks</h2>
+            <div id="subpacksList" class="children-spacing"></div>
+            <div class="button-container" style="height: 40px; margin-top: 5px;">
+                <button class="mc-button mc-btn-wh" onclick="addSubpack()" style="height: 40px;">
+                    <div class="mc-btn-con"><p>+ ADD SUBPACK</p></div>
+                </button>
+            </div>
         </div>
 
-        <!-- Settings -->
-        <h2 class="section-title">Settings</h2>
-        <div id="settingsList" class="children-spacing"></div>
-        <div class="button-container" style="height: 40px; margin-top: 5px;">
-            <button class="mc-button mc-btn-wh" onclick="addSetting()" style="height: 40px;">
-                <div class="mc-btn-con"><p>+ ADD SETTING</p></div>
-            </button>
+        <!-- Settings (Dynamically shown only for supported types) -->
+        <div id="settingsSectionWrap">
+            <h2 class="section-title">Settings</h2>
+            <div id="settingsList" class="children-spacing"></div>
+            <div class="button-container" style="height: 40px; margin-top: 5px;">
+                <button class="mc-button mc-btn-wh" onclick="addSetting()" style="height: 40px;">
+                    <div class="mc-btn-con"><p>+ ADD SETTING</p></div>
+                </button>
+            </div>
         </div>
 
         <!-- JSON Output -->
@@ -420,7 +424,28 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         function setPackType(val, displayVal) {
             document.getElementById('packTypeVal').value = val;
             document.getElementById('packTypeDisplay').innerText = displayVal;
+            updateSectionVisibility(val);
             updateManifest();
+        }
+
+        function updateSectionVisibility(packType) {
+            const isResource = packType === 'resources';
+            const isBehavior = packType === 'data';
+            const isClient = packType === 'client_data';
+            const isSkin = packType === 'skin_pack';
+            const isWorld = packType === 'world_template';
+
+            // Subpacks: only resources
+            document.getElementById('subpacksSectionWrap').style.display = isResource ? 'block' : 'none';
+
+            // Settings: resources and data (Behavior)
+            document.getElementById('settingsSectionWrap').style.display = (isResource || isBehavior) ? 'block' : 'none';
+
+            // Capabilities: resources, data, and client_data
+            document.getElementById('capabilitiesWrap').style.display = (isResource || isBehavior || isClient) ? 'block' : 'none';
+
+            // Pack optimization: only resources
+            document.getElementById('packOptWrap').style.display = isResource ? 'block' : 'none';
         }
 
         function setSettingType(index, val, displayVal) {
@@ -629,11 +654,21 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             const authVal = document.getElementById('authors').value;
             const authorsList = authVal ? authVal.split(',').map(s => s.trim()).filter(s => s) : [];
 
+            const isResource = packType === 'resources';
+            const isBehavior = packType === 'data';
+            const isClient = packType === 'client_data';
+
             const freshHeaderUuid = uuidv4();
             const freshModuleUuid = uuidv4();
 
+            // Set appropriate format_version dynamically
+            let formatVersion = 2;
+            if (isResource || ((isResource || isBehavior) && state.settings.length > 0)) {
+                formatVersion = 3;
+            }
+
             const manifest = {
-                format_version: 3,
+                format_version: formatVersion,
                 header: {
                     description: desc,
                     name: name,
@@ -651,11 +686,12 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 ]
             };
 
-            if (packOpt) manifest.header.pack_optimization_version = packOpt;
-            if (capsList.length > 0) manifest.capabilities = capsList;
+            // Only attach supported fields depending on the pack type
+            if (isResource && packOpt) manifest.header.pack_optimization_version = packOpt;
+            if ((isResource || isBehavior || isClient) && capsList.length > 0) manifest.capabilities = capsList;
             if (authorsList.length > 0) manifest.metadata = { authors: authorsList };
-            if (state.subpacks.length > 0) manifest.subpacks = state.subpacks;
-            if (state.settings.length > 0) manifest.settings = state.settings;
+            if (isResource && state.subpacks.length > 0) manifest.subpacks = state.subpacks;
+            if ((isResource || isBehavior) && state.settings.length > 0) manifest.settings = state.settings;
 
             document.getElementById('output').value = JSON.stringify(manifest, null, 4);
         }
@@ -669,6 +705,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         }
 
         window.onload = () => {
+            updateSectionVisibility('resources');
             renderSubpacks();
             renderSettings();
             updateManifest();
