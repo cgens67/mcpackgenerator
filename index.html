@@ -78,12 +78,26 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 /* Custom Dropdown UI */
 .custom-dropdown { position: relative; width: 100%; background-color: #313233; color: #fff; border-top: 4px solid var(--clr-darkGray); outline: 3px solid #1e1e1f; height: 40px; font-family: Minecraftia, unifont; font-size: .85rem; cursor: pointer; user-select: none; }
 .dropdown-header { display: flex; justify-content: space-between; align-items: center; padding: 0 .7rem; height: 100%; }
-.dropdown-arrow { transform: scaleY(0.7); font-size: 14px; }
 .dropdown-options { display: none; position: absolute; top: calc(100% + 3px); left: -3px; width: calc(100% + 6px); background-color: #313233; outline: 3px solid #1e1e1f; z-index: 100; max-height: 250px; overflow-y: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
 .custom-dropdown.active .dropdown-options { display: block; }
 .dropdown-option { padding: 10px .7rem; border-bottom: 2px solid #242425; }
 .dropdown-option:last-child { border-bottom: none; }
 .dropdown-option:hover { background-color: #484d4a; }
+
+/* Unified Dropdown Arrow */
+.dropdown-arrow {
+    width: 12px;
+    height: 7px;
+    fill: #ffffff;
+    image-rendering: pixelated;
+    transition: transform 0.2s ease;
+    display: inline-block;
+    flex-shrink: 0;
+}
+.custom-dropdown.active .dropdown-arrow,
+.faq-item.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
 
 /* Minecraft-style Toast Notification */
 .mc-toast { position: fixed; top: 20px; right: -350px; width: 300px; background-color: #212121; border: 3px solid #000; border-top-color: #555; border-left-color: #555; color: #fff; padding: 12px 15px; font-family: Minecraftia, unifont; font-size: 0.85rem; z-index: 9999; transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 4px 4px 0px rgba(0,0,0,0.5); pointer-events: none; display: flex; align-items: center; gap: 15px; }
@@ -116,8 +130,6 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 .faq-question { width: 100%; text-align: left; background: none; border: none; color: #00ffba; font-family: Minecraftia; font-size: 0.95rem; padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 .faq-question:hover { background-color: #383a3c; }
 .faq-question-text { padding-right: 15px; line-height: 1.4; }
-.faq-arrow { transition: transform 0.3s ease; font-size: 14px; transform: scaleY(0.7); display: inline-block; }
-.faq-item.active .faq-arrow { transform: scaleY(-0.7); }
 .faq-answer-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; }
 .faq-item.active .faq-answer-wrapper { grid-template-rows: 1fr; }
 .faq-answer { overflow: hidden; }
@@ -175,7 +187,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="custom-dropdown" id="packTypeDropdown" onclick="toggleDropdown(this)">
                 <div class="dropdown-header">
                     <span id="packTypeDisplay">Resource Pack (resources)</span>
-                    <span class="dropdown-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </div>
                 <div class="dropdown-options">
                     <div class="dropdown-option" onclick="setPackType('resources', 'Resource Pack (resources)')">Resource Pack (resources)</div>
@@ -275,7 +287,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is "Client Data"?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -289,7 +301,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Do World Templates or Skin Packs support subpacks and settings?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -303,7 +315,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is the difference between format_version 2 and 3?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -317,7 +329,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is memory tier?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -331,7 +343,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What are capabilities in a manifest?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -345,7 +357,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is a UUID and why do I need it?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -359,7 +371,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Can I have multiple subpacks in one pack?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -373,7 +385,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">How do Pack Settings work?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -384,11 +396,11 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 </div>
             </div>
 
-            <!-- 15 New FAQ Questions -->
+            <!-- 15 Extended Questions -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is min_engine_version and why is it important?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -402,7 +414,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What are modules in a manifest?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -416,7 +428,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is the difference between Resource Packs and Behavior Packs?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -430,7 +442,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">How do I use translation keys (.lang files) for pack names?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -444,7 +456,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">How do color formatting codes (§) work in pack names?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -458,7 +470,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What does the raytraced capability do?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -472,7 +484,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What are dependencies in a manifest?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -486,7 +498,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Why does Minecraft show "Duplicate Pack Detected"?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -500,7 +512,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">How do I update an existing pack without breaking worlds?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -514,7 +526,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is pack_optimization_version?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -528,7 +540,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is format_version 1 used for?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -542,7 +554,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Can a single manifest have multiple modules?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -556,7 +568,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Where should manifest.json be placed in my pack?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -570,7 +582,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">How do Subpack folder structures work?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -584,7 +596,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Is there a maximum number of dropdown options in settings?</span>
-                    <span class="faq-arrow">▼</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
@@ -816,7 +828,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                         <div class="custom-dropdown" onclick="toggleDropdown(this)">
                             <div class="dropdown-header">
                                 <span>${displayType}</span>
-                                <span class="dropdown-arrow">▼</span>
+                                <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                             </div>
                             <div class="dropdown-options">
                                 <div class="dropdown-option" onclick="setSettingType(${i}, 'dropdown', 'Dropdown')">Dropdown</div>
