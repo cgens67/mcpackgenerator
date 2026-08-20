@@ -203,7 +203,17 @@ select option { background: #313233; color: white; }
             toast: new Audio('https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/audios/ui/Toast.ogg')
         };
 
+        let lastSoundTime = 0;
+
         function playSfx(type) {
+            const now = Date.now();
+            
+            // Debounce: Prevents the same interaction from playing sounds rapidly (fixes double sound on mobile tap)
+            if (now - lastSoundTime < 100) {
+                return;
+            }
+            lastSoundTime = now;
+
             if (sfx[type]) {
                 const clone = sfx[type].cloneNode();
                 clone.volume = 0.5;
@@ -211,7 +221,7 @@ select option { background: #313233; color: white; }
             }
         }
 
-        // Use pointer events to avoid mobile touch/mouse double firing
+        // Use pointer events for interaction sounds
         document.addEventListener('pointerdown', (e) => {
             if (e.target.closest('button, .mc-button, select, .small-btn, .delete-btn')) {
                 playSfx('click');
@@ -228,7 +238,11 @@ select option { background: #313233; color: white; }
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').innerText = message;
             toast.classList.add('show');
-            playSfx('toast');
+            
+            // Bypass the interaction debounce strictly for toasts
+            const toastAudio = sfx.toast.cloneNode();
+            toastAudio.volume = 0.5;
+            toastAudio.play().catch(e => {});
             
             setTimeout(() => {
                 toast.classList.remove('show');
@@ -386,7 +400,7 @@ select option { background: #313233; color: white; }
             const authVal = document.getElementById('authors').value;
             const authorsList = authVal ? authVal.split(',').map(s => s.trim()).filter(s => s) : [];
 
-            // Automatically regenerate UUIDs on every update
+            // Regenerates new UUIDs automatically upon any modification
             const freshHeaderUuid = uuidv4();
             const freshModuleUuid = uuidv4();
 
