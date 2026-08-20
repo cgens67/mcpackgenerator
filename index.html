@@ -59,6 +59,12 @@ html{scroll-behavior:smooth}
 .mc-btn-gr:active .mc-btn-con{background-color:#1d4d13;border:3px solid #608259}
 .mc-btn-gr .mc-btn-con p{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity))}
 
+.mc-btn-red{background-color:#5a1818}
+.mc-btn-red .mc-btn-con{background-color:#b02e26;border:3px solid #d33c33}
+.mc-btn-red:hover .mc-btn-con{background-color:#8f231c;border:3px solid #b02e26}
+.mc-btn-red:active .mc-btn-con{background-color:#5a1818;border:3px solid #751a14}
+.mc-btn-red .mc-btn-con p{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity))}
+
 .button-container .mc-button .mc-btn-con p{font-family:"RFB Store set Loud",unifont;font-weight:400; font-size: 1.25rem;}
 .input-wrap{display:flex;flex-direction:column;width:100%}
 .input-wrap p{font-size:.875rem;line-height:1.25rem;margin-bottom:5px;margin-left:-1px}
@@ -121,6 +127,22 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 .sidebar-link { padding: 15px 20px; color: white; font-family: 'RFB Store set Loud'; font-size: 1.15rem; cursor: pointer; transition: background 0.2s; border-bottom: 2px solid #313233; }
 .sidebar-link:hover { background-color: #313233; color: #00ffba; }
 
+/* In-UI Confirmation Modal */
+.modal-scrim {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 2000;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+    backdrop-filter: blur(2px);
+}
+.modal-scrim.active { display: flex; }
+.modal-card {
+    background-color: #313233; border: 3px solid #1e1e1f; outline: 3px solid #1e1e1f;
+    padding: 24px; max-width: 440px; width: 100%; text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+}
+.modal-title { font-family: 'RFB Store set Loud'; font-size: 1.6rem; color: #ff5555; margin-bottom: 12px; }
+.modal-desc { font-size: 0.9rem; color: #ccc; margin-bottom: 24px; line-height: 1.5; font-family: Minecraftia; }
+.modal-actions { display: flex; gap: 12px; justify-content: center; }
+
 /* View Switching */
 .view-section { display: none; }
 .view-section.active { display: flex; }
@@ -161,11 +183,31 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             </button>
         </div>
         <div class="sidebar-links">
-            <div class="sidebar-link" onclick="switchView('manifestView', 'manifest.json')">manifest.json</div>
-            <div class="sidebar-link" onclick="switchView('splashesView', 'splashes.json')">splashes.json</div>
-            <div class="sidebar-link" onclick="switchView('loadingMessagesView', 'loading_messages.json')">loading_messages.json</div>
-            <div class="sidebar-link" onclick="switchView('faqView', 'FAQ')">FAQ</div>
-            <div class="sidebar-link" onclick="switchView('aboutView', 'About')">About</div>
+            <div class="sidebar-link" onclick="requestSwitchView('manifestView', 'manifest.json')">manifest.json</div>
+            <div class="sidebar-link" onclick="requestSwitchView('splashesView', 'splashes.json')">splashes.json</div>
+            <div class="sidebar-link" onclick="requestSwitchView('loadingMessagesView', 'loading_messages.json')">loading_messages.json</div>
+            <div class="sidebar-link" onclick="requestSwitchView('faqView', 'FAQ')">FAQ</div>
+            <div class="sidebar-link" onclick="requestSwitchView('aboutView', 'About')">About</div>
+        </div>
+    </div>
+
+    <!-- Discard Confirmation Modal -->
+    <div class="modal-scrim" id="discardModal">
+        <div class="modal-card">
+            <div class="modal-title">Discard Changes?</div>
+            <div class="modal-desc">You have unsaved changes. Are you sure you want to discard them?</div>
+            <div class="modal-actions">
+                <div class="button-container" style="height: 48px; width: 140px; margin: 0;">
+                    <button class="mc-button mc-btn-wh" style="height: 48px;" onclick="cancelDiscard()">
+                        <div class="mc-btn-con"><p style="font-size: 1rem;">CANCEL</p></div>
+                    </button>
+                </div>
+                <div class="button-container" style="height: 48px; width: 140px; margin: 0;">
+                    <button class="mc-button mc-btn-red" style="height: 48px;" onclick="confirmDiscard()">
+                        <div class="mc-btn-con"><p style="font-size: 1rem;">DISCARD</p></div>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -203,34 +245,34 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 
         <div class="input-wrap">
             <p>Pack name <span class="required-badge">(required)</span></p>
-            <input type="text" id="packName" placeholder="pack.name" oninput="updateManifest()">
+            <input type="text" id="packName" placeholder="pack.name" oninput="markDirty(); updateManifest()">
         </div>
         <div class="input-wrap">
             <p>Pack description <span class="required-badge">(required)</span></p>
-            <input type="text" id="packDesc" placeholder="pack.description" oninput="updateManifest()">
+            <input type="text" id="packDesc" placeholder="pack.description" oninput="markDirty(); updateManifest()">
         </div>
         <div class="input-wrap">
             <p>Version <span class="required-badge">(required)</span></p>
-            <input type="text" id="packVersion" placeholder="1.0.0" oninput="updateManifest()">
+            <input type="text" id="packVersion" placeholder="1.0.0" oninput="markDirty(); updateManifest()">
         </div>
         <div class="input-wrap" id="minEngineWrap">
             <p>Min engine version <span class="required-badge">(required)</span></p>
-            <input type="text" id="minEngine" placeholder="1.26.10" oninput="updateManifest()">
+            <input type="text" id="minEngine" placeholder="1.26.10" oninput="markDirty(); updateManifest()">
         </div>
         <div class="input-wrap" id="packOptWrap">
             <p>Pack optimization version <span class="optional-badge">(optional)</span></p>
-            <input type="text" id="packOpt" placeholder="0.1.0" oninput="updateManifest()">
+            <input type="text" id="packOpt" placeholder="0.1.0" oninput="markDirty(); updateManifest()">
         </div>
 
         <!-- Arrays / Metadata -->
         <h2 class="section-title">Metadata & Capabilities</h2>
         <div class="input-wrap" id="capabilitiesWrap">
             <p>Capabilities <span class="optional-badge">(optional, comma separated)</span></p>
-            <input type="text" id="capabilities" placeholder="pbr" oninput="updateManifest()">
+            <input type="text" id="capabilities" placeholder="pbr" oninput="markDirty(); updateManifest()">
         </div>
         <div class="input-wrap" id="authorsWrap">
             <p>Authors <span class="optional-badge">(optional, comma separated)</span></p>
-            <input type="text" id="authors" placeholder="Oreville Studios Ltd" oninput="updateManifest()">
+            <input type="text" id="authors" placeholder="Oreville Studios Ltd" oninput="markDirty(); updateManifest()">
         </div>
 
         <!-- Subpacks -->
@@ -705,6 +747,62 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
     </div>
 
     <script>
+        // --- State Tracking & Unsaved Changes Logic ---
+        let isDirty = false;
+        let pendingView = null;
+        let pendingTitle = null;
+
+        function markDirty() {
+            isDirty = true;
+        }
+
+        window.addEventListener('beforeunload', (e) => {
+            if (isDirty) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        function requestSwitchView(viewId, title) {
+            const currentActive = document.querySelector('.view-section.active');
+            if (currentActive && currentActive.id === viewId) {
+                closeSidebar();
+                return;
+            }
+
+            if (isDirty) {
+                pendingView = viewId;
+                pendingTitle = title;
+                openDiscardModal();
+            } else {
+                switchView(viewId, title);
+            }
+        }
+
+        function openDiscardModal() {
+            closeSidebar();
+            document.getElementById('discardModal').classList.add('active');
+            playSfx('click');
+        }
+
+        function cancelDiscard() {
+            document.getElementById('discardModal').classList.remove('active');
+            pendingView = null;
+            pendingTitle = null;
+            playSfx('release');
+        }
+
+        function confirmDiscard() {
+            document.getElementById('discardModal').classList.remove('active');
+            isDirty = false;
+            playSfx('click');
+            if (pendingView) {
+                switchView(pendingView, pendingTitle);
+                pendingView = null;
+                pendingTitle = null;
+            }
+        }
+
         // --- Sidebar & Views Logic ---
         function openSidebar() {
             document.getElementById('sidebar').classList.add('active');
@@ -766,6 +864,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         function setPackType(val, displayVal) {
             document.getElementById('packTypeVal').value = val;
             document.getElementById('packTypeDisplay').innerText = displayVal;
+            markDirty();
             updateSectionVisibility(val);
             updateManifest();
         }
@@ -782,6 +881,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         }
 
         function setSettingType(index, val, displayVal) {
+            markDirty();
             state.settings[index].type = val;
             if (val === 'toggle') {
                 delete state.settings[index].options;
@@ -866,27 +966,29 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Folder name <span class="required-badge">(required)</span></p>
-                        <input type="text" placeholder="e.g. SP0" value="${sp.folder_name}" oninput="state.subpacks[${i}].folder_name=this.value; updateManifest()">
+                        <input type="text" placeholder="e.g. SP0" value="${sp.folder_name}" oninput="markDirty(); state.subpacks[${i}].folder_name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Name & description <span class="required-badge">(required, supports §)</span></p>
-                        <input type="text" placeholder="e.g. Custom Experience §8..." value="${sp.name}" oninput="state.subpacks[${i}].name=this.value; updateManifest()">
+                        <input type="text" placeholder="e.g. Custom Experience §8..." value="${sp.name}" oninput="markDirty(); state.subpacks[${i}].name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap">
                         <p>Memory performance tier <span class="required-badge">(required)</span></p>
-                        <input type="number" placeholder="0" value="${sp.memory_performance_tier}" oninput="state.subpacks[${i}].memory_performance_tier=parseInt(this.value)||0; updateManifest()">
+                        <input type="number" placeholder="0" value="${sp.memory_performance_tier}" oninput="markDirty(); state.subpacks[${i}].memory_performance_tier=parseInt(this.value)||0; updateManifest()">
                     </div>
                 </div>
             `).join('');
         }
 
         function addSubpack() {
+            markDirty();
             state.subpacks.push({ folder_name: "", name: "", memory_performance_tier: 0 });
             renderSubpacks();
             updateManifest();
         }
 
         function removeSubpack(index) {
+            markDirty();
             state.subpacks.splice(index, 1);
             renderSubpacks();
             updateManifest();
@@ -919,16 +1021,16 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Name (ID) <span class="required-badge">(required)</span></p>
-                        <input type="text" placeholder="e.g. namespace:id" value="${set.name}" oninput="state.settings[${i}].name=this.value; updateManifest()">
+                        <input type="text" placeholder="e.g. namespace:id" value="${set.name}" oninput="markDirty(); state.settings[${i}].name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Text (language key) <span class="required-badge">(required)</span></p>
-                        <input type="text" placeholder="e.g. text.namespace.id" value="${set.text}" oninput="state.settings[${i}].text=this.value; updateManifest()">
+                        <input type="text" placeholder="e.g. text.namespace.id" value="${set.text}" oninput="markDirty(); state.settings[${i}].text=this.value; updateManifest()">
                     </div>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Default value <span class="required-badge">(required)</span></p>
-                        <input type="text" placeholder="e.g. true" value="${set.default}" oninput="handleDefaultInput(${i}, this.value)">
+                        <input type="text" placeholder="e.g. true" value="${set.default}" oninput="markDirty(); handleDefaultInput(${i}, this.value)">
                     </div>
 
                     ${!isToggle ? `
@@ -936,8 +1038,8 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                             <p style="font-family: Minecraftia; font-size: 0.8rem; margin-bottom: 10px; color: #00ffba;">Options for dropdown <span class="required-badge">(required)</span>:</p>
                             ${set.options.map((opt, optIdx) => `
                                 <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center; width: 100%;">
-                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Name (required)" value="${opt.name}" oninput="state.settings[${i}].options[${optIdx}].name=this.value; updateManifest()"></div>
-                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Text (required)" value="${opt.text}" oninput="state.settings[${i}].options[${optIdx}].text=this.value; updateManifest()"></div>
+                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Name (required)" value="${opt.name}" oninput="markDirty(); state.settings[${i}].options[${optIdx}].name=this.value; updateManifest()"></div>
+                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Text (required)" value="${opt.text}" oninput="markDirty(); state.settings[${i}].options[${optIdx}].text=this.value; updateManifest()"></div>
                                     <button class="delete-btn" style="position: relative; right: auto; top: auto; flex: 0 0 30px; margin: 0;" onclick="removeOption(${i}, ${optIdx}); playSfx('release');">
                                         <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
                                     </button>
@@ -958,24 +1060,28 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         }
 
         function addSetting() {
+            markDirty();
             state.settings.push({ type: "toggle", text: "", name: "", default: true });
             renderSettings();
             updateManifest();
         }
 
         function removeSetting(index) {
+            markDirty();
             state.settings.splice(index, 1);
             renderSettings();
             updateManifest();
         }
 
         function addOption(settingIndex) {
+            markDirty();
             state.settings[settingIndex].options.push({ name: "", text: "" });
             renderSettings();
             updateManifest();
         }
 
         function removeOption(settingIndex, optionIndex) {
+            markDirty();
             state.settings[settingIndex].options.splice(optionIndex, 1);
             renderSettings();
             updateManifest();
@@ -1047,7 +1153,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             container.innerHTML = splashesState.map((splash, i) => `
                 <div class="card" style="display: flex; gap: 10px; align-items: center; padding: 12px 15px; margin-bottom: 8px;">
                     <div class="input-wrap" style="flex: 1; min-width: 0;">
-                        <input type="text" placeholder="Enter splash text..." value="${splash}" oninput="splashesState[${i}]=this.value; updateSplashesJSON()">
+                        <input type="text" placeholder="Enter splash text..." value="${splash}" oninput="markDirty(); splashesState[${i}]=this.value; updateSplashesJSON()">
                     </div>
                     <button class="delete-btn" style="position: relative; right: auto; top: auto; flex: 0 0 30px;" onclick="removeSplash(${i}); playSfx('release');">
                         <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
@@ -1058,11 +1164,13 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         }
 
         function addSplash() {
+            markDirty();
             splashesState.push("");
             renderSplashes();
         }
 
         function removeSplash(index) {
+            markDirty();
             splashesState.splice(index, 1);
             renderSplashes();
         }
@@ -1085,7 +1193,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             container.innerHTML = loadingMessagesState.map((msg, i) => `
                 <div class="card" style="display: flex; gap: 10px; align-items: center; padding: 12px 15px; margin-bottom: 8px;">
                     <div class="input-wrap" style="flex: 1; min-width: 0;">
-                        <input type="text" placeholder="Enter loading message..." value="${msg}" oninput="loadingMessagesState[${i}]=this.value; updateLoadingMessagesJSON()">
+                        <input type="text" placeholder="Enter loading message..." value="${msg}" oninput="markDirty(); loadingMessagesState[${i}]=this.value; updateLoadingMessagesJSON()">
                     </div>
                     <button class="delete-btn" style="position: relative; right: auto; top: auto; flex: 0 0 30px;" onclick="removeLoadingMessage(${i}); playSfx('release');">
                         <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
@@ -1096,11 +1204,13 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         }
 
         function addLoadingMessage() {
+            markDirty();
             loadingMessagesState.push("");
             renderLoadingMessages();
         }
 
         function removeLoadingMessage(index) {
+            markDirty();
             loadingMessagesState.splice(index, 1);
             renderLoadingMessages();
         }
@@ -1119,6 +1229,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             updateManifest();
             renderSplashes();
             renderLoadingMessages();
+            isDirty = false; // Fresh load starts clean
         };
     </script>
 </body>
