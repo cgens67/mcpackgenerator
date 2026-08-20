@@ -10,7 +10,7 @@
 */
 *,:after,:before{border:0 solid #e5e7eb;--tw-content:"";-webkit-tap-highlight-color:transparent;-webkit-tap-highlight-color:#00000000;box-sizing:border-box}
 :host,html{-webkit-text-size-adjust:100%;font-feature-settings:normal;-webkit-tap-highlight-color:transparent;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-variation-settings:normal;line-height:1.5;tab-size:4}
-body{line-height:inherit;margin:0;--tw-text-opacity:1;background-color:#272727;color:rgb(255 255 255/var(--tw-text-opacity));font-family:Minecraftia,unifont;user-select:none;-webkit-user-select:none;width:100%}
+body{line-height:inherit;margin:0;--tw-text-opacity:1;background-color:#272727;color:rgb(255 255 255/var(--tw-text-opacity));font-family:Minecraftia,unifont;user-select:none;-webkit-user-select:none;width:100%; overflow-x: hidden;}
 hr{border-top-width:1px;color:inherit;height:0}
 h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}
 table{border-collapse:collapse;border-color:inherit;text-indent:0}
@@ -29,7 +29,7 @@ input::placeholder,textarea::placeholder{color:#9ca3af;opacity:1}
 .container{margin-left:auto;margin-right:auto;padding-left:1.5rem;padding-right:1.5rem;width:100%; max-width: 800px;}
 .children-spacing{display:flex;flex-direction:column;gap:1rem;width:100%}
 
-/* Custom GitHub Fonts - Swapped to fix the issue */
+/* Custom GitHub Fonts */
 @font-face{font-display:block;font-family:unifont;src:url('https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/fonts/%E7%B2%BE%E5%93%81.ttf') format("truetype")}
 @font-face{font-display:block;font-family:Minecraftia;src:url('https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/fonts/Mojangles.ttf') format("truetype")}
 @font-face{font-display:block;font-family:"RFB Store set Loud";src:url('https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/fonts/MinecraftTen.ttf') format("truetype")}
@@ -75,14 +75,63 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 .small-btn { background: #3c8527; color: white; border: 2px solid #4f913c; padding: 5px 10px; cursor: pointer; font-family: Minecraftia; font-size: 0.75rem; }
 .small-btn:hover { background: #2a641c; }
 select option { background: #313233; color: white; }
+
+/* Minecraft-style Toast Notification */
+.mc-toast {
+    position: fixed;
+    top: 20px;
+    right: -350px;
+    width: 300px;
+    background-color: #212121;
+    border: 3px solid #000;
+    border-top-color: #555;
+    border-left-color: #555;
+    color: #fff;
+    padding: 12px 15px;
+    font-family: Minecraftia, unifont;
+    font-size: 0.85rem;
+    z-index: 9999;
+    transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.mc-toast.show {
+    right: 20px;
+}
+.mc-toast-title {
+    color: #ffff55; /* Minecraft Yellow */
+    margin-bottom: 2px;
+}
 </style>
 </head>
 <body>
+    <div id="toast" class="mc-toast">
+        <div>
+            <div class="mc-toast-title">Success!</div>
+            <div id="toast-message">Manifest copied to clipboard.</div>
+        </div>
+    </div>
+
     <div class="container children-spacing" style="padding-top: 3rem; padding-bottom: 5rem;">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">mcpack generator</h1>
         
         <!-- Header Configuration -->
         <h2 class="section-title">Header Configuration</h2>
+        
+        <div class="input-wrap">
+            <p>Pack Type</p>
+            <select id="packType" onchange="updateManifest()">
+                <option value="resources">Resource Pack (resources)</option>
+                <option value="data">Behavior Pack (data)</option>
+                <option value="skin_pack">Skin Pack (skin_pack)</option>
+                <option value="world_template">World Template (world_template)</option>
+                <option value="client_data">Client Data (client_data)</option>
+            </select>
+        </div>
+
         <div class="input-wrap">
             <p>Pack Name</p>
             <input type="text" id="packName" placeholder="pack.name" oninput="updateManifest()">
@@ -140,11 +189,8 @@ select option { background: #313233; color: white; }
         </div>
         
         <div class="button-container">
-            <button class="mc-button mc-btn-wh" style="margin-right: 15px;" onclick="regenerateUUIDs()">
-                <div class="mc-btn-con"><p>REGENERATE UUIDS</p></div>
-            </button>
             <button class="mc-button mc-btn-gr" onclick="copyJSON()">
-                <div class="mc-btn-con"><p>COPY TO CLIPBOARD</p></div>
+                <div class="mc-btn-con"><p>COPY</p></div>
             </button>
         </div>
     </div>
@@ -153,30 +199,41 @@ select option { background: #313233; color: white; }
         // --- UI Sounds Setup ---
         const sfx = {
             click: new Audio('https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/audios/ui/Click_stereo.ogg%20(1).ogg'),
-            release: new Audio('https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/audios/ui/Release.ogg.ogg')
+            release: new Audio('https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/audios/ui/Release.ogg.ogg'),
+            toast: new Audio('https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/audios/ui/Toast.ogg')
         };
 
         function playSfx(type) {
             if (sfx[type]) {
-                const clone = sfx[type].cloneNode(); // Allows overlapping sound plays
+                const clone = sfx[type].cloneNode();
                 clone.volume = 0.5;
-                clone.play().catch(e => {}); // Ignore play-prevention errors
+                clone.play().catch(e => {}); 
             }
         }
 
-        // Attach global sound listeners for buttons and interactables
-        document.addEventListener('mousedown', (e) => {
+        // Use pointer events to avoid mobile touch/mouse double firing
+        document.addEventListener('pointerdown', (e) => {
             if (e.target.closest('button, .mc-button, select, .small-btn, .delete-btn')) {
                 playSfx('click');
             }
         });
 
-        document.addEventListener('mouseup', (e) => {
+        document.addEventListener('pointerup', (e) => {
             if (e.target.closest('button, .mc-button, select, .small-btn, .delete-btn')) {
                 playSfx('release');
             }
         });
 
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.add('show');
+            playSfx('toast');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
 
         // --- Manifest Logic ---
         function uuidv4() {
@@ -186,9 +243,7 @@ select option { background: #313233; color: white; }
             });
         }
 
-        // Empty default state
         const state = {
-            uuids: { header: uuidv4(), module: uuidv4() },
             subpacks: [],
             settings: []
         };
@@ -318,6 +373,7 @@ select option { background: #313233; color: white; }
         }
 
         function updateManifest() {
+            const packType = document.getElementById('packType').value;
             const name = document.getElementById('packName').value || "";
             const desc = document.getElementById('packDesc').value || "";
             const version = document.getElementById('packVersion').value || "";
@@ -330,20 +386,24 @@ select option { background: #313233; color: white; }
             const authVal = document.getElementById('authors').value;
             const authorsList = authVal ? authVal.split(',').map(s => s.trim()).filter(s => s) : [];
 
+            // Automatically regenerate UUIDs on every update
+            const freshHeaderUuid = uuidv4();
+            const freshModuleUuid = uuidv4();
+
             const manifest = {
                 format_version: 3,
                 header: {
                     description: desc,
                     name: name,
-                    uuid: state.uuids.header,
+                    uuid: freshHeaderUuid,
                     version: version,
                     min_engine_version: minEngine,
                 },
                 modules: [
                     {
                         description: desc,
-                        type: "resources",
-                        uuid: state.uuids.module,
+                        type: packType,
+                        uuid: freshModuleUuid,
                         version: version
                     }
                 ]
@@ -358,19 +418,11 @@ select option { background: #313233; color: white; }
             document.getElementById('output').value = JSON.stringify(manifest, null, 4);
         }
 
-        function regenerateUUIDs() {
-            state.uuids.header = uuidv4();
-            state.uuids.module = uuidv4();
-            updateManifest();
-            // We use a timeout to not block the click release sound
-            setTimeout(() => alert("New UUIDs generated successfully."), 50);
-        }
-
         function copyJSON() {
             const textArea = document.getElementById('output');
             textArea.select();
             navigator.clipboard.writeText(textArea.value).then(() => {
-                setTimeout(() => alert("Manifest successfully copied to clipboard!"), 50);
+                showToast("Manifest copied to clipboard.");
             });
         }
 
