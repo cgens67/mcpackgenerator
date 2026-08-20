@@ -255,6 +255,34 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         <div style="margin-top: 20px;">
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is "Client Data"?</span>
+                    <span class="faq-arrow">▼</span>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            The <code>client_data</code> module type is used primarily for client-side scripts, client-bound modules, or specialized UI scripts. While standard resource packs use <code>resources</code> for textures, models, and audio, <code>client_data</code> is specified when delivering client-bound script execution or custom client-side logic to the game engine.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">Do World Templates or Skin Packs support subpacks and settings?</span>
+                    <span class="faq-arrow">▼</span>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <b>No.</b> Subpacks and Pack Settings are only supported by <b>Resource Packs (<code>resources</code>)</b> and select <b>Behavior Packs (<code>data</code>)</b>. World templates (<code>world_template</code>) and skin packs (<code>skin_pack</code>) rely on strict, predefined structures (such as fixed world save files or <code>skins.json</code>) and do not support in-game manifest settings or subpack folders.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is the difference between format_version 2 and 3?</span>
                     <span class="faq-arrow">▼</span>
                 </button>
@@ -378,18 +406,11 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         // --- FAQ Accordion Logic ---
         function toggleFaq(btn) {
             const faqItem = btn.closest('.faq-item');
-            
-            // Optional: Close other open FAQs
-            // document.querySelectorAll('.faq-item.active').forEach(item => {
-            //    if (item !== faqItem) item.classList.remove('active');
-            // });
-
             faqItem.classList.toggle('active');
         }
 
         // --- Custom Dropdown Logic ---
         function toggleDropdown(el) {
-            // Close others first
             document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
                 if (dropdown !== el) dropdown.classList.remove('active');
             });
@@ -441,12 +462,10 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         }
 
         document.addEventListener('click', (e) => {
-            // Dropdown closing logic when clicking outside
             if (!e.target.closest('.custom-dropdown')) {
                 document.querySelectorAll('.custom-dropdown.active').forEach(el => el.classList.remove('active'));
             }
 
-            // Audio logic
             if (e.target.closest('button, .mc-button, .sidebar-link, .small-btn, .delete-btn, .dropdown-option, .dropdown-header, .faq-question')) {
                 playSfx('click');
             }
