@@ -98,7 +98,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 
 .sidebar-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s; }
 .sidebar-overlay.active { display: block; opacity: 1; }
-.sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background-color: #272727; border-right: 4px solid #1e1e1f; z-index: 1001; transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; }
+.sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background-color: #272727; border-right: 4px solid #1e1e1f; z-index: 1001; transition: left 0.3s ease; display: flex; flex-direction: column; }
 .sidebar.active { left: 0; }
 .sidebar-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1e1e1f; background-color: #212121; }
 .sidebar-header h2 { font-family: 'RFB Store set Loud'; font-size: 1.5rem; color: #00ffba; }
@@ -111,7 +111,19 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 .view-section { display: none; }
 .view-section.active { display: flex; }
 
-/* Typography for FAQ and About */
+/* FAQ Accordion Styles */
+.faq-item { border-bottom: 2px solid #242425; margin-bottom: 5px; background-color: #313233; border: 3px solid #1e1e1f; border-radius: 2px; overflow: hidden; }
+.faq-question { width: 100%; text-align: left; background: none; border: none; color: #00ffba; font-family: Minecraftia; font-size: 0.95rem; padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.faq-question:hover { background-color: #383a3c; }
+.faq-question-text { padding-right: 15px; line-height: 1.4; }
+.faq-arrow { transition: transform 0.3s ease; font-size: 0.8rem; transform: scaleY(0.7); }
+.faq-item.active .faq-arrow { transform: scaleY(0.7) rotate(180deg); }
+.faq-answer-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; }
+.faq-item.active .faq-answer-wrapper { grid-template-rows: 1fr; }
+.faq-answer { overflow: hidden; }
+.faq-answer-inner { padding: 0 15px 15px 15px; font-size: 0.85rem; color: #ccc; line-height: 1.6; }
+
+/* Typography for About */
 .info-heading { font-family: Minecraftia; color: #00ffba; margin-bottom: 10px; margin-top: 20px; font-size: 1rem; }
 .info-text { font-size: 0.85rem; color: #ccc; line-height: 1.6; margin-bottom: 15px; }
 </style>
@@ -240,16 +252,90 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
     <div id="faqView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">FAQ</h1>
         
-        <div class="card" style="margin-top: 20px;">
-            <h3 class="info-heading" style="margin-top: 0;">What is the difference between format_version 2 and 3?</h3>
-            <p class="info-text">
-                <code>format_version 3</code> introduces support for newer and more advanced pack features like <b>Pack Settings</b> (toggles and dropdowns in the UI) and advanced <b>Subpacks</b>. Using version 3 typically requires a higher <code>min_engine_version</code> (usually 1.26.0 or newer) to function correctly in-game. Version 2 is the legacy format used for simpler packs.
-            </p>
+        <div style="margin-top: 20px;">
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is the difference between format_version 2 and 3?</span>
+                    <span class="faq-arrow">▼</span>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <code>format_version 3</code> introduces support for newer and more advanced pack features like <b>Pack Settings</b> (toggles and dropdowns in the UI) and advanced <b>Subpacks</b>. Using version 3 typically requires a higher <code>min_engine_version</code> (usually 1.26.0 or newer) to function correctly in-game. Version 2 is the legacy format used for simpler packs.
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <h3 class="info-heading">What is memory tier?</h3>
-            <p class="info-text">
-                The <code>memory_performance_tier</code> property is used within subpacks to define the hardware requirements for that specific subpack configuration. Higher tiers will automatically disable the subpack on lower-end devices (like older mobile phones) with limited RAM, which prevents the game from crashing due to high-resolution textures or heavy models. 0 is the default/lowest tier.
-            </p>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is memory tier?</span>
+                    <span class="faq-arrow">▼</span>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            The <code>memory_performance_tier</code> property is used within subpacks to define the hardware requirements for that specific subpack configuration. Higher tiers will automatically disable the subpack on lower-end devices (like older mobile phones) with limited RAM, which prevents the game from crashing due to high-resolution textures or heavy models. 0 is the default/lowest tier.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What are capabilities in a manifest?</span>
+                    <span class="faq-arrow">▼</span>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Capabilities (such as <code>pbr</code>, <code>raytraced</code>, or <code>experimental_custom_ui</code>) tell the Minecraft engine that your pack requires specific rendering engines or experimental toggles to function. For example, adding <code>pbr</code> enables Physically Based Rendering for Deferred Graphics.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is a UUID and why do I need it?</span>
+                    <span class="faq-arrow">▼</span>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            A UUID (Universally Unique Identifier) is a random string of characters that Minecraft uses to identify your pack. Every pack and module must have a completely unique UUID. If two packs share the same UUID, Minecraft will think they are the same pack and will fail to load one of them. This generator automatically creates secure, randomized UUIDs for you!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">Can I have multiple subpacks in one pack?</span>
+                    <span class="faq-arrow">▼</span>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Yes! Subpacks allow you to bundle multiple variations of your pack into one file. Players will see a gear icon next to your pack in-game, allowing them to choose between different resolutions, UI styles, or features by moving a slider.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">How do Pack Settings work?</span>
+                    <span class="faq-arrow">▼</span>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Pack Settings allow you to create interactive UI elements like dropdown menus and toggles within your pack's configuration screen. When set up correctly in format_version 3, these settings can map to specific behavior pack variables, allowing players to customize exactly how your add-on behaves without needing separate subpacks.
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -287,6 +373,18 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             closeSidebar();
             playSfx('click');
             window.scrollTo(0,0);
+        }
+
+        // --- FAQ Accordion Logic ---
+        function toggleFaq(btn) {
+            const faqItem = btn.closest('.faq-item');
+            
+            // Optional: Close other open FAQs
+            // document.querySelectorAll('.faq-item.active').forEach(item => {
+            //    if (item !== faqItem) item.classList.remove('active');
+            // });
+
+            faqItem.classList.toggle('active');
         }
 
         // --- Custom Dropdown Logic ---
@@ -349,7 +447,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             }
 
             // Audio logic
-            if (e.target.closest('button, .mc-button, .sidebar-link, .small-btn, .delete-btn, .dropdown-option, .dropdown-header')) {
+            if (e.target.closest('button, .mc-button, .sidebar-link, .small-btn, .delete-btn, .dropdown-option, .dropdown-header, .faq-question')) {
                 playSfx('click');
             }
         });
@@ -377,7 +475,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             container.innerHTML = state.subpacks.map((sp, i) => `
                 <div class="card">
                     <h3 style="font-family: Minecraftia; margin-bottom: 10px; color: #fff;">Subpack ${i + 1}</h3>
-                    <button class="delete-btn" onclick="removeSubpack(${i}); playSfx('release');">
+                    <button class="delete-btn" style="position: absolute; right: 10px; top: 10px;" onclick="removeSubpack(${i}); playSfx('release');">
                         <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
                     </button>
                     
@@ -417,7 +515,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 return `
                 <div class="card">
                     <h3 style="font-family: Minecraftia; margin-bottom: 10px; color: #fff;">Setting ${i + 1}</h3>
-                    <button class="delete-btn" onclick="removeSetting(${i}); playSfx('release');">
+                    <button class="delete-btn" style="position: absolute; right: 10px; top: 10px;" onclick="removeSetting(${i}); playSfx('release');">
                         <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
                     </button>
                     
@@ -452,11 +550,11 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                         <div style="background: #242425; padding: 10px; margin-top: 15px; border-radius: 4px;">
                             <p style="font-family: Minecraftia; font-size: 0.8rem; margin-bottom: 10px; color: #00ffba;">Options for dropdown:</p>
                             ${set.options.map((opt, optIdx) => `
-                                <div style="display: flex; gap: 10px; margin-bottom: 8px;">
-                                    <div class="input-wrap" style="flex: 1;"><input type="text" placeholder="Name" value="${opt.name}" oninput="state.settings[${i}].options[${optIdx}].name=this.value; updateManifest()"></div>
-                                    <div class="input-wrap" style="flex: 1;"><input type="text" placeholder="Text (lang key)" value="${opt.text}" oninput="state.settings[${i}].options[${optIdx}].text=this.value; updateManifest()"></div>
-                                    <button class="delete-btn" style="position: relative; right: 0; top: 0;" onclick="removeOption(${i}, ${optIdx}); playSfx('release');">
-                                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                                <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center; width: 100%;">
+                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Name" value="${opt.name}" oninput="state.settings[${i}].options[${optIdx}].name=this.value; updateManifest()"></div>
+                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Text (lang key)" value="${opt.text}" oninput="state.settings[${i}].options[${optIdx}].text=this.value; updateManifest()"></div>
+                                    <button class="delete-btn" style="position: relative; right: auto; top: auto; flex: 0 0 30px; margin: 0;" onclick="removeOption(${i}, ${optIdx}); playSfx('release');">
+                                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
                                     </button>
                                 </div>
                             `).join('')}
