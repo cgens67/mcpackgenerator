@@ -64,7 +64,7 @@ html{scroll-behavior:smooth}
 .input-wrap p{font-size:.875rem;line-height:1.25rem;margin-bottom:5px;margin-left:-1px}
 .input-wrap input{background-color:#313233;color:#fff;font-family:Minecraftia,unifont;font-size:.85rem;line-height:1rem;padding:5px .7rem}
 .input-wrap input::placeholder{color:#b1b2b5d2}
-textarea{background-color:#313233;color:#fff;margin-bottom:1.7rem;min-height:600px;padding:15px;scrollbar-color:#272727 #313233;width:100%}
+textarea{background-color:#313233;color:#fff;margin-bottom:1.7rem;min-height:300px;padding:15px;scrollbar-color:#272727 #313233;width:100%}
 textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-height:1rem}
 
 .section-title { font-family: "RFB Store set Loud"; font-size: 1.5rem; border-bottom: 2px solid #444; padding-bottom: 5px; margin-top: 1.5rem; color: #00ffba; }
@@ -112,13 +112,13 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 
 .sidebar-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s; }
 .sidebar-overlay.active { display: block; opacity: 1; }
-.sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background-color: #272727; border-right: 4px solid #1e1e1f; z-index: 1001; transition: left 0.3s ease; display: flex; flex-direction: column; }
+.sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background-color: #272727; border-right: 4px solid #1e1e1f; z-index: 1001; transition: left 0.3s ease; display: flex; flex-direction: column; }
 .sidebar.active { left: 0; }
 .sidebar-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1e1e1f; background-color: #212121; }
 .sidebar-header h2 { font-family: 'RFB Store set Loud'; font-size: 1.5rem; color: #00ffba; }
 .sidebar-close { background: none; border: none; cursor: pointer; padding: 5px; }
-.sidebar-links { display: flex; flex-direction: column; padding: 15px 0; }
-.sidebar-link { padding: 15px 20px; color: white; font-family: 'RFB Store set Loud'; font-size: 1.25rem; cursor: pointer; transition: background 0.2s; border-bottom: 2px solid #313233; }
+.sidebar-links { display: flex; flex-direction: column; padding: 15px 0; overflow-y: auto; }
+.sidebar-link { padding: 15px 20px; color: white; font-family: 'RFB Store set Loud'; font-size: 1.15rem; cursor: pointer; transition: background 0.2s; border-bottom: 2px solid #313233; }
 .sidebar-link:hover { background-color: #313233; color: #00ffba; }
 
 /* View Switching */
@@ -148,22 +148,24 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
     <!-- Header / Navbar -->
     <div class="header-nav">
         <button class="menu-btn" onclick="openSidebar()">≡</button>
-        <div class="header-title">mcpack generator</div>
+        <div class="header-title" id="pageHeaderTitle">manifest.json</div>
     </div>
 
     <!-- Sidebar & Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h2>Menu</h2>
+            <h2>Generators</h2>
             <button class="sidebar-close" onclick="closeSidebar(); playSfx('release');">
                 <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:20px; height:20px; image-rendering:pixelated; filter:brightness(0) invert(1);">
             </button>
         </div>
         <div class="sidebar-links">
-            <div class="sidebar-link" onclick="switchView('generatorView')">Generator</div>
-            <div class="sidebar-link" onclick="switchView('faqView')">FAQ</div>
-            <div class="sidebar-link" onclick="switchView('aboutView')">About</div>
+            <div class="sidebar-link" onclick="switchView('manifestView', 'manifest.json')">manifest.json</div>
+            <div class="sidebar-link" onclick="switchView('splashesView', 'splashes.json')">splashes.json</div>
+            <div class="sidebar-link" onclick="switchView('loadingMessagesView', 'loading_messages.json')">loading_messages.json</div>
+            <div class="sidebar-link" onclick="switchView('faqView', 'FAQ')">FAQ</div>
+            <div class="sidebar-link" onclick="switchView('aboutView', 'About')">About</div>
         </div>
     </div>
 
@@ -171,15 +173,14 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
     <div id="toast" class="mc-toast">
         <div>
             <div class="mc-toast-title">Success!</div>
-            <div id="toast-message">Manifest copied to clipboard.</div>
+            <div id="toast-message">Copied to clipboard.</div>
         </div>
     </div>
 
-    <!-- GENERATOR VIEW -->
-    <div id="generatorView" class="container children-spacing view-section active">
-        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">mcpack generator</h1>
+    <!-- ==================== 1. MANIFEST.JSON VIEW ==================== -->
+    <div id="manifestView" class="container children-spacing view-section active">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">manifest generator</h1>
         
-        <!-- Header Configuration -->
         <h2 class="section-title">Header Configuration</h2>
         
         <div class="input-wrap">
@@ -255,19 +256,71 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         </div>
 
         <!-- JSON Output -->
-        <h2 class="section-title">Output</h2>
+        <h2 class="section-title">Output (manifest.json)</h2>
         <div class="input-wrap">
-            <textarea id="output" readonly spellcheck="false"></textarea>
+            <textarea id="output" readonly spellcheck="false" style="min-height: 500px;"></textarea>
         </div>
         
         <div class="button-container">
-            <button class="mc-button mc-btn-gr" onclick="copyJSON()">
+            <button class="mc-button mc-btn-gr" onclick="copyJSON('output', 'Manifest copied to clipboard.')">
                 <div class="mc-btn-con"><p>COPY</p></div>
             </button>
         </div>
     </div>
 
-    <!-- FAQ VIEW -->
+    <!-- ==================== 2. SPLASHES.JSON VIEW ==================== -->
+    <div id="splashesView" class="container children-spacing view-section">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">splashes generator</h1>
+        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Generate custom main menu splash lines for your Resource Pack.</p>
+        
+        <h2 class="section-title">Splash Lines</h2>
+        <div id="splashesList" class="children-spacing"></div>
+
+        <div class="button-container" style="height: 40px; margin-top: 5px;">
+            <button class="mc-button mc-btn-wh" onclick="addSplash()" style="height: 40px;">
+                <div class="mc-btn-con"><p>+ ADD SPLASH LINE</p></div>
+            </button>
+        </div>
+
+        <h2 class="section-title">Output (splashes.json)</h2>
+        <div class="input-wrap">
+            <textarea id="splashesOutput" readonly spellcheck="false"></textarea>
+        </div>
+        
+        <div class="button-container">
+            <button class="mc-button mc-btn-gr" onclick="copyJSON('splashesOutput', 'splashes.json copied to clipboard.')">
+                <div class="mc-btn-con"><p>COPY</p></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== 3. LOADING_MESSAGES.JSON VIEW ==================== -->
+    <div id="loadingMessagesView" class="container children-spacing view-section">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">loading messages</h1>
+        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Generate custom loading screen tips & messages shown while entering worlds.</p>
+        
+        <h2 class="section-title">Loading Messages</h2>
+        <div id="loadingMessagesList" class="children-spacing"></div>
+
+        <div class="button-container" style="height: 40px; margin-top: 5px;">
+            <button class="mc-button mc-btn-wh" onclick="addLoadingMessage()" style="height: 40px;">
+                <div class="mc-btn-con"><p>+ ADD LOADING MESSAGE</p></div>
+            </button>
+        </div>
+
+        <h2 class="section-title">Output (loading_messages.json)</h2>
+        <div class="input-wrap">
+            <textarea id="loadingMessagesOutput" readonly spellcheck="false"></textarea>
+        </div>
+        
+        <div class="button-container">
+            <button class="mc-button mc-btn-gr" onclick="copyJSON('loadingMessagesOutput', 'loading_messages.json copied to clipboard.')">
+                <div class="mc-btn-con"><p>COPY</p></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== 4. FAQ VIEW ==================== -->
     <div id="faqView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">FAQ</h1>
         
@@ -284,6 +337,34 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         </div>
 
         <div id="faqList" style="margin-top: 5px;">
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">Where should splashes.json be placed in my pack?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <code>splashes.json</code> should be placed directly inside the root directory or inside the <code>texts/</code> folder of your Resource Pack (e.g., <code>texts/splashes.json</code>).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">Where should loading_messages.json be placed in my pack?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <code>loading_messages.json</code> is placed inside the <code>texts/</code> folder of your Resource Pack (e.g., <code>texts/loading_messages.json</code>).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is "Client Data"?</span>
@@ -396,7 +477,6 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 </div>
             </div>
 
-            <!-- 15 Extended Questions -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is min_engine_version and why is it important?</span>
@@ -609,14 +689,14 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         </div>
     </div>
 
-    <!-- ABOUT VIEW -->
+    <!-- ==================== 5. ABOUT VIEW ==================== -->
     <div id="aboutView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">About</h1>
         
         <div class="card" style="margin-top: 20px;">
             <h3 class="info-heading" style="margin-top: 0;">mcpack generator</h3>
             <p class="info-text">
-                A rapid, web-based tool designed to easily generate valid <code>manifest.json</code> files for your Minecraft Bedrock Add-Ons, without requiring you to manually write a single line of JSON code.
+                A rapid, web-based tool designed to easily generate valid <code>manifest.json</code>, <code>splashes.json</code>, and <code>loading_messages.json</code> files for your Minecraft Bedrock Add-Ons, without requiring you to manually write a single line of JSON code.
             </p>
             <p class="info-text">
                 It supports all modern pack types including Resource Packs, Behavior Packs, Skin Packs, World Templates, and Client Data, alongside complex configurations like Pack Settings and Subpacks.
@@ -637,9 +717,10 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             document.getElementById('sidebarOverlay').classList.remove('active');
         }
 
-        function switchView(viewId) {
+        function switchView(viewId, title) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
+            document.getElementById('pageHeaderTitle').innerText = title;
             closeSidebar();
             playSfx('click');
             window.scrollTo(0,0);
@@ -651,7 +732,6 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             faqItem.classList.toggle('active');
         }
 
-        // --- FAQ Real-time Search Filter ---
         function filterFaq() {
             const query = document.getElementById('faqSearchInput').value.toLowerCase().trim();
             const items = document.querySelectorAll('.faq-item');
@@ -695,16 +775,9 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             const isBehavior = packType === 'data';
             const isClient = packType === 'client_data';
 
-            // Subpacks: only resources
             document.getElementById('subpacksSectionWrap').style.display = isResource ? 'block' : 'none';
-
-            // Settings: resources and data (Behavior)
             document.getElementById('settingsSectionWrap').style.display = (isResource || isBehavior) ? 'block' : 'none';
-
-            // Capabilities: resources, data, and client_data
             document.getElementById('capabilitiesWrap').style.display = (isResource || isBehavior || isClient) ? 'block' : 'none';
-
-            // Pack optimization: only resources
             document.getElementById('packOptWrap').style.display = isResource ? 'block' : 'none';
         }
 
@@ -762,6 +835,14 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             toast.classList.add('show');
             playSfx('toast');
             setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        function copyJSON(textareaId, message) {
+            const textArea = document.getElementById(textareaId);
+            textArea.select();
+            navigator.clipboard.writeText(textArea.value).then(() => {
+                showToast(message);
+            });
         }
 
         // --- Manifest Logic ---
@@ -954,19 +1035,90 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             document.getElementById('output').value = JSON.stringify(manifest, null, 4);
         }
 
-        function copyJSON() {
-            const textArea = document.getElementById('output');
-            textArea.select();
-            navigator.clipboard.writeText(textArea.value).then(() => {
-                showToast("Manifest copied to clipboard.");
-            });
+        // --- Splashes.json Logic ---
+        const splashesState = [
+            "Made with mcpack generator!",
+            "§eCustom Bedrock Add-Ons!",
+            "§bSupports § color codes!"
+        ];
+
+        function renderSplashes() {
+            const container = document.getElementById('splashesList');
+            container.innerHTML = splashesState.map((splash, i) => `
+                <div class="card" style="display: flex; gap: 10px; align-items: center; padding: 12px 15px; margin-bottom: 8px;">
+                    <div class="input-wrap" style="flex: 1; min-width: 0;">
+                        <input type="text" placeholder="Enter splash text..." value="${splash}" oninput="splashesState[${i}]=this.value; updateSplashesJSON()">
+                    </div>
+                    <button class="delete-btn" style="position: relative; right: auto; top: auto; flex: 0 0 30px;" onclick="removeSplash(${i}); playSfx('release');">
+                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                    </button>
+                </div>
+            `).join('');
+            updateSplashesJSON();
         }
 
+        function addSplash() {
+            splashesState.push("");
+            renderSplashes();
+        }
+
+        function removeSplash(index) {
+            splashesState.splice(index, 1);
+            renderSplashes();
+        }
+
+        function updateSplashesJSON() {
+            const filtered = splashesState.filter(s => s.trim().length > 0);
+            const obj = { splashes: filtered };
+            document.getElementById('splashesOutput').value = JSON.stringify(obj, null, 4);
+        }
+
+        // --- Loading Messages Logic ---
+        const loadingMessagesState = [
+            "Tip: Always carry a water bucket!",
+            "§aLoading awesome custom assets...",
+            "Did you know? You can customize this message!"
+        ];
+
+        function renderLoadingMessages() {
+            const container = document.getElementById('loadingMessagesList');
+            container.innerHTML = loadingMessagesState.map((msg, i) => `
+                <div class="card" style="display: flex; gap: 10px; align-items: center; padding: 12px 15px; margin-bottom: 8px;">
+                    <div class="input-wrap" style="flex: 1; min-width: 0;">
+                        <input type="text" placeholder="Enter loading message..." value="${msg}" oninput="loadingMessagesState[${i}]=this.value; updateLoadingMessagesJSON()">
+                    </div>
+                    <button class="delete-btn" style="position: relative; right: auto; top: auto; flex: 0 0 30px;" onclick="removeLoadingMessage(${i}); playSfx('release');">
+                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                    </button>
+                </div>
+            `).join('');
+            updateLoadingMessagesJSON();
+        }
+
+        function addLoadingMessage() {
+            loadingMessagesState.push("");
+            renderLoadingMessages();
+        }
+
+        function removeLoadingMessage(index) {
+            loadingMessagesState.splice(index, 1);
+            renderLoadingMessages();
+        }
+
+        function updateLoadingMessagesJSON() {
+            const filtered = loadingMessagesState.filter(m => m.trim().length > 0);
+            const obj = { loading_messages: filtered };
+            document.getElementById('loadingMessagesOutput').value = JSON.stringify(obj, null, 4);
+        }
+
+        // --- Initialization ---
         window.onload = () => {
             updateSectionVisibility('resources');
             renderSubpacks();
             renderSettings();
             updateManifest();
+            renderSplashes();
+            renderLoadingMessages();
         };
     </script>
 </body>
