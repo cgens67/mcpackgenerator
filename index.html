@@ -126,6 +126,9 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 /* Typography for About */
 .info-heading { font-family: Minecraftia; color: #00ffba; margin-bottom: 10px; margin-top: 20px; font-size: 1rem; }
 .info-text { font-size: 0.85rem; color: #ccc; line-height: 1.6; margin-bottom: 15px; }
+
+.required-badge { color: #ff5555; }
+.optional-badge { color: #888; }
 </style>
 </head>
 <body>
@@ -168,7 +171,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         <h2 class="section-title">Header Configuration</h2>
         
         <div class="input-wrap">
-            <p>Pack type</p>
+            <p>Pack type <span class="required-badge">(required)</span></p>
             <div class="custom-dropdown" id="packTypeDropdown" onclick="toggleDropdown(this)">
                 <div class="dropdown-header">
                     <span id="packTypeDisplay">Resource Pack (resources)</span>
@@ -186,38 +189,38 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         </div>
 
         <div class="input-wrap">
-            <p>Pack name</p>
+            <p>Pack name <span class="required-badge">(required)</span></p>
             <input type="text" id="packName" placeholder="pack.name" oninput="updateManifest()">
         </div>
         <div class="input-wrap">
-            <p>Pack description</p>
+            <p>Pack description <span class="required-badge">(required)</span></p>
             <input type="text" id="packDesc" placeholder="pack.description" oninput="updateManifest()">
         </div>
         <div class="input-wrap">
-            <p>Version</p>
+            <p>Version <span class="required-badge">(required)</span></p>
             <input type="text" id="packVersion" placeholder="1.0.0" oninput="updateManifest()">
         </div>
         <div class="input-wrap" id="minEngineWrap">
-            <p>Min engine version</p>
+            <p>Min engine version <span class="required-badge">(required)</span></p>
             <input type="text" id="minEngine" placeholder="1.26.10" oninput="updateManifest()">
         </div>
         <div class="input-wrap" id="packOptWrap">
-            <p>Pack optimization version (optional)</p>
+            <p>Pack optimization version <span class="optional-badge">(optional)</span></p>
             <input type="text" id="packOpt" placeholder="0.1.0" oninput="updateManifest()">
         </div>
 
         <!-- Arrays / Metadata -->
         <h2 class="section-title">Metadata & Capabilities</h2>
         <div class="input-wrap" id="capabilitiesWrap">
-            <p>Capabilities (comma separated)</p>
+            <p>Capabilities <span class="optional-badge">(optional, comma separated)</span></p>
             <input type="text" id="capabilities" placeholder="pbr" oninput="updateManifest()">
         </div>
         <div class="input-wrap" id="authorsWrap">
-            <p>Authors (comma separated)</p>
+            <p>Authors <span class="optional-badge">(optional, comma separated)</span></p>
             <input type="text" id="authors" placeholder="Oreville Studios Ltd" oninput="updateManifest()">
         </div>
 
-        <!-- Subpacks (Dynamically shown only for supported types) -->
+        <!-- Subpacks -->
         <div id="subpacksSectionWrap">
             <h2 class="section-title">Subpacks</h2>
             <div id="subpacksList" class="children-spacing"></div>
@@ -228,7 +231,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             </div>
         </div>
 
-        <!-- Settings (Dynamically shown only for supported types) -->
+        <!-- Settings -->
         <div id="settingsSectionWrap">
             <h2 class="section-title">Settings</h2>
             <div id="settingsList" class="children-spacing"></div>
@@ -524,15 +527,15 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                     </button>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
-                        <p>Folder name</p>
+                        <p>Folder name <span class="required-badge">(required)</span></p>
                         <input type="text" placeholder="e.g. SP0" value="${sp.folder_name}" oninput="state.subpacks[${i}].folder_name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
-                        <p>Name & description (supports § color codes)</p>
+                        <p>Name & description <span class="required-badge">(required, supports §)</span></p>
                         <input type="text" placeholder="e.g. Custom Experience §8..." value="${sp.name}" oninput="state.subpacks[${i}].name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap">
-                        <p>Memory performance tier</p>
+                        <p>Memory performance tier <span class="required-badge">(required)</span></p>
                         <input type="number" placeholder="0" value="${sp.memory_performance_tier}" oninput="state.subpacks[${i}].memory_performance_tier=parseInt(this.value)||0; updateManifest()">
                     </div>
                 </div>
@@ -564,7 +567,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                     </button>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
-                        <p>Setting type</p>
+                        <p>Setting type <span class="required-badge">(required)</span></p>
                         <div class="custom-dropdown" onclick="toggleDropdown(this)">
                             <div class="dropdown-header">
                                 <span>${displayType}</span>
@@ -577,26 +580,26 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                         </div>
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
-                        <p>Name (ID)</p>
+                        <p>Name (ID) <span class="required-badge">(required)</span></p>
                         <input type="text" placeholder="e.g. namespace:id" value="${set.name}" oninput="state.settings[${i}].name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
-                        <p>Text (language key)</p>
+                        <p>Text (language key) <span class="required-badge">(required)</span></p>
                         <input type="text" placeholder="e.g. text.namespace.id" value="${set.text}" oninput="state.settings[${i}].text=this.value; updateManifest()">
                     </div>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
-                        <p>Default value ${isToggle ? '(true / false)' : ''}</p>
+                        <p>Default value <span class="required-badge">(required)</span></p>
                         <input type="text" placeholder="e.g. true" value="${set.default}" oninput="handleDefaultInput(${i}, this.value)">
                     </div>
 
                     ${!isToggle ? `
                         <div style="background: #242425; padding: 10px; margin-top: 15px; border-radius: 4px;">
-                            <p style="font-family: Minecraftia; font-size: 0.8rem; margin-bottom: 10px; color: #00ffba;">Options for dropdown:</p>
+                            <p style="font-family: Minecraftia; font-size: 0.8rem; margin-bottom: 10px; color: #00ffba;">Options for dropdown <span class="required-badge">(required)</span>:</p>
                             ${set.options.map((opt, optIdx) => `
                                 <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center; width: 100%;">
-                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Name" value="${opt.name}" oninput="state.settings[${i}].options[${optIdx}].name=this.value; updateManifest()"></div>
-                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Text (lang key)" value="${opt.text}" oninput="state.settings[${i}].options[${optIdx}].text=this.value; updateManifest()"></div>
+                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Name (required)" value="${opt.name}" oninput="state.settings[${i}].options[${optIdx}].name=this.value; updateManifest()"></div>
+                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Text (required)" value="${opt.text}" oninput="state.settings[${i}].options[${optIdx}].text=this.value; updateManifest()"></div>
                                     <button class="delete-btn" style="position: relative; right: auto; top: auto; flex: 0 0 30px; margin: 0;" onclick="removeOption(${i}, ${optIdx}); playSfx('release');">
                                         <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
                                     </button>
@@ -661,7 +664,6 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             const freshHeaderUuid = uuidv4();
             const freshModuleUuid = uuidv4();
 
-            // Set appropriate format_version dynamically
             let formatVersion = 2;
             if (isResource || ((isResource || isBehavior) && state.settings.length > 0)) {
                 formatVersion = 3;
@@ -686,7 +688,6 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 ]
             };
 
-            // Only attach supported fields depending on the pack type
             if (isResource && packOpt) manifest.header.pack_optimization_version = packOpt;
             if ((isResource || isBehavior || isClient) && capsList.length > 0) manifest.capabilities = capsList;
             if (authorsList.length > 0) manifest.metadata = { authors: authorsList };
