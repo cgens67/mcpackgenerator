@@ -41,7 +41,46 @@ html{scroll-behavior:smooth}
 ::selection{background-color:#00ffba;color:#000}
 ::-moz-selection{background-color:#00ffba;color:#000}
 
-.input-wrap input, textarea{border-top:4px solid var(--clr-darkGray);caret-color:#6cc349;height:40px;outline:3px solid #1e1e1f;border-left:none;border-right:none;border-bottom:none;}
+/* Universal Dark Minecraft Input Styling */
+input[type="text"], input[type="number"], input:not([type="file"]):not([type="hidden"]) {
+    background-color: #313233 !important;
+    color: #fff !important;
+    font-family: Minecraftia, unifont !important;
+    font-size: 0.85rem !important;
+    line-height: 1rem !important;
+    padding: 6px 0.7rem !important;
+    border-top: 4px solid var(--clr-darkGray) !important;
+    caret-color: #6cc349 !important;
+    height: 40px !important;
+    outline: 3px solid #1e1e1f !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: block !important;
+}
+
+textarea {
+    background-color: #313233;
+    color: #fff;
+    border-top: 4px solid var(--clr-darkGray);
+    caret-color: #6cc349;
+    outline: 3px solid #1e1e1f;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    margin-bottom: 1.7rem;
+    min-height: 300px;
+    padding: 15px;
+    scrollbar-color: #272727 #313233;
+    width: 100%;
+    font-family: Minecraftia, unifont;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    box-sizing: border-box;
+}
+
 .button-container{align-items:flex-end;display:flex;height:60px;justify-content:center;width:100%}
 .button-container:last-child{margin:20px 0}
 .button-container .mc-button{align-items:center;cursor:pointer;display:flex;flex-direction:column-reverse;height:60px;justify-content:flex-end;outline:3px solid #1e1e1f;width:100%}
@@ -68,11 +107,9 @@ html{scroll-behavior:smooth}
 
 .button-container .mc-button .mc-btn-con p{font-family:"RFB Store set Loud",unifont;font-weight:400; font-size: 1.25rem;}
 .input-wrap{display:flex;flex-direction:column;width:100%}
-.input-wrap p{font-size:.875rem;line-height:1.25rem;margin-bottom:5px;margin-left:-1px}
-.input-wrap input{background-color:#313233;color:#fff;font-family:Minecraftia,unifont;font-size:.85rem;line-height:1rem;padding:5px .7rem}
+.input-wrap p{font-size:.875rem;line-height:1.25rem;margin-bottom:6px;margin-left:-1px;display:block}
 .input-wrap input::placeholder{color:#b1b2b5d2}
-textarea{background-color:#313233;color:#fff;margin-bottom:1.7rem;min-height:300px;padding:15px;scrollbar-color:#272727 #313233;width:100%}
-textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-height:1rem}
+textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-height:1rem}
 
 .section-title { font-family: "RFB Store set Loud"; font-size: 1.5rem; border-bottom: 2px solid #444; padding-bottom: 5px; margin-top: 1.5rem; color: #00ffba; }
 .card { background-color: #313233; border: 3px solid #1e1e1f; padding: 15px; border-radius: 2px; position: relative; margin-bottom: 10px; }
@@ -166,14 +203,15 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 .view-section.active { display: flex; }
 
 /* FAQ Accordion Styles */
-.faq-item { border-bottom: 2px solid #242425; margin-bottom: 5px; background-color: #313233; border: 3px solid #1e1e1f; border-radius: 2px; overflow: hidden; }
-.faq-question { width: 100%; text-align: left; background: none; border: none; color: #00ffba; font-family: Minecraftia; font-size: 0.95rem; padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.faq-item { border-bottom: 2px solid #242425; margin-bottom: 8px; background-color: #313233; border: 3px solid #1e1e1f; border-radius: 2px; overflow: hidden; }
+.faq-question { width: 100%; text-align: left; background: none; border: none; color: #00ffba; font-family: Minecraftia; font-size: 0.92rem; padding: 14px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 .faq-question:hover { background-color: #383a3c; }
 .faq-question-text { padding-right: 15px; line-height: 1.4; }
 .faq-answer-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; }
 .faq-item.active .faq-answer-wrapper { grid-template-rows: 1fr; }
 .faq-answer { overflow: hidden; }
 .faq-answer-inner { padding: 0 15px 15px 15px; font-size: 0.85rem; color: #ccc; line-height: 1.6; }
+.faq-answer-inner code { background: #212121; color: #00ffba; padding: 2px 5px; border: 1px solid #1e1e1f; border-radius: 2px; }
 
 /* Typography for About */
 .info-heading { font-family: Minecraftia; color: #00ffba; margin-bottom: 10px; margin-top: 20px; font-size: 1rem; }
@@ -206,13 +244,13 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 .file-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 8px;
+    width: 100%;
 }
 .file-card-info {
-    flex: 1 1 180px;
+    flex: 1 1 auto;
     min-width: 0;
 }
 .file-card-title {
@@ -250,8 +288,8 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="sidebar-link" onclick="requestSwitchView('manifestView', 'manifest.json')">manifest.json</div>
             <div class="sidebar-link" onclick="requestSwitchView('splashesView', 'splashes.json')">splashes.json</div>
             <div class="sidebar-link" onclick="requestSwitchView('loadingMessagesView', 'loading_messages.json')">loading_messages.json</div>
-            <div class="sidebar-link" onclick="requestSwitchView('brarchiveMakerView', '__brarchive Maker')">__brarchive Maker</div>
-            <div class="sidebar-link" onclick="requestSwitchView('brarchiveReverterView', '__brarchive Reverter')">__brarchive Reverter</div>
+            <div class="sidebar-link" onclick="requestSwitchView('brarchiveMakerView', 'brarchive maker')">brarchive maker</div>
+            <div class="sidebar-link" onclick="requestSwitchView('brarchiveConverterView', 'brarchive converter')">brarchive converter</div>
             <div class="sidebar-link" onclick="requestSwitchView('faqView', 'FAQ')">FAQ</div>
             <div class="sidebar-link" onclick="requestSwitchView('aboutView', 'About')">About</div>
         </div>
@@ -428,15 +466,15 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         </div>
     </div>
 
-    <!-- ==================== 4. __BRARCHIVE MAKER VIEW ==================== -->
+    <!-- ==================== 4. BRARCHIVE MAKER VIEW ==================== -->
     <div id="brarchiveMakerView" class="container children-spacing view-section">
-        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">__brarchive maker</h1>
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">brarchive maker</h1>
         <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Bundle multiple JSON files, raw game assets, or a .zip file into an official Bedrock .brarchive container.</p>
         
         <h2 class="section-title">Archive Configuration</h2>
         <div class="input-wrap">
-            <p>Archive Output Filename <span class="required-badge">(required)</span></p>
-            <input type="text" id="makerArchiveName" value="textures.brarchive" placeholder="e.g. textures.brarchive or sounds.brarchive" oninput="markDirty()">
+            <p>Archive Output Filename <span class="optional-badge">(optional)</span></p>
+            <input type="text" id="makerArchiveName" placeholder="e.g. textures.brarchive or sounds.brarchive" oninput="markDirty()">
         </div>
 
         <!-- File Upload Area -->
@@ -463,14 +501,14 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         </div>
     </div>
 
-    <!-- ==================== 5. __BRARCHIVE REVERTER VIEW ==================== -->
-    <div id="brarchiveReverterView" class="container children-spacing view-section">
-        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">__brarchive reverter</h1>
+    <!-- ==================== 5. BRARCHIVE CONVERTER VIEW ==================== -->
+    <div id="brarchiveConverterView" class="container children-spacing view-section">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">brarchive converter</h1>
         <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Decompile and unpack any Bedrock .brarchive container file back into individual loose files or a .zip.</p>
         
         <div class="dropzone" id="reverterDropzone" onclick="document.getElementById('reverterFileInput').click()">
             <div class="dropzone-icon">📦</div>
-            <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop a .brarchive file to revert</p>
+            <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop a .brarchive file to convert</p>
             <p style="color: #888; font-size: 0.75rem;">Inspect internal files, preview content, and export directly as a .zip</p>
             <input type="file" id="reverterFileInput" accept=".brarchive" style="display: none;" onchange="handleReverterFileUpload(this.files)">
         </div>
@@ -513,6 +551,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         </div>
 
         <div id="faqList" style="margin-top: 5px;">
+            <!-- 1. splashes.json location -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Where should splashes.json be placed in my pack?</span>
@@ -521,12 +560,13 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            <code>splashes.json</code> must always be placed directly inside the <b>root directory</b> of your Resource Pack (e.g. <code>RP/splashes.json</code>), right alongside your <code>manifest.json</code> and <code>pack_icon.png</code>. It should <b>never</b> be placed inside the <code>texts/</code> directory.
+                            <code>splashes.json</code> must always be placed directly in the <b>root directory</b> of your Resource Pack (e.g. <code>RP/splashes.json</code>), alongside <code>manifest.json</code> and <code>pack_icon.png</code>. It should <b>never</b> be placed inside the <code>texts/</code> folder.
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- 2. loading_messages.json location -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Where should loading_messages.json be placed in my pack?</span>
@@ -535,12 +575,13 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            <code>loading_messages.json</code> must also be placed directly in the <b>root directory</b> of your Resource Pack (e.g. <code>RP/loading_messages.json</code>). Placing it inside the <code>texts/</code> folder will prevent Minecraft from recognizing your custom loading tips.
+                            <code>loading_messages.json</code> must always be placed directly in the <b>root directory</b> of your Resource Pack (e.g. <code>RP/loading_messages.json</code>). Placing it inside the <code>texts/</code> folder will cause Minecraft to ignore your custom loading screen tips.
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- 3. .brarchive details -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">What is a .brarchive file and the __brarchive directory?</span>
@@ -549,306 +590,28 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            Starting in Minecraft Bedrock 1.21.40+, Mojang introduced the Bedrock Archive format (<code>.brarchive</code>). It bundles the dozens of loose JSON and metadata files within a directory (such as <code>textures/</code> or <code>sounds/</code>) into a single uncompressed container placed under <code>__brarchive/</code>. This dramatically decreases filesystem read overhead and optimizes game loading times.
+                            Introduced in Minecraft Bedrock 1.21.40+, the Bedrock Archive format (<code>.brarchive</code>) bundles multiple loose files within a directory (such as textures, sounds, or UI JSONs) into a single contiguous binary container placed inside a <code>__brarchive/</code> folder. This eliminates filesystem overhead and drastically improves pack load times.
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- 4. brarchive Maker & Converter -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do the __brarchive Maker and Reverter work?</span>
+                    <span class="faq-question-text">How do the brarchive Maker and Converter work?</span>
                     <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            The <b>__brarchive Maker</b> allows you to drag and drop loose files or zip archives and compiles them into a valid binary <code>.brarchive</code> file matching Bedrock's 16-byte magic header specification. The <b>__brarchive Reverter</b> reads any <code>.brarchive</code> container, parses its table of entries, provides previewing, and allows downloading individual files or a complete <b>.zip</b> archive.
+                            The <b>brarchive Maker</b> compiles staged files into a valid binary <code>.brarchive</code> container matching Bedrock's 16-byte magic header specification (<code>0x7D2725B1A0527026</code>). The <b>brarchive Converter</b> decompiles any <code>.brarchive</code> container, previews the contents, and exports them as loose files or a bundled <code>.zip</code>.
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is "Client Data"?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            The <code>client_data</code> module type is used primarily for client-side scripts, client-bound modules, or specialized UI scripts. While standard resource packs use <code>resources</code> for textures, models, and audio, <code>client_data</code> is specified when delivering client-bound script execution or custom client-side logic to the game engine.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">Do World Templates or Skin Packs support subpacks and settings?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <b>No.</b> Subpacks and Pack Settings are only supported by <b>Resource Packs (<code>resources</code>)</b> and select <b>Behavior Packs (<code>data</code>)</b>. World templates (<code>world_template</code>) and skin packs (<code>skin_pack</code>) rely on strict, predefined structures (such as fixed world save files or <code>skins.json</code>) and do not support in-game manifest settings or subpack folders.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is the difference between format_version 2 and 3?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <code>format_version 3</code> introduces support for newer and more advanced pack features like <b>Pack Settings</b> (toggles and dropdowns in the UI) and advanced <b>Subpacks</b>. Using version 3 typically requires a higher <code>min_engine_version</code> (usually 1.26.0 or newer) to function correctly in-game. Version 2 is the legacy format used for simpler packs.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is memory tier?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            The <code>memory_performance_tier</code> property is used within subpacks to define the hardware requirements for that specific subpack configuration. Higher tiers will automatically disable the subpack on lower-end devices (like older mobile phones) with limited RAM, which prevents the game from crashing due to high-resolution textures or heavy models. 0 is the default/lowest tier.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What are capabilities in a manifest?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Capabilities (such as <code>pbr</code>, <code>raytraced</code>, or <code>experimental_custom_ui</code>) tell the Minecraft engine that your pack requires specific rendering engines or experimental toggles to function. For example, adding <code>pbr</code> enables Physically Based Rendering for Deferred Graphics.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is a UUID and why do I need it?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            A UUID (Universally Unique Identifier) is a random string of characters that Minecraft uses to identify your pack. Every pack and module must have a completely unique UUID. If two packs share the same UUID, Minecraft will think they are the same pack and will fail to load one of them. This generator automatically creates secure, randomized UUIDs for you!
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">Can I have multiple subpacks in one pack?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Yes! Subpacks allow you to bundle multiple variations of your pack into one file. Players will see a gear icon next to your pack in-game, allowing them to choose between different resolutions, UI styles, or features by moving a slider.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do Pack Settings work?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Pack Settings allow you to create interactive UI elements like dropdown menus and toggles within your pack's configuration screen. When set up correctly in format_version 3, these settings can map to specific behavior pack variables, allowing players to customize exactly how your add-on behaves without needing separate subpacks.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is min_engine_version and why is it important?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <code>min_engine_version</code> sets the minimum Minecraft game version required to load your pack. If a player attempts to use your pack on an older version of Minecraft than what is specified here, the game will reject or flag the pack as incompatible.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What are modules in a manifest?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            The <code>modules</code> array tells Minecraft what functional components exist inside your pack. Common types include <code>resources</code> (textures, UI, audio), <code>data</code> (behaviors, entities, loot tables), <code>skin_pack</code>, <code>world_template</code>, and <code>client_data</code>.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is the difference between Resource Packs and Behavior Packs?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <b>Resource Packs (<code>resources</code>)</b> manage client-side visual and audio assets such as block/item textures, 3D entity models, custom UI, and sounds. <b>Behavior Packs (<code>data</code>)</b> run server-side logic controlling entity AI, custom craft recipes, item mechanics, loot drops, and scripts.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do I use translation keys (.lang files) for pack names?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Instead of hardcoding a raw title like "My Pack", you enter a translation key such as <code>pack.name</code> or <code>pack.description</code> in the manifest. Then inside your pack's <code>texts/en_US.lang</code> file, you add <code>pack.name=My Pack Name</code>. This allows your pack's name and description to automatically translate into different languages based on player game settings.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do color formatting codes (§) work in pack names?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Minecraft Bedrock uses the section sign <code>§</code> followed by a color code to style text in names and subpack descriptions. For example, <code>§aGreen Text</code>, <code>§cRed Text</code>, <code>§lBold Text</code>, or <code>§8Dark Gray Text</code>.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What does the raytraced capability do?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            The <code>raytraced</code> capability signals to the Bedrock engine that your resource pack contains DirectX Raytracing (RTX) PBR textures (normals, roughness, heightmaps, and metallic maps) allowing hardware-accelerated ray tracing to be toggled on Windows 10/11 RTX systems.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What are dependencies in a manifest?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Dependencies link your pack to another required pack (such as linking a Behavior Pack to its corresponding Resource Pack by UUID) or to Minecraft Script API modules (such as <code>@minecraft/server</code>).
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">Why does Minecraft show "Duplicate Pack Detected"?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            This error occurs when you install a pack that has the exact same Header UUID as another pack already installed on your device. To fix this, always generate new unique UUIDs whenever creating a brand new pack.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do I update an existing pack without breaking worlds?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            To release an update for your existing pack, <b>keep the exact same Header and Module UUIDs</b>, but increment the <code>version</code> number (e.g. from <code>1.0.0</code> to <code>1.0.1</code>). Minecraft will detect the newer version number and seamlessly update the existing pack without corrupting worlds.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is pack_optimization_version?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <code>pack_optimization_version</code> is an optional header property used in official Marketplace and modern Bedrock optimization pipelines to specify asset optimization schemas for low-memory platforms.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is format_version 1 used for?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <code>format_version: 1</code> is the legacy manifest format originally used in early versions of Minecraft Bedrock and standalone skin packs. Version 2 and 3 are standard for modern Add-On development.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">Can a single manifest have multiple modules?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Yes! For instance, script-enabled Add-Ons frequently include both a <code>data</code> module for custom entities/items and a <code>script</code> module for JavaScript/TypeScript execution within the same pack.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            <!-- 5. manifest.json location -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Where should manifest.json be placed in my pack?</span>
@@ -857,35 +620,275 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            <code>manifest.json</code> must always be placed directly in the <b>root directory</b> of your pack folder, alongside your <code>pack_icon.png</code> and top-level asset directories (such as <code>textures/</code>, <code>entities/</code>, or <code>subpacks/</code>).
+                            <code>manifest.json</code> must always reside directly in the <b>root directory</b> of your pack (e.g. <code>MyPack_RP/manifest.json</code> or <code>MyPack_BP/manifest.json</code>). If it is placed inside any subfolder, Minecraft will fail to recognize the pack.
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- 6. pack_icon.png -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do Subpack folder structures work?</span>
+                    <span class="faq-question-text">What are the requirements for pack_icon.png?</span>
                     <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            When subpacks are defined in your manifest, create a folder named <code>subpacks</code> in your pack's root. Inside it, create subfolders matching each subpack's <code>folder_name</code> (e.g. <code>subpacks/SP0/</code>). Any textures or models placed inside these subfolders will overwrite the main pack assets when that specific subpack is chosen in-game.
+                            <code>pack_icon.png</code> must be a square PNG image placed in the root directory of your pack. Standard supported resolutions are <b>64x64</b>, <b>128x128</b>, <b>256x256</b>, or <b>512x512</b> pixels. Non-square aspect ratios may appear distorted in the in-game settings menu.
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- 7. sound files location -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">Is there a maximum number of dropdown options in settings?</span>
+                    <span class="faq-question-text">Where are sounds.json and sound_definitions.json located?</span>
                     <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            While Minecraft does not enforce a strict hard limit on options, keeping dropdown lists to 15-20 options or fewer ensures that in-game UI scrollbars perform smoothly without clipping off the screen on mobile devices or smaller monitors.
+                            <code>sounds.json</code> belongs in the <b>root directory</b> of your Resource Pack (<code>RP/sounds.json</code>) to define individual block/item sound event mappings. In contrast, <code>sound_definitions.json</code> belongs inside the <code>sounds/</code> folder (<code>RP/sounds/sound_definitions.json</code>) to define sound categories, audio file paths, volume, and pitch.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. languages and texts folder -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">Where are language files and languages.json located?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            All language translation files (such as <code>en_US.lang</code>, <code>es_ES.lang</code>, <code>ja_JP.lang</code>) and the supported languages manifest (<code>languages.json</code>) must be placed inside the <code>texts/</code> folder of your pack (e.g. <code>RP/texts/en_US.lang</code>).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. format_version 1, 2, 3 -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is the difference between format_version 1, 2, and 3?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <b>Version 1</b> is the legacy format originally used in early Bedrock editions and standalone skin packs.<br>
+                            <b>Version 2</b> is the universal standard format for modern Resource and Behavior Packs.<br>
+                            <b>Version 3</b> adds native support for in-game interactive <b>Pack Settings</b> (toggles and dropdowns) and advanced <b>Subpacks</b>, typically paired with <code>min_engine_version</code> 1.26.0 or newer.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10. UUIDs -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is a UUID and why do I need it?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            A UUID (Universally Unique Identifier) is a 128-bit randomized string that Minecraft uses to uniquely identify packs and modules. The <code>header</code> UUID identifies the entire pack, while each entry in <code>modules</code> has its own unique UUID. Reusing a UUID across different packs causes "Duplicate Pack Detected" or silent pack loading collisions.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 11. Updating packs -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">How do I release an update for an existing pack without breaking worlds?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <b>Keep the exact same Header and Module UUIDs</b>, but increment the <code>version</code> array (e.g. from <code>[1, 0, 0]</code> to <code>[1, 0, 1]</code>). Minecraft will detect the newer version and update the installed pack without corrupting existing worlds.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 12. min_engine_version -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is min_engine_version and why is it important?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <code>min_engine_version</code> sets the minimum Minecraft game client version required to load your pack. If a player attempts to load your pack on an older game version, Minecraft will mark the pack as incompatible and prevent it from activating.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 13. RP vs BP -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is the difference between Resource Packs and Behavior Packs?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <b>Resource Packs (<code>resources</code>)</b> manage client-side visuals and audio, including block/item textures, 3D entity models, UI JSON, animations, particles, and sounds.<br>
+                            <b>Behavior Packs (<code>data</code>)</b> run server-side logic controlling entity AI, custom components, loot tables, recipes, trading, and JavaScript/TypeScript Script API execution.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 14. Client Data -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is "Client Data" (client_data)?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            The <code>client_data</code> module type is used for client-bound scripts and custom UI bindings. While standard resource packs use <code>resources</code> for assets, <code>client_data</code> allows executing client-side scripts directly on the player client without running on the server.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 15. Capabilities -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What capabilities are supported in manifest.json?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Common capabilities include:<br>
+                            • <code>pbr</code>: Enables Physically Based Rendering (roughness, normal, height, metallic maps) for Deferred Technical Preview.<br>
+                            • <code>raytraced</code>: Enables hardware DirectX Raytracing (RTX) textures.<br>
+                            • <code>experimental_custom_ui</code>: Enables experimental custom UI scripting.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 16. Subpacks -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">How do Subpacks work and how should their folders be structured?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            When subpacks are declared in <code>manifest.json</code>, create a <code>subpacks/</code> directory in your pack root. Inside it, create subfolders matching each subpack's <code>folder_name</code> (e.g. <code>subpacks/16x/</code>, <code>subpacks/32x/</code>). Any assets inside the selected subpack folder will override the base pack assets when chosen by the player via the in-game settings slider.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 17. Memory Tier -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is memory_performance_tier in Subpacks?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <code>memory_performance_tier</code> specifies hardware RAM requirements for a subpack option. Higher tiers prevent heavy subpacks (such as 128x texture resolutions) from loading on low-memory mobile devices to prevent Out-Of-Memory (OOM) game crashes. <code>0</code> is the default/lowest tier.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 18. Pack Settings -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">How do Pack Settings work in format_version 3?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Pack Settings allow creators to build custom interactive toggles and dropdown selectors directly inside the pack's settings menu. These variables can be queried in scripts or UI to toggle feature sets dynamically without creating dozens of separate packs.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 19. Color Codes -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">How do color formatting codes (§) work in pack names?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Minecraft Bedrock uses the section sign <code>§</code> followed by a formatting character. Examples include <code>§a</code> (Green), <code>§b</code> (Aqua), <code>§c</code> (Red), <code>§e</code> (Yellow), <code>§l</code> (Bold), <code>§o</code> (Italic), and <code>§r</code> (Reset).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 20. Dependencies -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What are dependencies in a manifest?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            The <code>dependencies</code> array links your pack to another required pack (e.g. linking a Behavior Pack to its matching Resource Pack by UUID) or to official Minecraft Script API modules (such as <code>@minecraft/server</code> or <code>@minecraft/server-ui</code>).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 21. Packaging .mcpack and .mcaddon -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">How do I properly package a .mcpack or .mcaddon file?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            1. Select all the contents inside your pack folder (so that <code>manifest.json</code> is at the root level of the archive, not inside a nested subfolder).<br>
+                            2. Compress them into a standard <code>.zip</code> file.<br>
+                            3. Rename the file extension from <code>.zip</code> to <code>.mcpack</code>.<br>
+                            4. To package both a Resource and Behavior pack together, zip both <code>.mcpack</code> files into one archive and rename the extension to <code>.mcaddon</code>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 22. Common Import Errors -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">Why does Minecraft show "Failed to Import Pack"?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Common reasons include:<br>
+                            • <b>Folder nesting</b>: The zip contains a parent folder instead of placing <code>manifest.json</code> at the root.<br>
+                            • <b>JSON syntax errors</b>: Missing commas, unclosed brackets, or invalid quotes in <code>manifest.json</code>.<br>
+                            • <b>Duplicate UUIDs</b>: The header UUID matches a pack already installed on your device.<br>
+                            • <b>Incompatible min_engine_version</b>: The specified engine version is higher than your current Minecraft client.
                         </div>
                     </div>
                 </div>
@@ -903,7 +906,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 A rapid, web-based toolkit designed to create and manage essential Minecraft Bedrock Edition files, including <code>manifest.json</code>, <code>splashes.json</code>, <code>loading_messages.json</code>, and Bedrock Archive <code>.brarchive</code> bundles.
             </p>
             <p class="info-text">
-                Supports modern pack types (Resource Packs, Behavior Packs, Skin Packs, World Templates, and Client Data), advanced Subpack & Setting configurations, and full packaging/decompilation of Mojang's modern <code>__brarchive</code> load optimization containers.
+                Supports modern pack types (Resource Packs, Behavior Packs, Skin Packs, World Templates, and Client Data), advanced Subpack & Setting configurations, and full packaging/decompilation of Mojang's modern <code>brarchive</code> load optimization containers.
             </p>
         </div>
     </div>
@@ -1119,7 +1122,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         }
 
         function escapeHtml(text) {
-            if (!text) return "";
+            if (text === undefined || text === null) return "";
             return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
         }
 
@@ -1403,7 +1406,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             document.getElementById('loadingMessagesOutput').value = JSON.stringify(obj, null, 4);
         }
 
-        // --- __BRARCHIVE CORE (MAKER & REVERTER) LOGIC ---
+        // --- BRARCHIVE CORE (MAKER & CONVERTER) LOGIC ---
         const BRARCHIVE_MAGIC = [0x7D, 0x27, 0x25, 0xB1, 0xA0, 0x52, 0x70, 0x26];
         const makerEntries = [];
         let revertedEntries = [];
@@ -1502,18 +1505,18 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             list.innerHTML = makerEntries.map((entry, idx) => `
                 <div class="card">
                     <div class="file-card-header">
-                        <div class="file-card-info">
-                            <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 3px;">Filename <span class="required-badge">(required)</span></p>
+                        <div class="file-card-info input-wrap">
+                            <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 6px;">Filename <span class="required-badge">(required)</span></p>
                             <input type="text" value="${escapeHtml(entry.name)}" placeholder="e.g. entity.json" oninput="markDirty(); makerEntries[${idx}].name=this.value;">
                         </div>
                         <button class="delete-btn" style="position: static; flex-shrink: 0;" onclick="removeMakerEntry(${idx}); playSfx('release');">
                             <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
                         </button>
                     </div>
-                    <p style="font-size: 0.75rem; color: #888; margin-bottom: 5px;">Size: ${formatBytes(entry.data.length)}</p>
+                    <p style="font-size: 0.75rem; color: #888; margin-top: 4px; margin-bottom: 5px;">Size: ${formatBytes(entry.data.length)}</p>
                     ${entry.isText ? `
-                        <div class="input-wrap">
-                            <p>File Content (Text / JSON)</p>
+                        <div class="input-wrap" style="margin-top: 8px;">
+                            <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 6px;">File Content (Text / JSON)</p>
                             <textarea style="min-height: 120px; margin-bottom: 0;" oninput="updateManualMakerText(${idx}, this.value)">${escapeHtml(entry.rawText || new TextDecoder().decode(entry.data))}</textarea>
                         </div>
                     ` : ''}
@@ -1583,7 +1586,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             showToast(`Generated ${archiveName}!`);
         }
 
-        // --- Reverter Implementation ---
+        // --- Converter Implementation ---
         const reverterDrop = document.getElementById('reverterDropzone');
         reverterDrop.addEventListener('dragover', (e) => { e.preventDefault(); reverterDrop.classList.add('dragover'); });
         reverterDrop.addEventListener('dragleave', () => reverterDrop.classList.remove('dragover'));
