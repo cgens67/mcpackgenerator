@@ -163,6 +163,26 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 
 .required-badge { color: #ff5555; }
 .optional-badge { color: #888; }
+
+/* Dropzone & Upload Cards */
+.dropzone {
+    border: 3px dashed #4f913c;
+    background-color: #212121;
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+.dropzone:hover, .dropzone.dragover {
+    border-color: #00ffba;
+    background-color: #2a2b2c;
+}
+.dropzone-icon {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    color: #00ffba;
+}
 </style>
 </head>
 <body>
@@ -186,6 +206,8 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <div class="sidebar-link" onclick="requestSwitchView('manifestView', 'manifest.json')">manifest.json</div>
             <div class="sidebar-link" onclick="requestSwitchView('splashesView', 'splashes.json')">splashes.json</div>
             <div class="sidebar-link" onclick="requestSwitchView('loadingMessagesView', 'loading_messages.json')">loading_messages.json</div>
+            <div class="sidebar-link" onclick="requestSwitchView('brarchiveMakerView', '__brarchive Maker')">__brarchive Maker</div>
+            <div class="sidebar-link" onclick="requestSwitchView('brarchiveReverterView', '__brarchive Reverter')">__brarchive Reverter</div>
             <div class="sidebar-link" onclick="requestSwitchView('faqView', 'FAQ')">FAQ</div>
             <div class="sidebar-link" onclick="requestSwitchView('aboutView', 'About')">About</div>
         </div>
@@ -362,7 +384,69 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         </div>
     </div>
 
-    <!-- ==================== 4. FAQ VIEW ==================== -->
+    <!-- ==================== 4. __BRARCHIVE MAKER VIEW ==================== -->
+    <div id="brarchiveMakerView" class="container children-spacing view-section">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">__brarchive maker</h1>
+        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Bundle multiple JSON files or raw game assets into an official Bedrock .brarchive file for load optimization.</p>
+        
+        <h2 class="section-title">Archive Configuration</h2>
+        <div class="input-wrap">
+            <p>Archive Output Filename <span class="required-badge">(required)</span></p>
+            <input type="text" id="makerArchiveName" value="textures.brarchive" placeholder="e.g. textures.brarchive or sounds.brarchive" oninput="markDirty()">
+        </div>
+
+        <!-- File Upload Area -->
+        <div class="dropzone" id="makerDropzone" onclick="document.getElementById('makerFileInput').click()">
+            <div class="dropzone-icon">📁</div>
+            <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop files here to stage</p>
+            <p style="color: #888; font-size: 0.75rem;">Supports .json, textures, models, sound definitions, or text files</p>
+            <input type="file" id="makerFileInput" multiple style="display: none;" onchange="handleMakerFileUpload(this.files)">
+        </div>
+
+        <h2 class="section-title">Staged Archive Entries (<span id="makerEntryCount">0</span>)</h2>
+        <div id="makerFileList" class="children-spacing"></div>
+
+        <div class="button-container" style="height: 40px; margin-top: 5px;">
+            <button class="mc-button mc-btn-wh" onclick="addManualMakerEntry()" style="height: 40px;">
+                <div class="mc-btn-con"><p>+ ADD MANUAL JSON / TEXT FILE</p></div>
+            </button>
+        </div>
+
+        <div class="button-container" style="margin-top: 20px;">
+            <button class="mc-button mc-btn-gr" onclick="generateAndDownloadBrarchive()">
+                <div class="mc-btn-con"><p>EXPORT .BRARCHIVE FILE</p></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== 5. __BRARCHIVE REVERTER VIEW ==================== -->
+    <div id="brarchiveReverterView" class="container children-spacing view-section">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">__brarchive reverter</h1>
+        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Decompile and unpack any Bedrock .brarchive container file back into individual loose files.</p>
+        
+        <div class="dropzone" id="reverterDropzone" onclick="document.getElementById('reverterFileInput').click()">
+            <div class="dropzone-icon">📦</div>
+            <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop a .brarchive file to revert</p>
+            <p style="color: #888; font-size: 0.75rem;">Inspect internal files, preview content, and export individual assets</p>
+            <input type="file" id="reverterFileInput" accept=".brarchive" style="display: none;" onchange="handleReverterFileUpload(this.files)">
+        </div>
+
+        <div id="reverterResultsSection" style="display: none;" class="children-spacing">
+            <h2 class="section-title">Archive Details</h2>
+            <div class="card" id="reverterArchiveMeta" style="font-size: 0.85rem; line-height: 1.8;"></div>
+
+            <h2 class="section-title">Extracted Files</h2>
+            <div id="reverterExtractedList" class="children-spacing"></div>
+
+            <div class="button-container" style="margin-top: 15px;">
+                <button class="mc-button mc-btn-gr" onclick="downloadAllRevertedFiles()">
+                    <div class="mc-btn-con"><p>DOWNLOAD ALL EXTRACTED FILES</p></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 6. FAQ VIEW ==================== -->
     <div id="faqView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">FAQ</h1>
         
@@ -387,7 +471,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            <code>splashes.json</code> should be placed directly inside the root directory or inside the <code>texts/</code> folder of your Resource Pack (e.g., <code>texts/splashes.json</code>).
+                            <code>splashes.json</code> must always be placed directly inside the <b>root directory</b> of your Resource Pack (e.g. <code>RP/splashes.json</code>), right alongside your <code>manifest.json</code> and <code>pack_icon.png</code>. It should <b>never</b> be placed inside the <code>texts/</code> directory.
                         </div>
                     </div>
                 </div>
@@ -401,7 +485,35 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            <code>loading_messages.json</code> is placed inside the <code>texts/</code> folder of your Resource Pack (e.g., <code>texts/loading_messages.json</code>).
+                            <code>loading_messages.json</code> must also be placed directly in the <b>root directory</b> of your Resource Pack (e.g. <code>RP/loading_messages.json</code>). Placing it inside the <code>texts/</code> folder will prevent Minecraft from recognizing your custom loading tips.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is a .brarchive file and the __brarchive directory?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Starting in Minecraft Bedrock 1.21.40+, Mojang introduced the Bedrock Archive format (<code>.brarchive</code>). It bundles the dozens of loose JSON and metadata files within a directory (such as <code>textures/</code> or <code>sounds/</code>) into a single uncompressed container placed under <code>__brarchive/</code>. This dramatically decreases filesystem read overhead and optimizes game loading times.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">How do the __brarchive Maker and Reverter work?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            The <b>__brarchive Maker</b> allows you to drag and drop or manually stage files and compiles them into a valid binary <code>.brarchive</code> file matching Bedrock's 16-byte magic header specification. The <b>__brarchive Reverter</b> reads any <code>.brarchive</code> container, parses its table of entries, displays real-time previews of the embedded text/JSON assets, and lets you extract them back into original loose files.
                         </div>
                     </div>
                 </div>
@@ -731,17 +843,17 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         </div>
     </div>
 
-    <!-- ==================== 5. ABOUT VIEW ==================== -->
+    <!-- ==================== 7. ABOUT VIEW ==================== -->
     <div id="aboutView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">About</h1>
         
         <div class="card" style="margin-top: 20px;">
             <h3 class="info-heading" style="margin-top: 0;">mcpack generator</h3>
             <p class="info-text">
-                A rapid, web-based tool designed to easily generate valid <code>manifest.json</code>, <code>splashes.json</code>, and <code>loading_messages.json</code> files for your Minecraft Bedrock Add-Ons, without requiring you to manually write a single line of JSON code.
+                A rapid, web-based toolkit designed to create and manage essential Minecraft Bedrock Edition files, including <code>manifest.json</code>, <code>splashes.json</code>, <code>loading_messages.json</code>, and Bedrock Archive <code>.brarchive</code> bundles.
             </p>
             <p class="info-text">
-                It supports all modern pack types including Resource Packs, Behavior Packs, Skin Packs, World Templates, and Client Data, alongside complex configurations like Pack Settings and Subpacks.
+                Supports modern pack types (Resource Packs, Behavior Packs, Skin Packs, World Templates, and Client Data), advanced Subpack & Setting configurations, and full packaging/decompilation of Mojang's modern <code>__brarchive</code> load optimization containers.
             </p>
         </div>
     </div>
@@ -943,6 +1055,17 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             navigator.clipboard.writeText(textArea.value).then(() => {
                 showToast(message);
             });
+        }
+
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         // --- Manifest Logic ---
@@ -1221,6 +1344,294 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             document.getElementById('loadingMessagesOutput').value = JSON.stringify(obj, null, 4);
         }
 
+        // --- __BRARCHIVE CORE (MAKER & REVERTER) LOGIC ---
+        const BRARCHIVE_MAGIC = [0x7D, 0x27, 0x25, 0xB1, 0xA0, 0x52, 0x70, 0x26];
+        const makerEntries = [];
+        let revertedEntries = [];
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // --- Maker Implementation ---
+        const makerDrop = document.getElementById('makerDropzone');
+        makerDrop.addEventListener('dragover', (e) => { e.preventDefault(); makerDrop.classList.add('dragover'); });
+        makerDrop.addEventListener('dragleave', () => makerDrop.classList.remove('dragover'));
+        makerDrop.addEventListener('drop', (e) => {
+            e.preventDefault();
+            makerDrop.classList.remove('dragover');
+            if (e.dataTransfer.files) handleMakerFileUpload(e.dataTransfer.files);
+        });
+
+        async function handleMakerFileUpload(files) {
+            if (!files || files.length === 0) return;
+            markDirty();
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const buffer = await file.arrayBuffer();
+                makerEntries.push({
+                    name: file.name,
+                    data: new Uint8Array(buffer),
+                    isText: false
+                });
+            }
+            renderMakerEntries();
+            showToast(`Added ${files.length} file(s) to archive.`);
+        }
+
+        function addManualMakerEntry() {
+            markDirty();
+            makerEntries.push({
+                name: `entry_${makerEntries.length + 1}.json`,
+                data: new TextEncoder().encode("{\n  \n}"),
+                isText: true,
+                rawText: "{\n  \n}"
+            });
+            renderMakerEntries();
+        }
+
+        function removeMakerEntry(index) {
+            markDirty();
+            makerEntries.splice(index, 1);
+            renderMakerEntries();
+        }
+
+        function updateManualMakerText(index, textVal) {
+            markDirty();
+            makerEntries[index].rawText = textVal;
+            makerEntries[index].data = new TextEncoder().encode(textVal);
+        }
+
+        function renderMakerEntries() {
+            const list = document.getElementById('makerFileList');
+            document.getElementById('makerEntryCount').innerText = makerEntries.length;
+            if (makerEntries.length === 0) {
+                list.innerHTML = `<div style="text-align: center; color: #888; padding: 15px; font-size: 0.85rem;">No files staged yet. Drag and drop files or add manual entries above.</div>`;
+                return;
+            }
+
+            list.innerHTML = makerEntries.map((entry, idx) => `
+                <div class="card">
+                    <button class="delete-btn" onclick="removeMakerEntry(${idx}); playSfx('release');">
+                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                    </button>
+                    <div class="input-wrap" style="margin-bottom: 8px; width: calc(100% - 40px);">
+                        <p>Filename <span class="required-badge">(required)</span></p>
+                        <input type="text" value="${entry.name}" placeholder="e.g. entity.json" oninput="markDirty(); makerEntries[${idx}].name=this.value;">
+                    </div>
+                    <p style="font-size: 0.75rem; color: #888; margin-bottom: 5px;">Size: ${formatBytes(entry.data.length)}</p>
+                    ${entry.isText ? `
+                        <div class="input-wrap">
+                            <p>File Content (Text / JSON)</p>
+                            <textarea style="min-height: 120px; margin-bottom: 0;" oninput="updateManualMakerText(${idx}, this.value)">${entry.rawText || new TextDecoder().decode(entry.data)}</textarea>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function generateAndDownloadBrarchive() {
+            if (makerEntries.length === 0) {
+                showToast("Please add at least one file to pack.");
+                return;
+            }
+
+            let archiveName = document.getElementById('makerArchiveName').value.trim();
+            if (!archiveName) archiveName = "archive.brarchive";
+            if (!archiveName.endsWith('.brarchive')) archiveName += ".brarchive";
+
+            const entryCount = makerEntries.length;
+            let totalDataSize = 0;
+            for (const entry of makerEntries) {
+                totalDataSize += entry.data.length;
+            }
+
+            // Binary Layout: 16 bytes Header + (entryCount * 256 bytes) + Data Block
+            const headerSize = 16 + entryCount * 256;
+            const totalBufferSize = headerSize + totalDataSize;
+            const outBuffer = new Uint8Array(totalBufferSize);
+            const view = new DataView(outBuffer.buffer);
+
+            // 1. Write Magic (8 bytes)
+            for (let i = 0; i < 8; i++) {
+                outBuffer[i] = BRARCHIVE_MAGIC[i];
+            }
+            // 2. Entry Count (4 bytes LE)
+            view.setUint32(8, entryCount, true);
+            // 3. Version (4 bytes LE = 1)
+            view.setUint32(12, 1, true);
+
+            // 4. Write Entry Table and Payloads
+            let currentPayloadOffset = 0;
+            const encoder = new TextEncoder();
+
+            for (let i = 0; i < entryCount; i++) {
+                const entry = makerEntries[i];
+                const entryHeaderOffset = 16 + i * 256;
+
+                const nameBytes = encoder.encode(entry.name || `file_${i}`);
+                const nameLength = Math.min(nameBytes.length, 247);
+
+                // Name length byte
+                outBuffer[entryHeaderOffset] = nameLength;
+                // Padded UTF-8 filename (247 bytes)
+                outBuffer.set(nameBytes.subarray(0, nameLength), entryHeaderOffset + 1);
+
+                // File contents relative offset (4 bytes LE)
+                view.setUint32(entryHeaderOffset + 248, currentPayloadOffset, true);
+                // File contents size (4 bytes LE)
+                view.setUint32(entryHeaderOffset + 252, entry.data.length, true);
+
+                // Write file bytes in Data Block
+                outBuffer.set(entry.data, headerSize + currentPayloadOffset);
+                currentPayloadOffset += entry.data.length;
+            }
+
+            const blob = new Blob([outBuffer], { type: 'application/octet-stream' });
+            downloadBlob(blob, archiveName);
+            showToast(`Generated ${archiveName}!`);
+        }
+
+        // --- Reverter Implementation ---
+        const reverterDrop = document.getElementById('reverterDropzone');
+        reverterDrop.addEventListener('dragover', (e) => { e.preventDefault(); reverterDrop.classList.add('dragover'); });
+        reverterDrop.addEventListener('dragleave', () => reverterDrop.classList.remove('dragover'));
+        reverterDrop.addEventListener('drop', (e) => {
+            e.preventDefault();
+            reverterDrop.classList.remove('dragover');
+            if (e.dataTransfer.files) handleReverterFileUpload(e.dataTransfer.files);
+        });
+
+        async function handleReverterFileUpload(files) {
+            if (!files || files.length === 0) return;
+            const file = files[0];
+            const buffer = await file.arrayBuffer();
+            decompileBrarchive(new Uint8Array(buffer), file.name);
+        }
+
+        function decompileBrarchive(u8, originalFilename) {
+            if (u8.length < 16) {
+                showToast("Invalid file: too small for .brarchive");
+                return;
+            }
+
+            // Verify Magic
+            for (let i = 0; i < 8; i++) {
+                if (u8[i] !== BRARCHIVE_MAGIC[i]) {
+                    showToast("Error: Not a valid .brarchive file (magic mismatch).");
+                    return;
+                }
+            }
+
+            const view = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+            const entryCount = view.getUint32(8, true);
+            const version = view.getUint32(12, true);
+
+            const expectedHeaderSize = 16 + entryCount * 256;
+            if (u8.length < expectedHeaderSize) {
+                showToast("Corrupt archive: Header truncated.");
+                return;
+            }
+
+            revertedEntries = [];
+            const decoder = new TextDecoder();
+            const dataBlockStart = expectedHeaderSize;
+
+            for (let i = 0; i < entryCount; i++) {
+                const entryHeaderOffset = 16 + i * 256;
+                const nameLength = u8[entryHeaderOffset];
+                const nameBytes = u8.subarray(entryHeaderOffset + 1, entryHeaderOffset + 1 + nameLength);
+                const name = decoder.decode(nameBytes);
+
+                const dataOffset = view.getUint32(entryHeaderOffset + 248, true);
+                const dataSize = view.getUint32(entryHeaderOffset + 252, true);
+
+                const fileStart = dataBlockStart + dataOffset;
+                const fileEnd = fileStart + dataSize;
+                const fileData = u8.subarray(fileStart, fileEnd);
+
+                let isText = false;
+                let textPreview = "";
+                try {
+                    textPreview = decoder.decode(fileData);
+                    // Check if mostly printable ASCII/UTF-8
+                    if (/^[\x09\x0A\x0D\x20-\x7E\u00A0-\uFFFF]*$/.test(textPreview.slice(0, 500))) {
+                        isText = true;
+                    }
+                } catch(e) {
+                    isText = false;
+                }
+
+                revertedEntries.push({
+                    name: name,
+                    data: fileData,
+                    size: dataSize,
+                    isText: isText,
+                    textPreview: textPreview
+                });
+            }
+
+            // Render Results
+            document.getElementById('reverterArchiveMeta').innerHTML = `
+                <div><b>Source File:</b> ${originalFilename}</div>
+                <div><b>Format Version:</b> ${version}</div>
+                <div><b>Total Files Found:</b> ${entryCount}</div>
+                <div><b>Total Extracted Size:</b> ${formatBytes(revertedEntries.reduce((a,b) => a + b.size, 0))}</div>
+            `;
+
+            renderRevertedEntries();
+            document.getElementById('reverterResultsSection').style.display = 'flex';
+            showToast(`Extracted ${entryCount} files!`);
+        }
+
+        function renderRevertedEntries() {
+            const list = document.getElementById('reverterExtractedList');
+            list.innerHTML = revertedEntries.map((entry, idx) => `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div>
+                            <div style="color: #00ffba; font-family: Minecraftia; font-size: 0.95rem;">${entry.name}</div>
+                            <div style="color: #888; font-size: 0.75rem;">Size: ${formatBytes(entry.size)} (${entry.size} bytes)</div>
+                        </div>
+                        <button class="small-btn" onclick="downloadSingleRevertedFile(${idx})">DOWNLOAD FILE</button>
+                    </div>
+
+                    ${entry.isText ? `
+                        <div class="input-wrap" style="margin-top: 10px;">
+                            <p style="color: #bbb;">Preview:</p>
+                            <textarea readonly style="min-height: 140px; margin-bottom: 0;" spellcheck="false">${entry.textPreview}</textarea>
+                        </div>
+                    ` : `
+                        <div style="background: #212121; padding: 8px 12px; font-size: 0.75rem; color: #aaa; border: 2px solid #1e1e1f; margin-top: 5px;">
+                            [Binary Data / Compiled Asset]
+                        </div>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        function downloadSingleRevertedFile(index) {
+            const entry = revertedEntries[index];
+            const blob = new Blob([entry.data], { type: 'application/octet-stream' });
+            downloadBlob(blob, entry.name);
+            showToast(`Downloaded ${entry.name}`);
+        }
+
+        function downloadAllRevertedFiles() {
+            if (revertedEntries.length === 0) return;
+            revertedEntries.forEach((entry, i) => {
+                setTimeout(() => {
+                    const blob = new Blob([entry.data], { type: 'application/octet-stream' });
+                    downloadBlob(blob, entry.name);
+                }, i * 200);
+            });
+            showToast(`Downloading all ${revertedEntries.length} files...`);
+        }
+
         // --- Initialization ---
         window.onload = () => {
             updateSectionVisibility('resources');
@@ -1229,6 +1640,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             updateManifest();
             renderSplashes();
             renderLoadingMessages();
+            renderMakerEntries();
             isDirty = false; // Fresh load starts clean
         };
     </script>
