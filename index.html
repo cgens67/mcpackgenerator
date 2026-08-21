@@ -4,6 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>mcpack generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 /*
 ! tailwindcss v3.4.1 | MIT License | https://tailwindcss.com
@@ -75,11 +76,28 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 
 .section-title { font-family: "RFB Store set Loud"; font-size: 1.5rem; border-bottom: 2px solid #444; padding-bottom: 5px; margin-top: 1.5rem; color: #00ffba; }
 .card { background-color: #313233; border: 3px solid #1e1e1f; padding: 15px; border-radius: 2px; position: relative; margin-bottom: 10px; }
-.delete-btn { position: absolute; right: 10px; top: 10px; background: #ff5555; color: white; border: 2px solid #cc0000; font-family: Minecraftia; padding: 4px; cursor: pointer; display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; }
+.delete-btn { background: #ff5555; color: white; border: 2px solid #cc0000; font-family: Minecraftia; padding: 4px; cursor: pointer; display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; }
 .delete-btn:hover { background: #ff3333; }
 .delete-btn:active { transform: translateY(2px); }
-.small-btn { background: #3c8527; color: white; border: 2px solid #4f913c; padding: 5px 10px; cursor: pointer; font-family: Minecraftia; font-size: 0.75rem; margin-top: 5px; }
-.small-btn:hover { background: #2a641c; }
+
+/* Responsive Mini Buttons */
+.small-btn {
+    background: #3c8527;
+    color: white;
+    border: 2px solid #4f913c;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: Minecraftia, unifont;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+    box-shadow: 1px 1px 0px #1e1e1f;
+}
+.small-btn:hover { background: #2a641c; border-color: #699260; }
+.small-btn:active { transform: translateY(1px); background: #1d4d13; }
 
 /* Custom Dropdown UI */
 .custom-dropdown { position: relative; width: 100%; background-color: #313233; color: #fff; border-top: 4px solid var(--clr-darkGray); outline: 3px solid #1e1e1f; height: 40px; font-family: Minecraftia, unifont; font-size: .85rem; cursor: pointer; user-select: none; }
@@ -182,6 +200,32 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
     font-size: 2.2rem;
     margin-bottom: 8px;
     color: #00ffba;
+}
+
+/* File Entry Card Layout (Responsive Header) */
+.file-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+.file-card-info {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+.file-card-title {
+    color: #00ffba;
+    font-family: Minecraftia;
+    font-size: 0.92rem;
+    word-break: break-all;
+    line-height: 1.4;
+    margin-bottom: 3px;
+}
+.file-card-size {
+    color: #888;
+    font-size: 0.75rem;
 }
 </style>
 </head>
@@ -387,7 +431,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
     <!-- ==================== 4. __BRARCHIVE MAKER VIEW ==================== -->
     <div id="brarchiveMakerView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">__brarchive maker</h1>
-        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Bundle multiple JSON files or raw game assets into an official Bedrock .brarchive file for load optimization.</p>
+        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Bundle multiple JSON files, raw game assets, or a .zip file into an official Bedrock .brarchive container.</p>
         
         <h2 class="section-title">Archive Configuration</h2>
         <div class="input-wrap">
@@ -398,9 +442,9 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         <!-- File Upload Area -->
         <div class="dropzone" id="makerDropzone" onclick="document.getElementById('makerFileInput').click()">
             <div class="dropzone-icon">📁</div>
-            <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop files here to stage</p>
-            <p style="color: #888; font-size: 0.75rem;">Supports .json, textures, models, sound definitions, or text files</p>
-            <input type="file" id="makerFileInput" multiple style="display: none;" onchange="handleMakerFileUpload(this.files)">
+            <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop files / .zip here to stage</p>
+            <p style="color: #888; font-size: 0.75rem;">Supports .json, textures, sounds, or .zip archives</p>
+            <input type="file" id="makerFileInput" multiple accept="*,.zip" style="display: none;" onchange="handleMakerFileUpload(this.files)">
         </div>
 
         <h2 class="section-title">Staged Archive Entries (<span id="makerEntryCount">0</span>)</h2>
@@ -422,12 +466,12 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
     <!-- ==================== 5. __BRARCHIVE REVERTER VIEW ==================== -->
     <div id="brarchiveReverterView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">__brarchive reverter</h1>
-        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Decompile and unpack any Bedrock .brarchive container file back into individual loose files.</p>
+        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Decompile and unpack any Bedrock .brarchive container file back into individual loose files or a .zip.</p>
         
         <div class="dropzone" id="reverterDropzone" onclick="document.getElementById('reverterFileInput').click()">
             <div class="dropzone-icon">📦</div>
             <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop a .brarchive file to revert</p>
-            <p style="color: #888; font-size: 0.75rem;">Inspect internal files, preview content, and export individual assets</p>
+            <p style="color: #888; font-size: 0.75rem;">Inspect internal files, preview content, and export directly as a .zip</p>
             <input type="file" id="reverterFileInput" accept=".brarchive" style="display: none;" onchange="handleReverterFileUpload(this.files)">
         </div>
 
@@ -435,12 +479,18 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             <h2 class="section-title">Archive Details</h2>
             <div class="card" id="reverterArchiveMeta" style="font-size: 0.85rem; line-height: 1.8;"></div>
 
+            <div class="button-container" style="margin-top: 5px; margin-bottom: 10px;">
+                <button class="mc-button mc-btn-gr" onclick="downloadAllRevertedZip()">
+                    <div class="mc-btn-con"><p>DOWNLOAD ALL AS .ZIP</p></div>
+                </button>
+            </div>
+
             <h2 class="section-title">Extracted Files</h2>
             <div id="reverterExtractedList" class="children-spacing"></div>
 
             <div class="button-container" style="margin-top: 15px;">
-                <button class="mc-button mc-btn-gr" onclick="downloadAllRevertedFiles()">
-                    <div class="mc-btn-con"><p>DOWNLOAD ALL EXTRACTED FILES</p></div>
+                <button class="mc-button mc-btn-gr" onclick="downloadAllRevertedZip()">
+                    <div class="mc-btn-con"><p>DOWNLOAD ALL AS .ZIP</p></div>
                 </button>
             </div>
         </div>
@@ -513,7 +563,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            The <b>__brarchive Maker</b> allows you to drag and drop or manually stage files and compiles them into a valid binary <code>.brarchive</code> file matching Bedrock's 16-byte magic header specification. The <b>__brarchive Reverter</b> reads any <code>.brarchive</code> container, parses its table of entries, displays real-time previews of the embedded text/JSON assets, and lets you extract them back into original loose files.
+                            The <b>__brarchive Maker</b> allows you to drag and drop loose files or zip archives and compiles them into a valid binary <code>.brarchive</code> file matching Bedrock's 16-byte magic header specification. The <b>__brarchive Reverter</b> reads any <code>.brarchive</code> container, parses its table of entries, provides previewing, and allows downloading individual files or a complete <b>.zip</b> archive.
                         </div>
                     </div>
                 </div>
@@ -1068,6 +1118,11 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             URL.revokeObjectURL(url);
         }
 
+        function escapeHtml(text) {
+            if (!text) return "";
+            return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
         // --- Manifest Logic ---
         function uuidv4() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -1082,18 +1137,20 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             const container = document.getElementById('subpacksList');
             container.innerHTML = state.subpacks.map((sp, i) => `
                 <div class="card">
-                    <h3 style="font-family: Minecraftia; margin-bottom: 10px; color: #fff;">Subpack ${i + 1}</h3>
-                    <button class="delete-btn" style="position: absolute; right: 10px; top: 10px;" onclick="removeSubpack(${i}); playSfx('release');">
-                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
-                    </button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h3 style="font-family: Minecraftia; color: #fff;">Subpack ${i + 1}</h3>
+                        <button class="delete-btn" onclick="removeSubpack(${i}); playSfx('release');">
+                            <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                        </button>
+                    </div>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Folder name <span class="required-badge">(required)</span></p>
-                        <input type="text" placeholder="e.g. SP0" value="${sp.folder_name}" oninput="markDirty(); state.subpacks[${i}].folder_name=this.value; updateManifest()">
+                        <input type="text" placeholder="e.g. SP0" value="${escapeHtml(sp.folder_name)}" oninput="markDirty(); state.subpacks[${i}].folder_name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Name & description <span class="required-badge">(required, supports §)</span></p>
-                        <input type="text" placeholder="e.g. Custom Experience §8..." value="${sp.name}" oninput="markDirty(); state.subpacks[${i}].name=this.value; updateManifest()">
+                        <input type="text" placeholder="e.g. Custom Experience §8..." value="${escapeHtml(sp.name)}" oninput="markDirty(); state.subpacks[${i}].name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap">
                         <p>Memory performance tier <span class="required-badge">(required)</span></p>
@@ -1124,10 +1181,12 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 const displayType = isToggle ? 'Toggle' : 'Dropdown';
                 return `
                 <div class="card">
-                    <h3 style="font-family: Minecraftia; margin-bottom: 10px; color: #fff;">Setting ${i + 1}</h3>
-                    <button class="delete-btn" style="position: absolute; right: 10px; top: 10px;" onclick="removeSetting(${i}); playSfx('release');">
-                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
-                    </button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h3 style="font-family: Minecraftia; color: #fff;">Setting ${i + 1}</h3>
+                        <button class="delete-btn" onclick="removeSetting(${i}); playSfx('release');">
+                            <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                        </button>
+                    </div>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Setting type <span class="required-badge">(required)</span></p>
@@ -1144,16 +1203,16 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Name (ID) <span class="required-badge">(required)</span></p>
-                        <input type="text" placeholder="e.g. namespace:id" value="${set.name}" oninput="markDirty(); state.settings[${i}].name=this.value; updateManifest()">
+                        <input type="text" placeholder="e.g. namespace:id" value="${escapeHtml(set.name)}" oninput="markDirty(); state.settings[${i}].name=this.value; updateManifest()">
                     </div>
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Text (language key) <span class="required-badge">(required)</span></p>
-                        <input type="text" placeholder="e.g. text.namespace.id" value="${set.text}" oninput="markDirty(); state.settings[${i}].text=this.value; updateManifest()">
+                        <input type="text" placeholder="e.g. text.namespace.id" value="${escapeHtml(set.text)}" oninput="markDirty(); state.settings[${i}].text=this.value; updateManifest()">
                     </div>
                     
                     <div class="input-wrap" style="margin-bottom: 10px;">
                         <p>Default value <span class="required-badge">(required)</span></p>
-                        <input type="text" placeholder="e.g. true" value="${set.default}" oninput="markDirty(); handleDefaultInput(${i}, this.value)">
+                        <input type="text" placeholder="e.g. true" value="${escapeHtml(String(set.default))}" oninput="markDirty(); handleDefaultInput(${i}, this.value)">
                     </div>
 
                     ${!isToggle ? `
@@ -1161,9 +1220,9 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                             <p style="font-family: Minecraftia; font-size: 0.8rem; margin-bottom: 10px; color: #00ffba;">Options for dropdown <span class="required-badge">(required)</span>:</p>
                             ${set.options.map((opt, optIdx) => `
                                 <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center; width: 100%;">
-                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Name (required)" value="${opt.name}" oninput="markDirty(); state.settings[${i}].options[${optIdx}].name=this.value; updateManifest()"></div>
-                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Text (required)" value="${opt.text}" oninput="markDirty(); state.settings[${i}].options[${optIdx}].text=this.value; updateManifest()"></div>
-                                    <button class="delete-btn" style="position: relative; right: auto; top: auto; flex: 0 0 30px; margin: 0;" onclick="removeOption(${i}, ${optIdx}); playSfx('release');">
+                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Name (required)" value="${escapeHtml(opt.name)}" oninput="markDirty(); state.settings[${i}].options[${optIdx}].name=this.value; updateManifest()"></div>
+                                    <div class="input-wrap" style="flex: 1; min-width: 0;"><input type="text" placeholder="Text (required)" value="${escapeHtml(opt.text)}" oninput="markDirty(); state.settings[${i}].options[${optIdx}].text=this.value; updateManifest()"></div>
+                                    <button class="delete-btn" style="position: static; flex: 0 0 30px; margin: 0;" onclick="removeOption(${i}, ${optIdx}); playSfx('release');">
                                         <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
                                     </button>
                                 </div>
@@ -1276,9 +1335,9 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             container.innerHTML = splashesState.map((splash, i) => `
                 <div class="card" style="display: flex; gap: 10px; align-items: center; padding: 12px 15px; margin-bottom: 8px;">
                     <div class="input-wrap" style="flex: 1; min-width: 0;">
-                        <input type="text" placeholder="Enter splash text..." value="${splash}" oninput="markDirty(); splashesState[${i}]=this.value; updateSplashesJSON()">
+                        <input type="text" placeholder="Enter splash text..." value="${escapeHtml(splash)}" oninput="markDirty(); splashesState[${i}]=this.value; updateSplashesJSON()">
                     </div>
-                    <button class="delete-btn" style="position: relative; right: auto; top: auto; flex: 0 0 30px;" onclick="removeSplash(${i}); playSfx('release');">
+                    <button class="delete-btn" style="position: static; flex: 0 0 30px;" onclick="removeSplash(${i}); playSfx('release');">
                         <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
                     </button>
                 </div>
@@ -1316,9 +1375,9 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             container.innerHTML = loadingMessagesState.map((msg, i) => `
                 <div class="card" style="display: flex; gap: 10px; align-items: center; padding: 12px 15px; margin-bottom: 8px;">
                     <div class="input-wrap" style="flex: 1; min-width: 0;">
-                        <input type="text" placeholder="Enter loading message..." value="${msg}" oninput="markDirty(); loadingMessagesState[${i}]=this.value; updateLoadingMessagesJSON()">
+                        <input type="text" placeholder="Enter loading message..." value="${escapeHtml(msg)}" oninput="markDirty(); loadingMessagesState[${i}]=this.value; updateLoadingMessagesJSON()">
                     </div>
-                    <button class="delete-btn" style="position: relative; right: auto; top: auto; flex: 0 0 30px;" onclick="removeLoadingMessage(${i}); playSfx('release');">
+                    <button class="delete-btn" style="position: static; flex: 0 0 30px;" onclick="removeLoadingMessage(${i}); playSfx('release');">
                         <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
                     </button>
                 </div>
@@ -1348,6 +1407,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         const BRARCHIVE_MAGIC = [0x7D, 0x27, 0x25, 0xB1, 0xA0, 0x52, 0x70, 0x26];
         const makerEntries = [];
         let revertedEntries = [];
+        let currentRevertedArchiveName = "archive";
 
         function formatBytes(bytes) {
             if (bytes === 0) return '0 Bytes';
@@ -1370,17 +1430,42 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
         async function handleMakerFileUpload(files) {
             if (!files || files.length === 0) return;
             markDirty();
+            let addedCount = 0;
+
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
+                if (file.name.toLowerCase().endsWith('.zip') && typeof JSZip !== 'undefined') {
+                    try {
+                        const zip = await JSZip.loadAsync(file);
+                        for (const [relativePath, zipEntry] of Object.entries(zip.files)) {
+                            if (!zipEntry.dir) {
+                                const data = await zipEntry.async("uint8array");
+                                const cleanName = relativePath.split('/').pop() || relativePath;
+                                makerEntries.push({
+                                    name: cleanName,
+                                    data: data,
+                                    isText: false
+                                });
+                                addedCount++;
+                            }
+                        }
+                        continue;
+                    } catch(e) {
+                        console.warn("Failed to parse zip directly:", e);
+                    }
+                }
+
                 const buffer = await file.arrayBuffer();
                 makerEntries.push({
                     name: file.name,
                     data: new Uint8Array(buffer),
                     isText: false
                 });
+                addedCount++;
             }
+
             renderMakerEntries();
-            showToast(`Added ${files.length} file(s) to archive.`);
+            showToast(`Added ${addedCount} file(s) to archive.`);
         }
 
         function addManualMakerEntry() {
@@ -1416,18 +1501,20 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 
             list.innerHTML = makerEntries.map((entry, idx) => `
                 <div class="card">
-                    <button class="delete-btn" onclick="removeMakerEntry(${idx}); playSfx('release');">
-                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
-                    </button>
-                    <div class="input-wrap" style="margin-bottom: 8px; width: calc(100% - 40px);">
-                        <p>Filename <span class="required-badge">(required)</span></p>
-                        <input type="text" value="${entry.name}" placeholder="e.g. entity.json" oninput="markDirty(); makerEntries[${idx}].name=this.value;">
+                    <div class="file-card-header">
+                        <div class="file-card-info">
+                            <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 3px;">Filename <span class="required-badge">(required)</span></p>
+                            <input type="text" value="${escapeHtml(entry.name)}" placeholder="e.g. entity.json" oninput="markDirty(); makerEntries[${idx}].name=this.value;">
+                        </div>
+                        <button class="delete-btn" style="position: static; flex-shrink: 0;" onclick="removeMakerEntry(${idx}); playSfx('release');">
+                            <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                        </button>
                     </div>
                     <p style="font-size: 0.75rem; color: #888; margin-bottom: 5px;">Size: ${formatBytes(entry.data.length)}</p>
                     ${entry.isText ? `
                         <div class="input-wrap">
                             <p>File Content (Text / JSON)</p>
-                            <textarea style="min-height: 120px; margin-bottom: 0;" oninput="updateManualMakerText(${idx}, this.value)">${entry.rawText || new TextDecoder().decode(entry.data)}</textarea>
+                            <textarea style="min-height: 120px; margin-bottom: 0;" oninput="updateManualMakerText(${idx}, this.value)">${escapeHtml(entry.rawText || new TextDecoder().decode(entry.data))}</textarea>
                         </div>
                     ` : ''}
                 </div>
@@ -1537,6 +1624,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
                 return;
             }
 
+            currentRevertedArchiveName = originalFilename ? originalFilename.replace(/\.brarchive$/i, '') : "archive";
             revertedEntries = [];
             const decoder = new TextDecoder();
             const dataBlockStart = expectedHeaderSize;
@@ -1577,7 +1665,7 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
 
             // Render Results
             document.getElementById('reverterArchiveMeta').innerHTML = `
-                <div><b>Source File:</b> ${originalFilename}</div>
+                <div><b>Source File:</b> ${escapeHtml(originalFilename)}</div>
                 <div><b>Format Version:</b> ${version}</div>
                 <div><b>Total Files Found:</b> ${entryCount}</div>
                 <div><b>Total Extracted Size:</b> ${formatBytes(revertedEntries.reduce((a,b) => a + b.size, 0))}</div>
@@ -1592,18 +1680,18 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             const list = document.getElementById('reverterExtractedList');
             list.innerHTML = revertedEntries.map((entry, idx) => `
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                        <div>
-                            <div style="color: #00ffba; font-family: Minecraftia; font-size: 0.95rem;">${entry.name}</div>
-                            <div style="color: #888; font-size: 0.75rem;">Size: ${formatBytes(entry.size)} (${entry.size} bytes)</div>
+                    <div class="file-card-header">
+                        <div class="file-card-info">
+                            <div class="file-card-title">${escapeHtml(entry.name)}</div>
+                            <div class="file-card-size">Size: ${formatBytes(entry.size)} (${entry.size} bytes)</div>
                         </div>
-                        <button class="small-btn" onclick="downloadSingleRevertedFile(${idx})">DOWNLOAD FILE</button>
+                        <button class="small-btn" onclick="downloadSingleRevertedFile(${idx})" style="flex-shrink: 0;">DOWNLOAD</button>
                     </div>
 
                     ${entry.isText ? `
                         <div class="input-wrap" style="margin-top: 10px;">
                             <p style="color: #bbb;">Preview:</p>
-                            <textarea readonly style="min-height: 140px; margin-bottom: 0;" spellcheck="false">${entry.textPreview}</textarea>
+                            <textarea readonly style="min-height: 140px; margin-bottom: 0;" spellcheck="false">${escapeHtml(entry.textPreview)}</textarea>
                         </div>
                     ` : `
                         <div style="background: #212121; padding: 8px 12px; font-size: 0.75rem; color: #aaa; border: 2px solid #1e1e1f; margin-top: 5px;">
@@ -1621,15 +1709,27 @@ textarea,textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;
             showToast(`Downloaded ${entry.name}`);
         }
 
-        function downloadAllRevertedFiles() {
+        async function downloadAllRevertedZip() {
             if (revertedEntries.length === 0) return;
-            revertedEntries.forEach((entry, i) => {
-                setTimeout(() => {
-                    const blob = new Blob([entry.data], { type: 'application/octet-stream' });
-                    downloadBlob(blob, entry.name);
-                }, i * 200);
-            });
-            showToast(`Downloading all ${revertedEntries.length} files...`);
+
+            if (typeof JSZip !== 'undefined') {
+                const zip = new JSZip();
+                revertedEntries.forEach(entry => {
+                    zip.file(entry.name, entry.data);
+                });
+                const blob = await zip.generateAsync({ type: "blob" });
+                downloadBlob(blob, `${currentRevertedArchiveName}.zip`);
+                showToast(`Downloaded ${currentRevertedArchiveName}.zip!`);
+            } else {
+                // Fallback if JSZip is unreachable
+                revertedEntries.forEach((entry, i) => {
+                    setTimeout(() => {
+                        const blob = new Blob([entry.data], { type: 'application/octet-stream' });
+                        downloadBlob(blob, entry.name);
+                    }, i * 200);
+                });
+                showToast(`Downloading files individually...`);
+            }
         }
 
         // --- Initialization ---
