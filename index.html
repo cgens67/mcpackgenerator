@@ -81,21 +81,6 @@ textarea {
     box-sizing: border-box;
 }
 
-/* Native Select Styling */
-select.mc-select {
-    background-color: #313233; color: #fff;
-    font-family: Minecraftia, unifont; font-size: 0.85rem;
-    padding: 6px 0.7rem; border-top: 4px solid var(--clr-darkGray);
-    outline: 3px solid #1e1e1f; border-left: none; border-right: none; border-bottom: none;
-    width: 100%; height: 40px; box-sizing: border-box;
-    cursor: pointer; appearance: none;
-    background-image: url('data:image/svg+xml;utf8,<svg fill="%23ffffff" viewBox="0 0 8 4" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>');
-    background-repeat: no-repeat; background-position: right 12px center; background-size: 12px 7px;
-    image-rendering: pixelated;
-}
-select.mc-select:focus { outline: 3px solid #00ffba; }
-select.mc-select option { background-color: #313233; color: #fff; }
-
 .button-container{align-items:flex-end;display:flex;height:60px;justify-content:center;width:100%}
 .button-container:last-child{margin:20px 0}
 .button-container .mc-button{align-items:center;cursor:pointer;display:flex;flex-direction:column-reverse;height:60px;justify-content:flex-end;outline:3px solid #1e1e1f;width:100%}
@@ -155,6 +140,12 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
 }
 .small-btn:hover { background: #2a641c; border-color: #699260; }
 .small-btn:active { transform: translateY(1px); background: #1d4d13; }
+
+.small-btn-wh {
+    background: #58585a;
+    border-color: #7b7b7e;
+}
+.small-btn-wh:hover { background: #454547; border-color: #8c8c90; }
 
 /* Custom Dropdown UI */
 .custom-dropdown { position: relative; width: 100%; background-color: #313233; color: #fff; border-top: 4px solid var(--clr-darkGray); outline: 3px solid #1e1e1f; height: 40px; font-family: Minecraftia, unifont; font-size: .85rem; cursor: pointer; user-select: none; }
@@ -311,6 +302,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             <div class="sidebar-link" onclick="requestSwitchView('splashesView', 'splashes.json')">splashes.json</div>
             <div class="sidebar-link" onclick="requestSwitchView('loadingMessagesView', 'loading_messages.json')">loading_messages.json</div>
             <div class="sidebar-link" onclick="requestSwitchView('soundsView', 'sounds generator')">sounds generator</div>
+            <div class="sidebar-link" onclick="requestSwitchView('musicDefsView', 'music_definitions.json')">music_definitions.json</div>
             <div class="sidebar-link" onclick="requestSwitchView('brarchiveMakerView', 'brarchive maker')">brarchive maker</div>
             <div class="sidebar-link" onclick="requestSwitchView('brarchiveConverterView', 'brarchive converter')">brarchive converter</div>
             <div class="sidebar-link" onclick="requestSwitchView('faqView', 'FAQ')">FAQ</div>
@@ -526,7 +518,37 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 5. BRARCHIVE MAKER VIEW ==================== -->
+    <!-- ==================== 5. MUSIC_DEFINITIONS.JSON VIEW ==================== -->
+    <div id="musicDefsView" class="container children-spacing view-section">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">music definitions</h1>
+        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Configure biome music triggers, main menu themes, and custom background soundtrack delays.</p>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+            <h2 class="section-title" style="margin-top: 0; border: none; padding: 0;">Music Contexts (<span id="musicEntryCount">0</span>)</h2>
+            <button class="small-btn small-btn-wh" onclick="loadAllVanillaMusic()">LOAD ALL VANILLA PRESETS</button>
+        </div>
+
+        <div id="musicList" class="children-spacing"></div>
+
+        <div class="button-container" style="height: 40px; margin-top: 5px;">
+            <button class="mc-button mc-btn-wh" onclick="addMusicEntry()" style="height: 40px;">
+                <div class="mc-btn-con"><p>+ ADD MUSIC CONTEXT</p></div>
+            </button>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 2rem;">Output (music_definitions.json)</h2>
+        <p style="color: #bbb; font-size: 0.8rem; margin-bottom: 5px;">Place this inside: <code style="color: #00ffba;">RP/sounds/music_definitions.json</code></p>
+        <div class="input-wrap">
+            <textarea id="musicDefsOutput" readonly spellcheck="false"></textarea>
+        </div>
+        <div class="button-container">
+            <button class="mc-button mc-btn-gr" onclick="copyJSON('musicDefsOutput', 'music_definitions.json copied to clipboard.')">
+                <div class="mc-btn-con"><p>COPY MUSIC_DEFINITIONS</p></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== 6. BRARCHIVE MAKER VIEW ==================== -->
     <div id="brarchiveMakerView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">brarchive maker</h1>
         <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Bundle multiple JSON files, raw game assets, or a .zip file into an official Bedrock .brarchive container.</p>
@@ -563,7 +585,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 6. BRARCHIVE CONVERTER VIEW ==================== -->
+    <!-- ==================== 7. BRARCHIVE CONVERTER VIEW ==================== -->
     <div id="brarchiveConverterView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">brarchive converter</h1>
         <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Decompile and unpack any Bedrock .brarchive container file back into individual loose files or a .zip.</p>
@@ -602,7 +624,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 7. FAQ VIEW ==================== -->
+    <!-- ==================== 8. FAQ VIEW ==================== -->
     <div id="faqView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">FAQ</h1>
         
@@ -964,14 +986,14 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 8. ABOUT VIEW ==================== -->
+    <!-- ==================== 9. ABOUT VIEW ==================== -->
     <div id="aboutView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">About</h1>
         
         <div class="card" style="margin-top: 20px;">
             <h3 class="info-heading" style="margin-top: 0;">mcpack generator</h3>
             <p class="info-text">
-                A rapid, web-based toolkit designed to create and manage essential Minecraft Bedrock Edition files, including <code>manifest.json</code>, <code>splashes.json</code>, <code>loading_messages.json</code>, and Bedrock Archive <code>.brarchive</code> bundles.
+                A rapid, web-based toolkit designed to create and manage essential Minecraft Bedrock Edition files, including <code>manifest.json</code>, <code>splashes.json</code>, <code>loading_messages.json</code>, <code>sound_definitions.json</code>, <code>music_definitions.json</code>, and Bedrock Archive <code>.brarchive</code> bundles.
             </p>
             <p class="info-text">
                 Supports modern pack types (Resource Packs, Behavior Packs, Skin Packs, World Templates, and Client Data), advanced Subpack & Setting configurations, and full packaging/decompilation of Mojang's modern <code>brarchive</code> load optimization containers.
@@ -1475,12 +1497,13 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         }
 
         // --- SOUNDS GENERATOR LOGIC ---
+        const soundCategories = ['ambient', 'block', 'bottle', 'hostile', 'music', 'neutral', 'player', 'record', 'ui', 'weather'];
         let soundsState = [];
 
         function renderSounds() {
             const container = document.getElementById('soundsList');
             if (soundsState.length === 0) {
-                container.innerHTML = `<div style="text-align: center; color: #888; padding: 15px; font-size: 0.85rem;">No sound events registered.</div>`;
+                container.innerHTML = `<div style="text-align: center; color: #888; padding: 15px; font-size: 0.85rem;">No sound events registered. Click "+ ADD SOUND EVENT" below.</div>`;
             } else {
                 container.innerHTML = soundsState.map((ev, i) => `
                     <div class="card">
@@ -1498,18 +1521,17 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                         
                         <div class="input-wrap" style="margin-bottom: 10px;">
                             <p>Category <span class="required-badge">(required)</span></p>
-                            <select class="mc-select" onchange="markDirty(); soundsState[${i}].category=this.value; updateSoundsJSON()">
-                                <option value="ambient" ${ev.category==='ambient'?'selected':''}>ambient</option>
-                                <option value="block" ${ev.category==='block'?'selected':''}>block</option>
-                                <option value="bottle" ${ev.category==='bottle'?'selected':''}>bottle</option>
-                                <option value="hostile" ${ev.category==='hostile'?'selected':''}>hostile</option>
-                                <option value="music" ${ev.category==='music'?'selected':''}>music</option>
-                                <option value="neutral" ${ev.category==='neutral'?'selected':''}>neutral</option>
-                                <option value="player" ${ev.category==='player'?'selected':''}>player</option>
-                                <option value="record" ${ev.category==='record'?'selected':''}>record</option>
-                                <option value="ui" ${ev.category==='ui'?'selected':''}>ui</option>
-                                <option value="weather" ${ev.category==='weather'?'selected':''}>weather</option>
-                            </select>
+                            <div class="custom-dropdown" onclick="toggleDropdown(this)">
+                                <div class="dropdown-header">
+                                    <span>${escapeHtml(ev.category || 'neutral')}</span>
+                                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                                </div>
+                                <div class="dropdown-options">
+                                    ${soundCategories.map(cat => `
+                                        <div class="dropdown-option" onclick="setSoundCategory(${i}, '${cat}')">${cat}</div>
+                                    `).join('')}
+                                </div>
+                            </div>
                         </div>
 
                         <div style="background: #242425; padding: 10px; margin-top: 15px; border-radius: 4px;">
@@ -1535,6 +1557,13 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                     </div>
                 `).join('');
             }
+            updateSoundsJSON();
+        }
+
+        function setSoundCategory(eventIdx, val) {
+            markDirty();
+            soundsState[eventIdx].category = val;
+            renderSounds();
             updateSoundsJSON();
         }
 
@@ -1577,7 +1606,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                     defsObj.sound_definitions[s.id] = {
                         category: s.category,
                         sounds: validFiles.map(f => {
-                            let snd = { name: f.path.replace(/\.ogg$/i, '') }; // auto strip .ogg if user typed it
+                            let snd = { name: f.path.replace(/\.ogg$/i, '') };
                             if (f.volume !== 1.0) snd.volume = f.volume;
                             if (f.pitch !== 1.0) snd.pitch = f.pitch;
                             return snd;
@@ -1598,6 +1627,141 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
 
             document.getElementById('soundDefsOutput').value = JSON.stringify(defsObj, null, 4);
             document.getElementById('soundsJsonOutput').value = JSON.stringify(soundsObj, null, 4);
+        }
+
+        // --- MUSIC_DEFINITIONS.JSON LOGIC ---
+        const vanillaMusicTemplate = [
+            { key: "bamboo_jungle", event_name: "music.overworld.bamboo_jungle", min_delay: 60, max_delay: 180 },
+            { key: "bamboo_jungle_hills", event_name: "music.overworld.bamboo_jungle", min_delay: 60, max_delay: 180 },
+            { key: "basalt_deltas", event_name: "music.game.basalt_deltas", min_delay: 60, max_delay: 180 },
+            { key: "birch_forest", event_name: "music.game_and_wild_equal_chance", min_delay: 60, max_delay: 180 },
+            { key: "birch_forest_hills", event_name: "music.game_and_wild_equal_chance", min_delay: 60, max_delay: 180 },
+            { key: "birch_forest_mutated", event_name: "music.game_and_wild_favor_game", min_delay: 60, max_delay: 180 },
+            { key: "cherry_grove", event_name: "music.overworld.cherry_grove", min_delay: 60, max_delay: 180 },
+            { key: "creative", event_name: "music.game.creative", min_delay: 60, max_delay: 180 },
+            { key: "credits", event_name: "music.game.credits", min_delay: 0, max_delay: 0 },
+            { key: "crimson_forest", event_name: "music.game.crimson_forest", min_delay: 60, max_delay: 180 },
+            { key: "deep_dark", event_name: "music.overworld.deep_dark", min_delay: 60, max_delay: 180 },
+            { key: "desert", event_name: "music.overworld.desert", min_delay: 60, max_delay: 180 },
+            { key: "desert_hills", event_name: "music.overworld.desert", min_delay: 60, max_delay: 180 },
+            { key: "desert_mutated", event_name: "music.overworld.desert", min_delay: 60, max_delay: 180 },
+            { key: "dripstone_caves", event_name: "music.overworld.dripstone_caves", min_delay: 60, max_delay: 180 },
+            { key: "end", event_name: "music.game.end", min_delay: 60, max_delay: 180 },
+            { key: "endboss", event_name: "music.game.endboss", min_delay: 60, max_delay: 180 },
+            { key: "flower_forest", event_name: "music.overworld.flower_forest", min_delay: 60, max_delay: 180 },
+            { key: "forest", event_name: "music.overworld.forest", min_delay: 60, max_delay: 180 },
+            { key: "frozen_peaks", event_name: "music.game.frozen_peaks", min_delay: 60, max_delay: 180 },
+            { key: "game", event_name: "music.game", min_delay: 600, max_delay: 1200 },
+            { key: "grove", event_name: "music.overworld.grove", min_delay: 60, max_delay: 180 },
+            { key: "hell", event_name: "music.game.nether_wastes", min_delay: 60, max_delay: 180 },
+            { key: "jagged_peaks", event_name: "music.overworld.jagged_peaks", min_delay: 60, max_delay: 180 },
+            { key: "jungle", event_name: "music.overworld.jungle", min_delay: 60, max_delay: 180 },
+            { key: "jungle_edge", event_name: "music.overworld.jungle_edge", min_delay: 60, max_delay: 180 },
+            { key: "jungle_hills", event_name: "music.overworld.jungle", min_delay: 60, max_delay: 180 },
+            { key: "jungle_mutated", event_name: "music.overworld.jungle", min_delay: 60, max_delay: 180 },
+            { key: "lush_caves", event_name: "music.overworld.lush_caves", min_delay: 60, max_delay: 180 },
+            { key: "mangrove_swamp", event_name: "music.game.swamp_music", min_delay: 60, max_delay: 180 },
+            { key: "meadow", event_name: "music.game.meadow", min_delay: 60, max_delay: 180 },
+            { key: "mega_taiga", event_name: "music.overworld.old_growth_taiga", min_delay: 600, max_delay: 1200 },
+            { key: "menu", event_name: "music.menu", min_delay: 0, max_delay: 30 },
+            { key: "mesa", event_name: "music.overworld.mesa", min_delay: 60, max_delay: 180 },
+            { key: "mesa_plateau", event_name: "music.overworld.mesa", min_delay: 60, max_delay: 180 },
+            { key: "mesa_plateau_mutated", event_name: "music.overworld.mesa", min_delay: 60, max_delay: 180 },
+            { key: "nether", event_name: "music.game.nether", min_delay: 60, max_delay: 180 },
+            { key: "redwood_taiga_hills_mutated", event_name: "music.game_and_wild_favor_game", min_delay: 60, max_delay: 180 },
+            { key: "redwood_taiga_mutated", event_name: "music.overworld.old_growth_taiga", min_delay: 600, max_delay: 1200 },
+            { key: "roofed_forest", event_name: "music.game_and_wild_equal_chance", min_delay: 60, max_delay: 180 },
+            { key: "roofed_forest_mutated", event_name: "music.game_and_wild_equal_chance", min_delay: 60, max_delay: 180 },
+            { key: "snowy_slopes", event_name: "music.overworld.snowy_slopes", min_delay: 60, max_delay: 180 },
+            { key: "soulsand_valley", event_name: "music.game.soulsand_valley", min_delay: 60, max_delay: 180 },
+            { key: "stony_peaks", event_name: "music.overworld.stony_peaks", min_delay: 60, max_delay: 180 },
+            { key: "sulfur_caves", event_name: "music.overworld.sulfur_caves", min_delay: 600, max_delay: 1200 },
+            { key: "swampland", event_name: "music.game.swamp_music", min_delay: 60, max_delay: 180 },
+            { key: "swampland_mutated", event_name: "music.game.swamp_music", min_delay: 60, max_delay: 180 },
+            { key: "water", event_name: "music.game.water", min_delay: 10, max_delay: 20 }
+        ];
+
+        let musicState = [
+            { key: "menu", event_name: "music.menu", min_delay: 0, max_delay: 30 },
+            { key: "game", event_name: "music.game", min_delay: 600, max_delay: 1200 },
+            { key: "creative", event_name: "music.game.creative", min_delay: 60, max_delay: 180 },
+            { key: "water", event_name: "music.game.water", min_delay: 10, max_delay: 20 }
+        ];
+
+        function renderMusic() {
+            const container = document.getElementById('musicList');
+            document.getElementById('musicEntryCount').innerText = musicState.length;
+            if (musicState.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: #888; padding: 15px; font-size: 0.85rem;">No music contexts declared. Click "+ ADD MUSIC CONTEXT" or "LOAD ALL VANILLA PRESETS".</div>`;
+            } else {
+                container.innerHTML = musicState.map((entry, idx) => `
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="font-family: Minecraftia; color: #fff;">Context ${idx + 1}: <span style="color: #00ffba;">${escapeHtml(entry.key || 'untitled')}</span></h3>
+                            <button class="delete-btn" onclick="removeMusicEntry(${idx}); playSfx('release');">
+                                <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                            </button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <div class="input-wrap">
+                                <p>Context / Biome Key <span class="required-badge">(required)</span></p>
+                                <input type="text" placeholder="e.g. menu or desert" value="${escapeHtml(entry.key)}" oninput="markDirty(); musicState[${idx}].key=this.value; updateMusicJSON()">
+                            </div>
+                            <div class="input-wrap">
+                                <p>Sound Event Name <span class="required-badge">(required)</span></p>
+                                <input type="text" placeholder="e.g. music.menu" value="${escapeHtml(entry.event_name)}" oninput="markDirty(); musicState[${idx}].event_name=this.value; updateMusicJSON()">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="input-wrap">
+                                <p>Min Delay (seconds)</p>
+                                <input type="number" placeholder="0" value="${entry.min_delay}" oninput="markDirty(); musicState[${idx}].min_delay=parseInt(this.value)||0; updateMusicJSON()">
+                            </div>
+                            <div class="input-wrap">
+                                <p>Max Delay (seconds)</p>
+                                <input type="number" placeholder="0" value="${entry.max_delay}" oninput="markDirty(); musicState[${idx}].max_delay=parseInt(this.value)||0; updateMusicJSON()">
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            updateMusicJSON();
+        }
+
+        function addMusicEntry() {
+            markDirty();
+            musicState.push({ key: "", event_name: "music.game", min_delay: 60, max_delay: 180 });
+            renderMusic();
+        }
+
+        function removeMusicEntry(idx) {
+            markDirty();
+            musicState.splice(idx, 1);
+            renderMusic();
+        }
+
+        function loadAllVanillaMusic() {
+            markDirty();
+            musicState = JSON.parse(JSON.stringify(vanillaMusicTemplate));
+            renderMusic();
+            showToast("Loaded all standard vanilla music definitions!");
+        }
+
+        function updateMusicJSON() {
+            const outObj = {};
+            musicState.forEach(m => {
+                const cleanKey = (m.key || "").trim();
+                if (cleanKey.length > 0) {
+                    outObj[cleanKey] = {
+                        event_name: m.event_name || "",
+                        max_delay: parseInt(m.max_delay) || 0,
+                        min_delay: parseInt(m.min_delay) || 0
+                    };
+                }
+            });
+            document.getElementById('musicDefsOutput').value = JSON.stringify(outObj, null, 4);
         }
 
         // --- BRARCHIVE CORE (MAKER & CONVERTER) LOGIC ---
@@ -1938,6 +2102,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             renderSplashes();
             renderLoadingMessages();
             renderSounds();
+            renderMusic();
             renderMakerEntries();
             isDirty = false; // Fresh load starts clean
         };
