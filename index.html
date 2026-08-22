@@ -604,16 +604,11 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 <p>Glyph Sheet Range</p>
                 <div class="custom-dropdown" onclick="toggleDropdown(this)">
                     <div class="dropdown-header">
-                        <span id="glyphPrefixDisplay">glyph_E1.png (E100 - E1FF)</span>
+                        <span id="glyphPrefixDisplay">glyph_E2.png (E200 - E2FF)</span>
                         <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                     </div>
-                    <div class="dropdown-options">
-                        <div class="dropdown-option" onclick="setGlyphPrefix('E1', 'glyph_E1.png (E100 - E1FF)')">glyph_E1.png (E100 - E1FF)</div>
-                        <div class="dropdown-option" onclick="setGlyphPrefix('E2', 'glyph_E2.png (E200 - E2FF)')">glyph_E2.png (E200 - E2FF)</div>
-                        <div class="dropdown-option" onclick="setGlyphPrefix('E3', 'glyph_E3.png (E300 - E3FF)')">glyph_E3.png (E300 - E3FF)</div>
-                        <div class="dropdown-option" onclick="setGlyphPrefix('E4', 'glyph_E4.png (E400 - E4FF)')">glyph_E4.png (E400 - E4FF)</div>
-                        <div class="dropdown-option" onclick="setGlyphPrefix('E0', 'glyph_E0.png (E000 - E0FF)')">glyph_E0.png (E000 - E0FF)</div>
-                        <div class="dropdown-option" onclick="setGlyphPrefix('F0', 'glyph_F0.png (F000 - F0FF)')">glyph_F0.png (F000 - F0FF)</div>
+                    <div class="dropdown-options" id="glyphRangeDropdownOptions">
+                        <!-- Populated by JS -->
                     </div>
                 </div>
             </div>
@@ -653,7 +648,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             <h2 class="section-title" style="margin-top: 0; border: none; padding: 0;">Compiled Sheet Preview</h2>
             <button class="small-btn small-btn-wh" onclick="toggleGlyphGridOverlay()">TOGGLE GRID OVERLAY</button>
         </div>
-        <p style="color: #bbb; font-size: 0.8rem; margin-bottom: 5px;">Destination path: <code style="color: #00ffba;" id="glyphPathDisplay">RP/font/glyph_E1.png</code></p>
+        <p style="color: #bbb; font-size: 0.8rem; margin-bottom: 5px;">Destination path: <code style="color: #00ffba;" id="glyphPathDisplay">RP/font/glyph_E2.png</code> (No JSON config needed)</p>
         
         <div class="glyph-preview-wrap">
             <canvas id="glyphAtlasCanvas" width="512" height="512"></canvas>
@@ -804,37 +799,22 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 </div>
             </div>
 
-            <!-- 4. brarchive Maker & Converter -->
+            <!-- 4. Custom Font Glyphs FAQ & emoticons.json -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do the brarchive Maker and Converter work?</span>
+                    <span class="faq-question-text">Do I need emoticons.json for custom font glyphs?</span>
                     <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            The <b>brarchive Maker</b> compiles staged files into a valid binary <code>.brarchive</code> container matching Bedrock's 16-byte magic header specification (<code>0x7D2725B1A0527026</code>). The <b>brarchive Converter</b> decompiles any <code>.brarchive</code> container, previews the contents, and exports them as loose files or a bundled <code>.zip</code>.
+                            <b>No, you do not need <code>emoticons.json</code>.</b> Minecraft Bedrock automatically detects bitmap font sheets formatted as <code>RP/font/glyph_XX.png</code> and maps them to their respective Unicode characters without any JSON configuration. In fact, Mojang creator guidelines advise against overriding <code>emoticons.json</code> to prevent chat conflicts.
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 5. Custom Font Glyphs FAQ -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do custom font glyphs and emojis work in Minecraft Bedrock?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Minecraft Bedrock maps Private Use Area Unicode characters (such as <code>\uE100</code> to <code>\uE1FF</code>) to 16x16 cell bitmap font sheets placed in <code>RP/font/glyph_E1.png</code>. When you paste the mapped Unicode character into chat, item names, signs, or UI JSON, Minecraft displays your custom texture in place of text.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 6. manifest.json location -->
+            <!-- 5. manifest.json location -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Where should manifest.json be placed in my pack?</span>
@@ -849,7 +829,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 </div>
             </div>
 
-            <!-- 7. sound files location -->
+            <!-- 6. sound files location -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Where are sounds.json and sound_definitions.json located?</span>
@@ -857,24 +837,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <code>sounds.json</code> belongs in the <b>root directory</b> of your Resource Pack (<code>RP/sounds.json</code>) to define individual block/item sound event mappings. In contrast, <code>sound_definitions.json</code> belongs inside the <code>sounds/</code> folder (<code>RP/sounds/sound_definitions.json</code>) to define sound categories, audio file paths, volume, and pitch.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 8. languages and texts folder -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">Where are language files and languages.json located?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            All language translation files (such as <code>en_US.lang</code>, <code>es_ES.lang</code>, <code>ja_JP.lang</code>) and the supported languages manifest (<code>languages.json</code>) must be placed inside the <code>texts/</code> folder of your pack (e.g. <code>RP/texts/en_US.lang</code>).
-                        </div>
+                        <code>sounds.json</code> belongs in the <b>root directory</b> of your Resource Pack (<code>RP/sounds.json</code>) to define individual block/item sound event mappings. In contrast, <code>sound_definitions.json</code> belongs inside the <code>sounds/</code> folder (<code>RP/sounds/sound_definitions.json</code>) to define sound categories, audio file paths, volume, and pitch.
                     </div>
                 </div>
             </div>
@@ -1666,10 +1629,25 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         }
 
         // --- GLYPHS CREATOR / GENERATOR LOGIC ---
-        let glyphPrefix = "E1";
+        // Range containing all custom PUA ranges not used by vanilla
+        const customGlyphRanges = [
+            "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9",
+            "EA", "EB", "EC", "ED", "EE", "EF", "F0", "F1",
+            "F2", "F3", "F4", "F5", "F6", "F7", "F8", "E1", "E0"
+        ];
+
+        let glyphPrefix = "E2";
         let glyphCellSize = 32;
         let glyphGridOverlay = true;
         let glyphItems = []; // [{ id, name, originalImg, w, h, slot, mode: 'fit'|'crop'|'stretch' }]
+
+        function populateGlyphRangeOptions() {
+            const container = document.getElementById('glyphRangeDropdownOptions');
+            if (!container) return;
+            container.innerHTML = customGlyphRanges.map(p => `
+                <div class="dropdown-option" onclick="setGlyphPrefix('${p}', 'glyph_${p}.png (${p}00 - ${p}FF)')">glyph_${p}.png (${p}00 - ${p}FF)</div>
+            `).join('');
+        }
 
         function setGlyphPrefix(val, display) {
             glyphPrefix = val;
@@ -1728,7 +1706,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
 
                 await new Promise((resolve) => {
                     img.onload = () => {
-                        // find next available slot
                         const usedSlots = glyphItems.map(g => g.slot);
                         let nextSlot = 0;
                         while (usedSlots.includes(nextSlot) && nextSlot < 255) {
@@ -2271,6 +2248,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             renderLoadingMessages();
             renderSounds();
             renderMusic();
+            populateGlyphRangeOptions();
             renderGlyphsList();
             renderGlyphAtlas();
             renderMakerEntries();
