@@ -10,7 +10,7 @@
 ! tailwindcss v3.4.1 | MIT License | https://tailwindcss.com
 */
 *,:after,:before{border:0 solid #e5e7eb;--tw-content:"";-webkit-tap-highlight-color:transparent;-webkit-tap-highlight-color:#00000000;box-sizing:border-box}
-:host,html{-webkit-text-size-adjust:100%;font-feature-settings:normal;-webkit-tap-highlight-color:transparent;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-variation-settings:normal;line-height:1.5;tab-size:4}
+:host,html{-webkit-text-size-adjust:100%;font-feature-settings:normal;-webkit-tap-highlight-color:transparent;font-family:ui-sans-serif,system-ui,sans-serif;font-variation-settings:normal;line-height:1.5;tab-size:4}
 body{line-height:inherit;margin:0;--tw-text-opacity:1;background-color:#272727;color:rgb(255 255 255/var(--tw-text-opacity));font-family:Minecraftia,unifont;user-select:none;-webkit-user-select:none;width:100%; overflow-x: hidden;}
 hr{border-top-width:1px;color:inherit;height:0}
 h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}
@@ -110,6 +110,11 @@ textarea {
 .input-wrap p{font-size:.875rem;line-height:1.25rem;margin-bottom:6px;margin-left:-1px;display:block}
 .input-wrap input::placeholder{color:#b1b2b5d2}
 textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-height:1rem}
+
+/* Specific fix to allow search icon spacing */
+#faqSearchInput {
+    padding-left: 40px !important;
+}
 
 .section-title { font-family: "RFB Store set Loud"; font-size: 1.5rem; border-bottom: 2px solid #444; padding-bottom: 5px; margin-top: 1.5rem; color: #00ffba; }
 .card { background-color: #313233; border: 3px solid #1e1e1f; padding: 15px; border-radius: 2px; position: relative; margin-bottom: 10px; }
@@ -235,9 +240,11 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
     background-color: #2a2b2c;
 }
 .dropzone-icon {
-    font-size: 2.2rem;
-    margin-bottom: 8px;
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 8px auto;
     color: #00ffba;
+    display: block;
 }
 
 /* File Entry Card Layout (Responsive Header) */
@@ -477,9 +484,11 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             <input type="text" id="makerArchiveName" placeholder="e.g. textures.brarchive or sounds.brarchive" oninput="markDirty()">
         </div>
 
-        <!-- File Upload Area -->
+        <!-- File Upload Area (SVG instead of emoji) -->
         <div class="dropzone" id="makerDropzone" onclick="document.getElementById('makerFileInput').click()">
-            <div class="dropzone-icon">📁</div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dropzone-icon">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
             <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop files / .zip here to stage</p>
             <p style="color: #888; font-size: 0.75rem;">Supports .json, textures, sounds, or .zip archives</p>
             <input type="file" id="makerFileInput" multiple accept="*,.zip" style="display: none;" onchange="handleMakerFileUpload(this.files)">
@@ -506,8 +515,14 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">brarchive converter</h1>
         <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Decompile and unpack any Bedrock .brarchive container file back into individual loose files or a .zip.</p>
         
+        <!-- File Upload Area (SVG instead of emoji) -->
         <div class="dropzone" id="reverterDropzone" onclick="document.getElementById('reverterFileInput').click()">
-            <div class="dropzone-icon">📦</div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dropzone-icon">
+                <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
             <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop a .brarchive file to convert</p>
             <p style="color: #888; font-size: 0.75rem;">Inspect internal files, preview content, and export directly as a .zip</p>
             <input type="file" id="reverterFileInput" accept=".brarchive" style="display: none;" onchange="handleReverterFileUpload(this.files)">
@@ -543,7 +558,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             <div style="position: absolute; left: 12px; top: 11px; pointer-events: none; display: flex; align-items: center;">
                 <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Search.svg" style="width: 18px; height: 18px; filter: brightness(0) invert(1); opacity: 0.7; image-rendering: pixelated;">
             </div>
-            <input type="text" id="faqSearchInput" placeholder="Search questions or keywords..." oninput="filterFaq()" style="padding-left: 40px;">
+            <input type="text" id="faqSearchInput" placeholder="Search questions or keywords..." oninput="filterFaq()">
         </div>
 
         <div id="faqNoResults" style="display: none; text-align: center; color: #888; padding: 20px; font-size: 0.9rem;">
