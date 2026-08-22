@@ -322,6 +322,22 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
     height: auto;
     border: 1px solid #444;
 }
+
+/* Extracted Glyphs Grid */
+.extracted-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+}
+.extracted-card {
+    background-color: #313233;
+    border: 3px solid #1e1e1f;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
 </style>
 </head>
 <body>
@@ -348,6 +364,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             <div class="sidebar-link" onclick="requestSwitchView('soundsView', 'sounds generator')">sounds generator</div>
             <div class="sidebar-link" onclick="requestSwitchView('musicDefsView', 'music_definitions.json')">music_definitions.json</div>
             <div class="sidebar-link" onclick="requestSwitchView('glyphView', 'glyphs creator')">glyphs creator</div>
+            <div class="sidebar-link" onclick="requestSwitchView('glyphExtractView', 'glyphs to png')">glyphs to png</div>
             <div class="sidebar-link" onclick="requestSwitchView('brarchiveMakerView', 'brarchive maker')">brarchive maker</div>
             <div class="sidebar-link" onclick="requestSwitchView('brarchiveConverterView', 'brarchive converter')">brarchive converter</div>
             <div class="sidebar-link" onclick="requestSwitchView('faqView', 'FAQ')">FAQ</div>
@@ -596,7 +613,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
     <!-- ==================== 6. GLYPHS CREATOR VIEW ==================== -->
     <div id="glyphView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">glyphs creator</h1>
-        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Create custom in-game icons, server badges, and custom font sheets (glyph_XX.png) with automatic 1:1 square resizing.</p>
+        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Create custom in-game icons, server badges, and font sheets (glyph_XX.png) with automatic 1:1 square resizing.</p>
         
         <h2 class="section-title">Atlas Configuration</h2>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -629,7 +646,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             </div>
         </div>
 
-        <!-- Dropzone -->
+        <!-- Dropzone (Opens Files App directly) -->
         <div class="dropzone" id="glyphDropzone" onclick="document.getElementById('glyphFileInput').click()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dropzone-icon">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -638,7 +655,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             </svg>
             <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop icon images / photos here</p>
             <p style="color: #888; font-size: 0.75rem;">Supports multiple PNG, JPG, or WebP files</p>
-            <input type="file" id="glyphFileInput" multiple accept="image/*" style="display: none;" onchange="handleGlyphUpload(this.files)">
+            <input type="file" id="glyphFileInput" multiple accept="*" style="display: none;" onchange="handleGlyphUpload(this.files)">
         </div>
 
         <h2 class="section-title">Uploaded Glyphs (<span id="glyphCount">0</span>/256)</h2>
@@ -661,7 +678,53 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 7. BRARCHIVE MAKER VIEW ==================== -->
+    <!-- ==================== 7. GLYPHS TO PNG (EXTRACTOR) VIEW ==================== -->
+    <div id="glyphExtractView" class="container children-spacing view-section">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">glyphs to png</h1>
+        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Decompile any Bedrock glyph_XX.png font atlas sheet back into individual loose PNG icon files.</p>
+        
+        <div class="input-wrap">
+            <p>Atlas Unicode Prefix Override <span class="optional-badge">(auto-detected from filename)</span></p>
+            <div class="custom-dropdown" onclick="toggleDropdown(this)">
+                <div class="dropdown-header">
+                    <span id="glyphExtractPrefixDisplay">glyph_E2.png (E200 - E2FF)</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </div>
+                <div class="dropdown-options" id="glyphExtractRangeDropdownOptions">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Dropzone (Opens Files App directly) -->
+        <div class="dropzone" id="glyphExtractDropzone" onclick="document.getElementById('glyphExtractFileInput').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dropzone-icon">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m8 17 4 4 4-4"></path>
+            </svg>
+            <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop a glyph_XX.png file here</p>
+            <p style="color: #888; font-size: 0.75rem;">Slices all 256 cells and extracts non-empty icons as loose PNGs</p>
+            <input type="file" id="glyphExtractFileInput" accept="*" style="display: none;" onchange="handleGlyphExtractUpload(this.files)">
+        </div>
+
+        <div id="glyphExtractResultsSection" style="display: none;" class="children-spacing">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                <h2 class="section-title" style="margin-top: 0; border: none; padding: 0;">Extracted Icons (<span id="extractedCount">0</span>)</h2>
+                <button class="small-btn" onclick="downloadAllExtractedGlyphsZip()">DOWNLOAD ALL AS .ZIP</button>
+            </div>
+
+            <div id="extractedGlyphsGrid" class="extracted-grid"></div>
+
+            <div class="button-container" style="margin-top: 15px;">
+                <button class="mc-button mc-btn-gr" onclick="downloadAllExtractedGlyphsZip()">
+                    <div class="mc-btn-con"><p>DOWNLOAD ALL AS .ZIP</p></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 8. BRARCHIVE MAKER VIEW ==================== -->
     <div id="brarchiveMakerView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">brarchive maker</h1>
         <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Bundle multiple JSON files, raw game assets, or a .zip file into an official Bedrock .brarchive container.</p>
@@ -672,14 +735,14 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             <input type="text" id="makerArchiveName" placeholder="e.g. textures.brarchive or sounds.brarchive" oninput="markDirty()">
         </div>
 
-        <!-- File Upload Area (SVG instead of emoji) -->
+        <!-- File Upload Area (Opens Files App directly) -->
         <div class="dropzone" id="makerDropzone" onclick="document.getElementById('makerFileInput').click()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dropzone-icon">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
             </svg>
             <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop files / .zip here to stage</p>
             <p style="color: #888; font-size: 0.75rem;">Supports .json, textures, sounds, or .zip archives</p>
-            <input type="file" id="makerFileInput" multiple accept="*,.zip" style="display: none;" onchange="handleMakerFileUpload(this.files)">
+            <input type="file" id="makerFileInput" multiple accept="*" style="display: none;" onchange="handleMakerFileUpload(this.files)">
         </div>
 
         <h2 class="section-title">Staged Archive Entries (<span id="makerEntryCount">0</span>)</h2>
@@ -698,12 +761,12 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 8. BRARCHIVE CONVERTER VIEW ==================== -->
+    <!-- ==================== 9. BRARCHIVE CONVERTER VIEW ==================== -->
     <div id="brarchiveConverterView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">brarchive converter</h1>
         <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Decompile and unpack any Bedrock .brarchive container file back into individual loose files or a .zip.</p>
         
-        <!-- File Upload Area (SVG instead of emoji) -->
+        <!-- File Upload Area (Opens Files App directly) -->
         <div class="dropzone" id="reverterDropzone" onclick="document.getElementById('reverterFileInput').click()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dropzone-icon">
                 <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
@@ -713,7 +776,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             </svg>
             <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop a .brarchive file to convert</p>
             <p style="color: #888; font-size: 0.75rem;">Inspect internal files, preview content, and export directly as a .zip</p>
-            <input type="file" id="reverterFileInput" accept=".brarchive" style="display: none;" onchange="handleReverterFileUpload(this.files)">
+            <input type="file" id="reverterFileInput" accept="*" style="display: none;" onchange="handleReverterFileUpload(this.files)">
         </div>
 
         <div id="reverterResultsSection" style="display: none;" class="children-spacing">
@@ -737,7 +800,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 9. FAQ VIEW ==================== -->
+    <!-- ==================== 10. FAQ VIEW ==================== -->
     <div id="faqView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">FAQ</h1>
         
@@ -844,14 +907,14 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 10. ABOUT VIEW ==================== -->
+    <!-- ==================== 11. ABOUT VIEW ==================== -->
     <div id="aboutView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">About</h1>
         
         <div class="card" style="margin-top: 20px;">
             <h3 class="info-heading" style="margin-top: 0;">mcpack generator</h3>
             <p class="info-text">
-                A rapid, web-based toolkit designed to create and manage essential Minecraft Bedrock Edition files, including <code>manifest.json</code>, <code>splashes.json</code>, <code>loading_messages.json</code>, <code>sound_definitions.json</code>, <code>music_definitions.json</code>, custom font <code>glyph_XX.png</code> atlases, and Bedrock Archive <code>.brarchive</code> bundles.
+                A rapid, web-based toolkit designed to create and manage essential Minecraft Bedrock Edition files, including <code>manifest.json</code>, <code>splashes.json</code>, <code>loading_messages.json</code>, <code>sound_definitions.json</code>, <code>music_definitions.json</code>, custom font <code>glyph_XX.png</code> atlases, glyph decompiler tools, and Bedrock Archive <code>.brarchive</code> bundles.
             </p>
         </div>
     </div>
@@ -1629,7 +1692,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         }
 
         // --- GLYPHS CREATOR / GENERATOR LOGIC ---
-        // Range containing all custom PUA ranges not used by vanilla
         const customGlyphRanges = [
             "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9",
             "EA", "EB", "EC", "ED", "EE", "EF", "F0", "F1",
@@ -1639,14 +1701,21 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         let glyphPrefix = "E2";
         let glyphCellSize = 32;
         let glyphGridOverlay = true;
-        let glyphItems = []; // [{ id, name, originalImg, w, h, slot, mode: 'fit'|'crop'|'stretch' }]
+        let glyphItems = [];
 
         function populateGlyphRangeOptions() {
             const container = document.getElementById('glyphRangeDropdownOptions');
-            if (!container) return;
-            container.innerHTML = customGlyphRanges.map(p => `
-                <div class="dropdown-option" onclick="setGlyphPrefix('${p}', 'glyph_${p}.png (${p}00 - ${p}FF)')">glyph_${p}.png (${p}00 - ${p}FF)</div>
-            `).join('');
+            const extractContainer = document.getElementById('glyphExtractRangeDropdownOptions');
+            if (container) {
+                container.innerHTML = customGlyphRanges.map(p => `
+                    <div class="dropdown-option" onclick="setGlyphPrefix('${p}', 'glyph_${p}.png (${p}00 - ${p}FF)')">glyph_${p}.png (${p}00 - ${p}FF)</div>
+                `).join('');
+            }
+            if (extractContainer) {
+                extractContainer.innerHTML = customGlyphRanges.map(p => `
+                    <div class="dropdown-option" onclick="setGlyphExtractPrefix('${p}', 'glyph_${p}.png (${p}00 - ${p}FF)')">glyph_${p}.png (${p}00 - ${p}FF)</div>
+                `).join('');
+            }
         }
 
         function setGlyphPrefix(val, display) {
@@ -1670,9 +1739,9 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             renderGlyphAtlas();
         }
 
-        function getUnicodeForSlot(slotIndex) {
+        function getUnicodeForSlot(slotIndex, prefix = glyphPrefix) {
             const hexSuffix = slotIndex.toString(16).toUpperCase().padStart(2, '0');
-            const fullHex = glyphPrefix + hexSuffix;
+            const fullHex = prefix + hexSuffix;
             const codePoint = parseInt(fullHex, 16);
             let char = "";
             try {
@@ -1699,7 +1768,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                if (!file.type.startsWith('image/')) continue;
+                if (!file.type.startsWith('image/') && !file.name.match(/\.(png|jpg|jpeg|webp)$/i)) continue;
 
                 const img = new Image();
                 const blobUrl = URL.createObjectURL(file);
@@ -1833,7 +1902,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             ctx.clearRect(0, 0, totalSize, totalSize);
             ctx.imageSmoothingEnabled = false;
 
-            // Draw assigned glyphs
             glyphItems.forEach(item => {
                 if (item.slot >= 0 && item.slot < 256) {
                     const col = item.slot % 16;
@@ -1845,7 +1913,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 }
             });
 
-            // Draw optional overlay grid
             if (glyphGridOverlay) {
                 ctx.strokeStyle = "rgba(0, 255, 186, 0.25)";
                 ctx.lineWidth = 1;
@@ -1892,7 +1959,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
 
-            // Render without grid lines for export
             glyphItems.forEach(item => {
                 if (item.slot >= 0 && item.slot < 256) {
                     const col = item.slot % 16;
@@ -1907,6 +1973,144 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 downloadBlob(blob, `glyph_${glyphPrefix}.png`);
                 showToast(`Downloaded glyph_${glyphPrefix}.png!`);
             }, 'image/png');
+        }
+
+        // --- GLYPHS TO PNG (EXTRACTOR) LOGIC ---
+        let glyphExtractPrefix = "E2";
+        let extractedGlyphs = [];
+
+        function setGlyphExtractPrefix(val, display) {
+            glyphExtractPrefix = val;
+            document.getElementById('glyphExtractPrefixDisplay').innerText = display;
+            if (extractedGlyphs.length > 0) {
+                extractedGlyphs.forEach(g => {
+                    const uInfo = getUnicodeForSlot(g.slot, glyphExtractPrefix);
+                    g.hex = uInfo.fullHex;
+                    g.char = uInfo.char;
+                    g.escapeStr = uInfo.escapeStr;
+                });
+                renderExtractedGlyphsUI();
+            }
+        }
+
+        const glyphExtractDrop = document.getElementById('glyphExtractDropzone');
+        glyphExtractDrop.addEventListener('dragover', (e) => { e.preventDefault(); glyphExtractDrop.classList.add('dragover'); });
+        glyphExtractDrop.addEventListener('dragleave', () => glyphExtractDrop.classList.remove('dragover'));
+        glyphExtractDrop.addEventListener('drop', (e) => {
+            e.preventDefault();
+            glyphExtractDrop.classList.remove('dragover');
+            if (e.dataTransfer.files) handleGlyphExtractUpload(e.dataTransfer.files);
+        });
+
+        async function handleGlyphExtractUpload(files) {
+            if (!files || files.length === 0) return;
+            const file = files[0];
+
+            // Auto detect prefix from filename
+            const match = file.name.match(/glyph_([0-9a-fA-F]{2})/i);
+            if (match) {
+                glyphExtractPrefix = match[1].toUpperCase();
+                document.getElementById('glyphExtractPrefixDisplay').innerText = `glyph_${glyphExtractPrefix}.png (${glyphExtractPrefix}00 - ${glyphExtractPrefix}FF)`;
+            }
+
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            await new Promise(res => { img.onload = res; img.src = url; });
+
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            ctx.drawImage(img, 0, 0);
+
+            const cellSize = img.width / 16;
+            extractedGlyphs = [];
+
+            for (let r = 0; r < 16; r++) {
+                for (let c = 0; c < 16; c++) {
+                    const slot = r * 16 + c;
+                    const sx = c * cellSize;
+                    const sy = r * cellSize;
+
+                    const imgData = ctx.getImageData(sx, sy, cellSize, cellSize);
+                    let hasContent = false;
+                    for (let p = 3; p < imgData.data.length; p += 4) {
+                        if (imgData.data[p] > 5) {
+                            hasContent = true;
+                            break;
+                        }
+                    }
+
+                    if (hasContent) {
+                        const cellCanvas = document.createElement('canvas');
+                        cellCanvas.width = cellSize;
+                        cellCanvas.height = cellSize;
+                        const cellCtx = cellCanvas.getContext('2d');
+                        cellCtx.putImageData(imgData, 0, 0);
+
+                        const uInfo = getUnicodeForSlot(slot, glyphExtractPrefix);
+
+                        extractedGlyphs.push({
+                            slot: slot,
+                            hex: uInfo.fullHex,
+                            char: uInfo.char,
+                            escapeStr: uInfo.escapeStr,
+                            dataUrl: cellCanvas.toDataURL('image/png')
+                        });
+                    }
+                }
+            }
+
+            renderExtractedGlyphsUI();
+            document.getElementById('glyphExtractResultsSection').style.display = 'block';
+            showToast(`Extracted ${extractedGlyphs.length} individual icons!`);
+        }
+
+        function renderExtractedGlyphsUI() {
+            const grid = document.getElementById('extractedGlyphsGrid');
+            document.getElementById('extractedCount').innerText = extractedGlyphs.length;
+
+            grid.innerHTML = extractedGlyphs.map((g, idx) => `
+                <div class="extracted-card">
+                    <div style="width: 44px; height: 44px; background: #1e1e1f; border: 2px solid #444; display: flex; align-items: center; justify-content: center; margin-bottom: 6px;">
+                        <img src="${g.dataUrl}" style="max-width: 100%; max-height: 100%; image-rendering: pixelated;">
+                    </div>
+                    <span style="font-family: Minecraftia; color: #00ffba; font-size: 0.8rem; margin-bottom: 2px;">${g.hex}</span>
+                    <button class="small-btn" onclick="copyText('${escapeHtml(g.char)}', 'Copied raw symbol!')" style="padding: 2px 6px; font-size: 0.75rem; margin-bottom: 4px; width: 100%;">
+                        COPY "${escapeHtml(g.char)}"
+                    </button>
+                    <button class="small-btn small-btn-wh" onclick="downloadSingleExtractedGlyph(${idx})" style="padding: 2px 6px; font-size: 0.65rem; width: 100%;">
+                        DOWNLOAD PNG
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function downloadSingleExtractedGlyph(idx) {
+            const g = extractedGlyphs[idx];
+            const a = document.createElement('a');
+            a.href = g.dataUrl;
+            a.download = `${g.hex}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast(`Downloaded ${g.hex}.png`);
+        }
+
+        async function downloadAllExtractedGlyphsZip() {
+            if (extractedGlyphs.length === 0) return;
+            if (typeof JSZip !== 'undefined') {
+                const zip = new JSZip();
+                extractedGlyphs.forEach(g => {
+                    const base64Data = g.dataUrl.split(',')[1];
+                    zip.file(`${g.hex}.png`, base64Data, { base64: true });
+                });
+                const blob = await zip.generateAsync({ type: 'blob' });
+                downloadBlob(blob, `glyph_${glyphExtractPrefix}_extracted.zip`);
+                showToast(`Exported ${extractedGlyphs.length} glyphs as .zip!`);
+            } else {
+                showToast("Error loading zip library.");
+            }
         }
 
         // --- BRARCHIVE CORE (MAKER & CONVERTER) LOGIC ---
@@ -2043,22 +2247,17 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 totalDataSize += entry.data.length;
             }
 
-            // Binary Layout: 16 bytes Header + (entryCount * 256 bytes) + Data Block
             const headerSize = 16 + entryCount * 256;
             const totalBufferSize = headerSize + totalDataSize;
             const outBuffer = new Uint8Array(totalBufferSize);
             const view = new DataView(outBuffer.buffer);
 
-            // 1. Write Magic (8 bytes)
             for (let i = 0; i < 8; i++) {
                 outBuffer[i] = BRARCHIVE_MAGIC[i];
             }
-            // 2. Entry Count (4 bytes LE)
             view.setUint32(8, entryCount, true);
-            // 3. Version (4 bytes LE = 1)
             view.setUint32(12, 1, true);
 
-            // 4. Write Entry Table and Payloads
             let currentPayloadOffset = 0;
             const encoder = new TextEncoder();
 
@@ -2069,17 +2268,12 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 const nameBytes = encoder.encode(entry.name || `file_${i}`);
                 const nameLength = Math.min(nameBytes.length, 247);
 
-                // Name length byte
                 outBuffer[entryHeaderOffset] = nameLength;
-                // Padded UTF-8 filename (247 bytes)
                 outBuffer.set(nameBytes.subarray(0, nameLength), entryHeaderOffset + 1);
 
-                // File contents relative offset (4 bytes LE)
                 view.setUint32(entryHeaderOffset + 248, currentPayloadOffset, true);
-                // File contents size (4 bytes LE)
                 view.setUint32(entryHeaderOffset + 252, entry.data.length, true);
 
-                // Write file bytes in Data Block
                 outBuffer.set(entry.data, headerSize + currentPayloadOffset);
                 currentPayloadOffset += entry.data.length;
             }
@@ -2112,7 +2306,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 return;
             }
 
-            // Verify Magic
             for (let i = 0; i < 8; i++) {
                 if (u8[i] !== BRARCHIVE_MAGIC[i]) {
                     showToast("Error: Not a valid .brarchive file (magic mismatch).");
@@ -2152,7 +2345,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 let textPreview = "";
                 try {
                     textPreview = decoder.decode(fileData);
-                    // Check if mostly printable ASCII/UTF-8
                     if (/^[\x09\x0A\x0D\x20-\x7E\u00A0-\uFFFF]*$/.test(textPreview.slice(0, 500))) {
                         isText = true;
                     }
@@ -2169,7 +2361,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 });
             }
 
-            // Render Results
             document.getElementById('reverterArchiveMeta').innerHTML = `
                 <div><b>Source File:</b> ${escapeHtml(originalFilename)}</div>
                 <div><b>Format Version:</b> ${version}</div>
@@ -2227,7 +2418,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 downloadBlob(blob, `${currentRevertedArchiveName}.zip`);
                 showToast(`Downloaded ${currentRevertedArchiveName}.zip!`);
             } else {
-                // Fallback if JSZip is unreachable
                 revertedEntries.forEach((entry, i) => {
                     setTimeout(() => {
                         const blob = new Blob([entry.data], { type: 'application/octet-stream' });
@@ -2252,7 +2442,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             renderGlyphsList();
             renderGlyphAtlas();
             renderMakerEntries();
-            isDirty = false; // Fresh load starts clean
+            isDirty = false;
         };
     </script>
 </body>
