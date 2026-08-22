@@ -105,7 +105,25 @@ textarea {
 .mc-btn-red:active .mc-btn-con{background-color:#5a1818;border:3px solid #751a14}
 .mc-btn-red .mc-btn-con p{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity))}
 
-.button-container .mc-button .mc-btn-con p{font-family:"RFB Store set Loud",unifont;font-weight:400; font-size: 1.25rem;}
+/* Perfectly centered button typography */
+.button-container .mc-button .mc-btn-con p {
+    font-family: "RFB Store set Loud", unifont;
+    font-weight: 400;
+    font-size: 1.25rem;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(1px);
+}
+
+.button-container[style*="40px"] .mc-button .mc-btn-con p {
+    font-size: 1.05rem;
+    transform: translateY(1px);
+}
+
 .input-wrap{display:flex;flex-direction:column;width:100%}
 .input-wrap p{font-size:.875rem;line-height:1.25rem;margin-bottom:6px;margin-left:-1px;display:block}
 .input-wrap input::placeholder{color:#b1b2b5d2}
