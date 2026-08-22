@@ -81,6 +81,21 @@ textarea {
     box-sizing: border-box;
 }
 
+/* Native Select Styling */
+select.mc-select {
+    background-color: #313233; color: #fff;
+    font-family: Minecraftia, unifont; font-size: 0.85rem;
+    padding: 6px 0.7rem; border-top: 4px solid var(--clr-darkGray);
+    outline: 3px solid #1e1e1f; border-left: none; border-right: none; border-bottom: none;
+    width: 100%; height: 40px; box-sizing: border-box;
+    cursor: pointer; appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23ffffff" viewBox="0 0 8 4" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>');
+    background-repeat: no-repeat; background-position: right 12px center; background-size: 12px 7px;
+    image-rendering: pixelated;
+}
+select.mc-select:focus { outline: 3px solid #00ffba; }
+select.mc-select option { background-color: #313233; color: #fff; }
+
 .button-container{align-items:flex-end;display:flex;height:60px;justify-content:center;width:100%}
 .button-container:last-child{margin:20px 0}
 .button-container .mc-button{align-items:center;cursor:pointer;display:flex;flex-direction:column-reverse;height:60px;justify-content:flex-end;outline:3px solid #1e1e1f;width:100%}
@@ -295,6 +310,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             <div class="sidebar-link" onclick="requestSwitchView('manifestView', 'manifest.json')">manifest.json</div>
             <div class="sidebar-link" onclick="requestSwitchView('splashesView', 'splashes.json')">splashes.json</div>
             <div class="sidebar-link" onclick="requestSwitchView('loadingMessagesView', 'loading_messages.json')">loading_messages.json</div>
+            <div class="sidebar-link" onclick="requestSwitchView('soundsView', 'sounds generator')">sounds generator</div>
             <div class="sidebar-link" onclick="requestSwitchView('brarchiveMakerView', 'brarchive maker')">brarchive maker</div>
             <div class="sidebar-link" onclick="requestSwitchView('brarchiveConverterView', 'brarchive converter')">brarchive converter</div>
             <div class="sidebar-link" onclick="requestSwitchView('faqView', 'FAQ')">FAQ</div>
@@ -473,7 +489,44 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 4. BRARCHIVE MAKER VIEW ==================== -->
+    <!-- ==================== 4. SOUNDS GENERATOR VIEW ==================== -->
+    <div id="soundsView" class="container children-spacing view-section">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">sounds generator</h1>
+        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Instantly link custom .ogg audio files to playable in-game events.</p>
+        
+        <h2 class="section-title">Custom Sound Events</h2>
+        <div id="soundsList" class="children-spacing"></div>
+
+        <div class="button-container" style="height: 40px; margin-top: 5px;">
+            <button class="mc-button mc-btn-wh" onclick="addSoundEvent()" style="height: 40px;">
+                <div class="mc-btn-con"><p>+ ADD SOUND EVENT</p></div>
+            </button>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 2rem;">Output (sound_definitions.json)</h2>
+        <p style="color: #bbb; font-size: 0.8rem; margin-bottom: 5px;">Place this inside: <code style="color: #00ffba;">RP/sounds/sound_definitions.json</code></p>
+        <div class="input-wrap">
+            <textarea id="soundDefsOutput" readonly spellcheck="false"></textarea>
+        </div>
+        <div class="button-container">
+            <button class="mc-button mc-btn-gr" onclick="copyJSON('soundDefsOutput', 'sound_definitions.json copied to clipboard.')">
+                <div class="mc-btn-con"><p>COPY DEFINITIONS</p></div>
+            </button>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 2rem;">Output (sounds.json)</h2>
+        <p style="color: #bbb; font-size: 0.8rem; margin-bottom: 5px;">Place this inside: <code style="color: #00ffba;">RP/sounds.json</code></p>
+        <div class="input-wrap">
+            <textarea id="soundsJsonOutput" readonly spellcheck="false"></textarea>
+        </div>
+        <div class="button-container">
+            <button class="mc-button mc-btn-gr" onclick="copyJSON('soundsJsonOutput', 'sounds.json copied to clipboard.')">
+                <div class="mc-btn-con"><p>COPY SOUNDS.JSON</p></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== 5. BRARCHIVE MAKER VIEW ==================== -->
     <div id="brarchiveMakerView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">brarchive maker</h1>
         <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Bundle multiple JSON files, raw game assets, or a .zip file into an official Bedrock .brarchive container.</p>
@@ -510,7 +563,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 5. BRARCHIVE CONVERTER VIEW ==================== -->
+    <!-- ==================== 6. BRARCHIVE CONVERTER VIEW ==================== -->
     <div id="brarchiveConverterView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">brarchive converter</h1>
         <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Decompile and unpack any Bedrock .brarchive container file back into individual loose files or a .zip.</p>
@@ -549,7 +602,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 6. FAQ VIEW ==================== -->
+    <!-- ==================== 7. FAQ VIEW ==================== -->
     <div id="faqView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">FAQ</h1>
         
@@ -911,7 +964,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 7. ABOUT VIEW ==================== -->
+    <!-- ==================== 8. ABOUT VIEW ==================== -->
     <div id="aboutView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">About</h1>
         
@@ -1421,6 +1474,132 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             document.getElementById('loadingMessagesOutput').value = JSON.stringify(obj, null, 4);
         }
 
+        // --- SOUNDS GENERATOR LOGIC ---
+        let soundsState = [];
+
+        function renderSounds() {
+            const container = document.getElementById('soundsList');
+            if (soundsState.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: #888; padding: 15px; font-size: 0.85rem;">No sound events registered.</div>`;
+            } else {
+                container.innerHTML = soundsState.map((ev, i) => `
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="font-family: Minecraftia; color: #fff;">Sound Event ${i + 1}</h3>
+                            <button class="delete-btn" onclick="removeSoundEvent(${i}); playSfx('release');">
+                                <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                            </button>
+                        </div>
+                        
+                        <div class="input-wrap" style="margin-bottom: 10px;">
+                            <p>Event ID <span class="required-badge">(required)</span></p>
+                            <input type="text" placeholder="e.g. custom.blaster.shoot" value="${escapeHtml(ev.id)}" oninput="markDirty(); soundsState[${i}].id=this.value; updateSoundsJSON()">
+                        </div>
+                        
+                        <div class="input-wrap" style="margin-bottom: 10px;">
+                            <p>Category <span class="required-badge">(required)</span></p>
+                            <select class="mc-select" onchange="markDirty(); soundsState[${i}].category=this.value; updateSoundsJSON()">
+                                <option value="ambient" ${ev.category==='ambient'?'selected':''}>ambient</option>
+                                <option value="block" ${ev.category==='block'?'selected':''}>block</option>
+                                <option value="bottle" ${ev.category==='bottle'?'selected':''}>bottle</option>
+                                <option value="hostile" ${ev.category==='hostile'?'selected':''}>hostile</option>
+                                <option value="music" ${ev.category==='music'?'selected':''}>music</option>
+                                <option value="neutral" ${ev.category==='neutral'?'selected':''}>neutral</option>
+                                <option value="player" ${ev.category==='player'?'selected':''}>player</option>
+                                <option value="record" ${ev.category==='record'?'selected':''}>record</option>
+                                <option value="ui" ${ev.category==='ui'?'selected':''}>ui</option>
+                                <option value="weather" ${ev.category==='weather'?'selected':''}>weather</option>
+                            </select>
+                        </div>
+
+                        <div style="background: #242425; padding: 10px; margin-top: 15px; border-radius: 4px;">
+                            <p style="font-family: Minecraftia; font-size: 0.8rem; margin-bottom: 10px; color: #00ffba;">Audio Files (.ogg paths) <span class="required-badge">(required)</span>:</p>
+                            ${ev.files.map((file, fIdx) => `
+                                <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center; width: 100%;">
+                                    <div class="input-wrap" style="flex: 2; min-width: 0;">
+                                        <input type="text" placeholder="e.g. sounds/custom/blaster_1" value="${escapeHtml(file.path)}" oninput="markDirty(); soundsState[${i}].files[${fIdx}].path=this.value; updateSoundsJSON()">
+                                    </div>
+                                    <div class="input-wrap" style="flex: 1; min-width: 0;">
+                                        <input type="number" step="0.1" placeholder="Vol" value="${file.volume}" oninput="markDirty(); soundsState[${i}].files[${fIdx}].volume=parseFloat(this.value)||1.0; updateSoundsJSON()" title="Volume">
+                                    </div>
+                                    <div class="input-wrap" style="flex: 1; min-width: 0;">
+                                        <input type="number" step="0.1" placeholder="Pitch" value="${file.pitch}" oninput="markDirty(); soundsState[${i}].files[${fIdx}].pitch=parseFloat(this.value)||1.0; updateSoundsJSON()" title="Pitch">
+                                    </div>
+                                    <button class="delete-btn" style="position: static; flex: 0 0 30px; margin: 0;" onclick="removeSoundFile(${i}, ${fIdx}); playSfx('release');">
+                                        <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:14px; height:14px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                                    </button>
+                                </div>
+                            `).join('')}
+                            <button class="small-btn" onclick="addSoundFile(${i})">+ Add File</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            updateSoundsJSON();
+        }
+
+        function addSoundEvent() {
+            markDirty();
+            soundsState.push({
+                id: "",
+                category: "neutral",
+                files: [ { path: "", volume: 1.0, pitch: 1.0 } ]
+            });
+            renderSounds();
+        }
+
+        function removeSoundEvent(idx) {
+            markDirty();
+            soundsState.splice(idx, 1);
+            renderSounds();
+        }
+
+        function addSoundFile(eventIdx) {
+            markDirty();
+            soundsState[eventIdx].files.push({ path: "", volume: 1.0, pitch: 1.0 });
+            renderSounds();
+        }
+
+        function removeSoundFile(eventIdx, fileIdx) {
+            markDirty();
+            soundsState[eventIdx].files.splice(fileIdx, 1);
+            renderSounds();
+        }
+
+        function updateSoundsJSON() {
+            const validEvents = soundsState.filter(s => s.id.trim() !== "");
+            
+            // 1. sound_definitions.json
+            const defsObj = { format_version: "1.20.20", sound_definitions: {} };
+            validEvents.forEach(s => {
+                const validFiles = s.files.filter(f => f.path.trim() !== "");
+                if (validFiles.length > 0) {
+                    defsObj.sound_definitions[s.id] = {
+                        category: s.category,
+                        sounds: validFiles.map(f => {
+                            let snd = { name: f.path.replace(/\.ogg$/i, '') }; // auto strip .ogg if user typed it
+                            if (f.volume !== 1.0) snd.volume = f.volume;
+                            if (f.pitch !== 1.0) snd.pitch = f.pitch;
+                            return snd;
+                        })
+                    };
+                }
+            });
+
+            // 2. sounds.json
+            const soundsObj = { individual_event_sounds: { events: {} } };
+            validEvents.forEach(s => {
+                soundsObj.individual_event_sounds.events[s.id] = {
+                    sound: s.id,
+                    volume: 1.0,
+                    pitch: 1.0
+                };
+            });
+
+            document.getElementById('soundDefsOutput').value = JSON.stringify(defsObj, null, 4);
+            document.getElementById('soundsJsonOutput').value = JSON.stringify(soundsObj, null, 4);
+        }
+
         // --- BRARCHIVE CORE (MAKER & CONVERTER) LOGIC ---
         const BRARCHIVE_MAGIC = [0x7D, 0x27, 0x25, 0xB1, 0xA0, 0x52, 0x70, 0x26];
         const makerEntries = [];
@@ -1758,6 +1937,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             updateManifest();
             renderSplashes();
             renderLoadingMessages();
+            renderSounds();
             renderMakerEntries();
             isDirty = false; // Fresh load starts clean
         };
