@@ -165,6 +165,12 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
 }
 .small-btn-wh:hover { background: #454547; border-color: #8c8c90; }
 
+.small-btn-active {
+    background: #00ffba !important;
+    color: #000 !important;
+    border-color: #00cc95 !important;
+}
+
 /* Custom Dropdown UI */
 .custom-dropdown { position: relative; width: 100%; background-color: #313233; color: #fff; border-top: 4px solid var(--clr-darkGray); outline: 3px solid #1e1e1f; height: 40px; font-family: Minecraftia, unifont; font-size: .85rem; cursor: pointer; user-select: none; }
 .dropdown-header { display: flex; justify-content: space-between; align-items: center; padding: 0 .7rem; height: 100%; }
@@ -296,6 +302,26 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
     color: #888;
     font-size: 0.75rem;
 }
+
+/* Glyph Canvas Preview */
+.glyph-preview-wrap {
+    background: #1e1e1f;
+    border: 3px solid #000;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: repeating-linear-gradient(45deg, #242425 25%, transparent 25%, transparent 75%, #242425 75%, #242425), repeating-linear-gradient(45deg, #242425 25%, #1e1e1f 25%, #1e1e1f 75%, #242425 75%, #242425);
+    background-position: 0 0, 10px 10px;
+    background-size: 20px 20px;
+    overflow-x: auto;
+}
+#glyphAtlasCanvas {
+    image-rendering: pixelated;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #444;
+}
 </style>
 </head>
 <body>
@@ -321,6 +347,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             <div class="sidebar-link" onclick="requestSwitchView('loadingMessagesView', 'loading_messages.json')">loading_messages.json</div>
             <div class="sidebar-link" onclick="requestSwitchView('soundsView', 'sounds generator')">sounds generator</div>
             <div class="sidebar-link" onclick="requestSwitchView('musicDefsView', 'music_definitions.json')">music_definitions.json</div>
+            <div class="sidebar-link" onclick="requestSwitchView('glyphView', 'glyphs creator')">glyphs creator</div>
             <div class="sidebar-link" onclick="requestSwitchView('brarchiveMakerView', 'brarchive maker')">brarchive maker</div>
             <div class="sidebar-link" onclick="requestSwitchView('brarchiveConverterView', 'brarchive converter')">brarchive converter</div>
             <div class="sidebar-link" onclick="requestSwitchView('faqView', 'FAQ')">FAQ</div>
@@ -566,7 +593,80 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 6. BRARCHIVE MAKER VIEW ==================== -->
+    <!-- ==================== 6. GLYPHS CREATOR VIEW ==================== -->
+    <div id="glyphView" class="container children-spacing view-section">
+        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">glyphs creator</h1>
+        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Create custom in-game icons, server badges, and custom font sheets (glyph_XX.png) with automatic 1:1 square resizing.</p>
+        
+        <h2 class="section-title">Atlas Configuration</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="input-wrap">
+                <p>Glyph Sheet Range</p>
+                <div class="custom-dropdown" onclick="toggleDropdown(this)">
+                    <div class="dropdown-header">
+                        <span id="glyphPrefixDisplay">glyph_E1.png (E100 - E1FF)</span>
+                        <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                    </div>
+                    <div class="dropdown-options">
+                        <div class="dropdown-option" onclick="setGlyphPrefix('E1', 'glyph_E1.png (E100 - E1FF)')">glyph_E1.png (E100 - E1FF)</div>
+                        <div class="dropdown-option" onclick="setGlyphPrefix('E2', 'glyph_E2.png (E200 - E2FF)')">glyph_E2.png (E200 - E2FF)</div>
+                        <div class="dropdown-option" onclick="setGlyphPrefix('E3', 'glyph_E3.png (E300 - E3FF)')">glyph_E3.png (E300 - E3FF)</div>
+                        <div class="dropdown-option" onclick="setGlyphPrefix('E4', 'glyph_E4.png (E400 - E4FF)')">glyph_E4.png (E400 - E4FF)</div>
+                        <div class="dropdown-option" onclick="setGlyphPrefix('E0', 'glyph_E0.png (E000 - E0FF)')">glyph_E0.png (E000 - E0FF)</div>
+                        <div class="dropdown-option" onclick="setGlyphPrefix('F0', 'glyph_F0.png (F000 - F0FF)')">glyph_F0.png (F000 - F0FF)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-wrap">
+                <p>Glyph Cell Size</p>
+                <div class="custom-dropdown" onclick="toggleDropdown(this)">
+                    <div class="dropdown-header">
+                        <span id="glyphSizeDisplay">32x32 px (512x512 Sheet)</span>
+                        <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                    </div>
+                    <div class="dropdown-options">
+                        <div class="dropdown-option" onclick="setGlyphCellSize(16, '16x16 px (256x256 Sheet)')">16x16 px (256x256 Sheet)</div>
+                        <div class="dropdown-option" onclick="setGlyphCellSize(32, '32x32 px (512x512 Sheet)')">32x32 px (512x512 Sheet)</div>
+                        <div class="dropdown-option" onclick="setGlyphCellSize(64, '64x64 px (1024x1024 Sheet)')">64x64 px (1024x1024 Sheet)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dropzone -->
+        <div class="dropzone" id="glyphDropzone" onclick="document.getElementById('glyphFileInput').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dropzone-icon">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop icon images / photos here</p>
+            <p style="color: #888; font-size: 0.75rem;">Supports multiple PNG, JPG, or WebP files</p>
+            <input type="file" id="glyphFileInput" multiple accept="image/*" style="display: none;" onchange="handleGlyphUpload(this.files)">
+        </div>
+
+        <h2 class="section-title">Uploaded Glyphs (<span id="glyphCount">0</span>/256)</h2>
+        <div id="glyphList" class="children-spacing"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+            <h2 class="section-title" style="margin-top: 0; border: none; padding: 0;">Compiled Sheet Preview</h2>
+            <button class="small-btn small-btn-wh" onclick="toggleGlyphGridOverlay()">TOGGLE GRID OVERLAY</button>
+        </div>
+        <p style="color: #bbb; font-size: 0.8rem; margin-bottom: 5px;">Destination path: <code style="color: #00ffba;" id="glyphPathDisplay">RP/font/glyph_E1.png</code></p>
+        
+        <div class="glyph-preview-wrap">
+            <canvas id="glyphAtlasCanvas" width="512" height="512"></canvas>
+        </div>
+
+        <div class="button-container" style="margin-top: 15px;">
+            <button class="mc-button mc-btn-gr" onclick="downloadGlyphSheet()">
+                <div class="mc-btn-con"><p>EXPORT GLYPH ATLAS (.PNG)</p></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== 7. BRARCHIVE MAKER VIEW ==================== -->
     <div id="brarchiveMakerView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">brarchive maker</h1>
         <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Bundle multiple JSON files, raw game assets, or a .zip file into an official Bedrock .brarchive container.</p>
@@ -603,7 +703,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 7. BRARCHIVE CONVERTER VIEW ==================== -->
+    <!-- ==================== 8. BRARCHIVE CONVERTER VIEW ==================== -->
     <div id="brarchiveConverterView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">brarchive converter</h1>
         <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Decompile and unpack any Bedrock .brarchive container file back into individual loose files or a .zip.</p>
@@ -642,7 +742,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 8. FAQ VIEW ==================== -->
+    <!-- ==================== 9. FAQ VIEW ==================== -->
     <div id="faqView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">FAQ</h1>
         
@@ -719,7 +819,22 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 </div>
             </div>
 
-            <!-- 5. manifest.json location -->
+            <!-- 5. Custom Font Glyphs FAQ -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">How do custom font glyphs and emojis work in Minecraft Bedrock?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Minecraft Bedrock maps Private Use Area Unicode characters (such as <code>\uE100</code> to <code>\uE1FF</code>) to 16x16 cell bitmap font sheets placed in <code>RP/font/glyph_E1.png</code>. When you paste the mapped Unicode character into chat, item names, signs, or UI JSON, Minecraft displays your custom texture in place of text.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. manifest.json location -->
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
                     <span class="faq-question-text">Where should manifest.json be placed in my pack?</span>
@@ -729,21 +844,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
                             <code>manifest.json</code> must always reside directly in the <b>root directory</b> of your pack (e.g. <code>MyPack_RP/manifest.json</code> or <code>MyPack_BP/manifest.json</code>). If it is placed inside any subfolder, Minecraft will fail to recognize the pack.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 6. pack_icon.png -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What are the requirements for pack_icon.png?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <code>pack_icon.png</code> must be a square PNG image placed in the root directory of your pack. Standard supported resolutions are <b>64x64</b>, <b>128x128</b>, <b>256x256</b>, or <b>512x512</b> pixels. Non-square aspect ratios may appear distorted in the in-game settings menu.
                         </div>
                     </div>
                 </div>
@@ -778,243 +878,17 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                     </div>
                 </div>
             </div>
-
-            <!-- 9. format_version 1, 2, 3 -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is the difference between format_version 1, 2, and 3?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <b>Version 1</b> is the legacy format originally used in early Bedrock editions and standalone skin packs.<br>
-                            <b>Version 2</b> is the universal standard format for modern Resource and Behavior Packs.<br>
-                            <b>Version 3</b> adds native support for in-game interactive <b>Pack Settings</b> (toggles and dropdowns) and advanced <b>Subpacks</b>, typically paired with <code>min_engine_version</code> 1.26.0 or newer.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 10. UUIDs -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is a UUID and why do I need it?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            A UUID (Universally Unique Identifier) is a 128-bit randomized string that Minecraft uses to uniquely identify packs and modules. The <code>header</code> UUID identifies the entire pack, while each entry in <code>modules</code> has its own unique UUID. Reusing a UUID across different packs causes "Duplicate Pack Detected" or silent pack loading collisions.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 11. Updating packs -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do I release an update for an existing pack without breaking worlds?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <b>Keep the exact same Header and Module UUIDs</b>, but increment the <code>version</code> array (e.g. from <code>[1, 0, 0]</code> to <code>[1, 0, 1]</code>). Minecraft will detect the newer version and update the installed pack without corrupting existing worlds.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 12. min_engine_version -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is min_engine_version and why is it important?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <code>min_engine_version</code> sets the minimum Minecraft game client version required to load your pack. If a player attempts to load your pack on an older game version, Minecraft will mark the pack as incompatible and prevent it from activating.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 13. RP vs BP -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is the difference between Resource Packs and Behavior Packs?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <b>Resource Packs (<code>resources</code>)</b> manage client-side visuals and audio, including block/item textures, 3D entity models, UI JSON, animations, particles, and sounds.<br>
-                            <b>Behavior Packs (<code>data</code>)</b> run server-side logic controlling entity AI, custom components, loot tables, recipes, trading, and JavaScript/TypeScript Script API execution.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 14. Client Data -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is "Client Data" (client_data)?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            The <code>client_data</code> module type is used for client-bound scripts and custom UI bindings. While standard resource packs use <code>resources</code> for assets, <code>client_data</code> allows executing client-side scripts directly on the player client without running on the server.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 15. Capabilities -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What capabilities are supported in manifest.json?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Common capabilities include:<br>
-                            • <code>pbr</code>: Enables Physically Based Rendering (roughness, normal, height, metallic maps) for Deferred Technical Preview.<br>
-                            • <code>raytraced</code>: Enables hardware DirectX Raytracing (RTX) textures.<br>
-                            • <code>experimental_custom_ui</code>: Enables experimental custom UI scripting.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 16. Subpacks -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do Subpacks work and how should their folders be structured?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            When subpacks are declared in <code>manifest.json</code>, create a <code>subpacks/</code> directory in your pack root. Inside it, create subfolders matching each subpack's <code>folder_name</code> (e.g. <code>subpacks/16x/</code>, <code>subpacks/32x/</code>). Any assets inside the selected subpack folder will override the base pack assets when chosen by the player via the in-game settings slider.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 17. Memory Tier -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What is memory_performance_tier in Subpacks?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <code>memory_performance_tier</code> specifies hardware RAM requirements for a subpack option. Higher tiers prevent heavy subpacks (such as 128x texture resolutions) from loading on low-memory mobile devices to prevent Out-Of-Memory (OOM) game crashes. <code>0</code> is the default/lowest tier.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 18. Pack Settings -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do Pack Settings work in format_version 3?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Pack Settings allow creators to build custom interactive toggles and dropdown selectors directly inside the pack's settings menu. These variables can be queried in scripts or UI to toggle feature sets dynamically without creating dozens of separate packs.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 19. Color Codes -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do color formatting codes (§) work in pack names?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Minecraft Bedrock uses the section sign <code>§</code> followed by a formatting character. Examples include <code>§a</code> (Green), <code>§b</code> (Aqua), <code>§c</code> (Red), <code>§e</code> (Yellow), <code>§l</code> (Bold), <code>§o</code> (Italic), and <code>§r</code> (Reset).
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 20. Dependencies -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">What are dependencies in a manifest?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            The <code>dependencies</code> array links your pack to another required pack (e.g. linking a Behavior Pack to its matching Resource Pack by UUID) or to official Minecraft Script API modules (such as <code>@minecraft/server</code> or <code>@minecraft/server-ui</code>).
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 21. Packaging .mcpack and .mcaddon -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">How do I properly package a .mcpack or .mcaddon file?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            1. Select all the contents inside your pack folder (so that <code>manifest.json</code> is at the root level of the archive, not inside a nested subfolder).<br>
-                            2. Compress them into a standard <code>.zip</code> file.<br>
-                            3. Rename the file extension from <code>.zip</code> to <code>.mcpack</code>.<br>
-                            4. To package both a Resource and Behavior pack together, zip both <code>.mcpack</code> files into one archive and rename the extension to <code>.mcaddon</code>.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 22. Common Import Errors -->
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(this)">
-                    <span class="faq-question-text">Why does Minecraft show "Failed to Import Pack"?</span>
-                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                </button>
-                <div class="faq-answer-wrapper">
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Common reasons include:<br>
-                            • <b>Folder nesting</b>: The zip contains a parent folder instead of placing <code>manifest.json</code> at the root.<br>
-                            • <b>JSON syntax errors</b>: Missing commas, unclosed brackets, or invalid quotes in <code>manifest.json</code>.<br>
-                            • <b>Duplicate UUIDs</b>: The header UUID matches a pack already installed on your device.<br>
-                            • <b>Incompatible min_engine_version</b>: The specified engine version is higher than your current Minecraft client.
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- ==================== 9. ABOUT VIEW ==================== -->
+    <!-- ==================== 10. ABOUT VIEW ==================== -->
     <div id="aboutView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">About</h1>
         
         <div class="card" style="margin-top: 20px;">
             <h3 class="info-heading" style="margin-top: 0;">mcpack generator</h3>
             <p class="info-text">
-                A rapid, web-based toolkit designed to create and manage essential Minecraft Bedrock Edition files, including <code>manifest.json</code>, <code>splashes.json</code>, <code>loading_messages.json</code>, <code>sound_definitions.json</code>, <code>music_definitions.json</code>, and Bedrock Archive <code>.brarchive</code> bundles.
-            </p>
-            <p class="info-text">
-                Supports modern pack types (Resource Packs, Behavior Packs, Skin Packs, World Templates, and Client Data), advanced Subpack & Setting configurations, and full packaging/decompilation of Mojang's modern <code>brarchive</code> load optimization containers.
+                A rapid, web-based toolkit designed to create and manage essential Minecraft Bedrock Edition files, including <code>manifest.json</code>, <code>splashes.json</code>, <code>loading_messages.json</code>, <code>sound_definitions.json</code>, <code>music_definitions.json</code>, custom font <code>glyph_XX.png</code> atlases, and Bedrock Archive <code>.brarchive</code> bundles.
             </p>
         </div>
     </div>
@@ -1095,6 +969,9 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             closeSidebar();
             playSfx('click');
             window.scrollTo(0,0);
+            if (viewId === 'glyphView') {
+                renderGlyphAtlas();
+            }
         }
 
         // --- FAQ Accordion Logic ---
@@ -1214,6 +1091,12 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             const textArea = document.getElementById(textareaId);
             textArea.select();
             navigator.clipboard.writeText(textArea.value).then(() => {
+                showToast(message);
+            });
+        }
+
+        function copyText(text, message) {
+            navigator.clipboard.writeText(text).then(() => {
                 showToast(message);
             });
         }
@@ -1782,6 +1665,273 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             document.getElementById('musicDefsOutput').value = JSON.stringify(outObj, null, 4);
         }
 
+        // --- GLYPHS CREATOR / GENERATOR LOGIC ---
+        let glyphPrefix = "E1";
+        let glyphCellSize = 32;
+        let glyphGridOverlay = true;
+        let glyphItems = []; // [{ id, name, originalImg, w, h, slot, mode: 'fit'|'crop'|'stretch' }]
+
+        function setGlyphPrefix(val, display) {
+            glyphPrefix = val;
+            document.getElementById('glyphPrefixDisplay').innerText = display;
+            document.getElementById('glyphPathDisplay').innerText = `RP/font/glyph_${val}.png`;
+            markDirty();
+            renderGlyphsList();
+            renderGlyphAtlas();
+        }
+
+        function setGlyphCellSize(val, display) {
+            glyphCellSize = val;
+            document.getElementById('glyphSizeDisplay').innerText = display;
+            markDirty();
+            renderGlyphAtlas();
+        }
+
+        function toggleGlyphGridOverlay() {
+            glyphGridOverlay = !glyphGridOverlay;
+            renderGlyphAtlas();
+        }
+
+        function getUnicodeForSlot(slotIndex) {
+            const hexSuffix = slotIndex.toString(16).toUpperCase().padStart(2, '0');
+            const fullHex = glyphPrefix + hexSuffix;
+            const codePoint = parseInt(fullHex, 16);
+            let char = "";
+            try {
+                char = String.fromCodePoint(codePoint);
+            } catch(e) {
+                char = "?";
+            }
+            return { fullHex, char, escapeStr: `\\u${fullHex}` };
+        }
+
+        const glyphDrop = document.getElementById('glyphDropzone');
+        glyphDrop.addEventListener('dragover', (e) => { e.preventDefault(); glyphDrop.classList.add('dragover'); });
+        glyphDrop.addEventListener('dragleave', () => glyphDrop.classList.remove('dragover'));
+        glyphDrop.addEventListener('drop', (e) => {
+            e.preventDefault();
+            glyphDrop.classList.remove('dragover');
+            if (e.dataTransfer.files) handleGlyphUpload(e.dataTransfer.files);
+        });
+
+        async function handleGlyphUpload(files) {
+            if (!files || files.length === 0) return;
+            markDirty();
+            let addedCount = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (!file.type.startsWith('image/')) continue;
+
+                const img = new Image();
+                const blobUrl = URL.createObjectURL(file);
+
+                await new Promise((resolve) => {
+                    img.onload = () => {
+                        // find next available slot
+                        const usedSlots = glyphItems.map(g => g.slot);
+                        let nextSlot = 0;
+                        while (usedSlots.includes(nextSlot) && nextSlot < 255) {
+                            nextSlot++;
+                        }
+
+                        glyphItems.push({
+                            id: 'g_' + Math.random().toString(36).substr(2, 9),
+                            name: file.name,
+                            originalImg: img,
+                            w: img.width,
+                            h: img.height,
+                            slot: nextSlot,
+                            mode: img.width === img.height ? 'stretch' : 'fit'
+                        });
+                        addedCount++;
+                        resolve();
+                    };
+                    img.src = blobUrl;
+                });
+            }
+
+            renderGlyphsList();
+            renderGlyphAtlas();
+            showToast(`Added ${addedCount} glyph image(s).`);
+        }
+
+        function removeGlyph(idx) {
+            markDirty();
+            glyphItems.splice(idx, 1);
+            renderGlyphsList();
+            renderGlyphAtlas();
+        }
+
+        function setGlyphMode(idx, mode) {
+            markDirty();
+            glyphItems[idx].mode = mode;
+            renderGlyphsList();
+            renderGlyphAtlas();
+        }
+
+        function setGlyphSlot(idx, slotVal) {
+            markDirty();
+            let parsed = parseInt(slotVal);
+            if (isNaN(parsed)) parsed = 0;
+            if (parsed < 0) parsed = 0;
+            if (parsed > 255) parsed = 255;
+            glyphItems[idx].slot = parsed;
+            renderGlyphsList();
+            renderGlyphAtlas();
+        }
+
+        function renderGlyphsList() {
+            const container = document.getElementById('glyphList');
+            document.getElementById('glyphCount').innerText = glyphItems.length;
+
+            if (glyphItems.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: #888; padding: 15px; font-size: 0.85rem;">No images uploaded. Drag and drop icons above.</div>`;
+                return;
+            }
+
+            container.innerHTML = glyphItems.map((g, idx) => {
+                const uInfo = getUnicodeForSlot(g.slot);
+                const isSquare = g.w === g.h;
+
+                return `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-family: Minecraftia; color: #00ffba; font-size: 0.95rem;">[${uInfo.fullHex}]</span>
+                            <span style="color: #fff; font-size: 0.85rem;">${escapeHtml(g.name)}</span>
+                        </div>
+                        <button class="delete-btn" onclick="removeGlyph(${idx}); playSfx('release');">
+                            <img src="https://raw.githubusercontent.com/cgens67/mcpackgenerator/main/assets/svg/Close.svg" style="width:16px; height:16px; image-rendering:pixelated; filter:brightness(0) invert(1);">
+                        </button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 15px; align-items: center;">
+                        <!-- Mini Preview -->
+                        <div style="width: 48px; height: 48px; background: #1e1e1f; border: 2px solid #444; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <img src="${g.originalImg.src}" style="max-width: 100%; max-height: 100%; object-fit: ${g.mode === 'crop' ? 'cover' : (g.mode === 'fit' ? 'contain' : 'fill')}; image-rendering: pixelated;">
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="children-spacing" style="gap: 8px;">
+                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <div class="input-wrap" style="width: 110px;">
+                                    <p style="font-size: 0.75rem; color: #bbb;">Slot (0 - 255):</p>
+                                    <input type="number" min="0" max="255" value="${g.slot}" oninput="setGlyphSlot(${idx}, this.value)" style="height: 32px !important; padding: 2px 6px !important;">
+                                </div>
+                                <div class="input-wrap" style="flex: 1; min-width: 130px;">
+                                    <p style="font-size: 0.75rem; color: #bbb;">In-Game Unicode:</p>
+                                    <div style="display: flex; gap: 6px;">
+                                        <input type="text" readonly value="${uInfo.escapeStr}" style="height: 32px !important; padding: 2px 6px !important; flex: 1;">
+                                        <button class="small-btn" onclick="copyText('${uInfo.escapeStr}', 'Copied ${uInfo.escapeStr}')" style="height: 32px; padding: 4px 8px;">COPY</button>
+                                        <button class="small-btn" onclick="copyText('${escapeHtml(uInfo.char)}', 'Copied raw character symbol!')" style="height: 32px; padding: 4px 8px; font-size: 0.9rem;" title="Copy Raw Symbol">${escapeHtml(uInfo.char)}</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 1:1 Aspect Ratio Formatter -->
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
+                                <span style="font-size: 0.75rem; color: ${isSquare ? '#888' : '#ffff55'};">
+                                    ${isSquare ? `Aspect: 1:1 (${g.w}x${g.h})` : `Not 1:1 (${g.w}x${g.h}) - Adjust:`}
+                                </span>
+                                <button class="small-btn ${g.mode === 'fit' ? 'small-btn-active' : 'small-btn-wh'}" onclick="setGlyphMode(${idx}, 'fit')" style="padding: 2px 8px; font-size: 0.7rem;">FIT 1:1</button>
+                                <button class="small-btn ${g.mode === 'crop' ? 'small-btn-active' : 'small-btn-wh'}" onclick="setGlyphMode(${idx}, 'crop')" style="padding: 2px 8px; font-size: 0.7rem;">CROP 1:1</button>
+                                <button class="small-btn ${g.mode === 'stretch' ? 'small-btn-active' : 'small-btn-wh'}" onclick="setGlyphMode(${idx}, 'stretch')" style="padding: 2px 8px; font-size: 0.7rem;">STRETCH</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderGlyphAtlas() {
+            const canvas = document.getElementById('glyphAtlasCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const totalSize = glyphCellSize * 16;
+            canvas.width = totalSize;
+            canvas.height = totalSize;
+
+            ctx.clearRect(0, 0, totalSize, totalSize);
+            ctx.imageSmoothingEnabled = false;
+
+            // Draw assigned glyphs
+            glyphItems.forEach(item => {
+                if (item.slot >= 0 && item.slot < 256) {
+                    const col = item.slot % 16;
+                    const row = Math.floor(item.slot / 16);
+                    const dx = col * glyphCellSize;
+                    const dy = row * glyphCellSize;
+
+                    drawGlyphCell(ctx, item.originalImg, dx, dy, glyphCellSize, item.mode);
+                }
+            });
+
+            // Draw optional overlay grid
+            if (glyphGridOverlay) {
+                ctx.strokeStyle = "rgba(0, 255, 186, 0.25)";
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= 16; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(i * glyphCellSize, 0);
+                    ctx.lineTo(i * glyphCellSize, totalSize);
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(0, i * glyphCellSize);
+                    ctx.lineTo(totalSize, i * glyphCellSize);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function drawGlyphCell(ctx, img, dx, dy, size, mode) {
+            const iw = img.width;
+            const ih = img.height;
+
+            if (mode === 'stretch' || iw === ih) {
+                ctx.drawImage(img, dx, dy, size, size);
+            } else if (mode === 'fit') {
+                const ratio = Math.min(size / iw, size / ih);
+                const nw = iw * ratio;
+                const nh = ih * ratio;
+                const ox = dx + (size - nw) / 2;
+                const oy = dy + (size - nh) / 2;
+                ctx.drawImage(img, ox, oy, nw, nh);
+            } else if (mode === 'crop') {
+                const minSide = Math.min(iw, ih);
+                const sx = (iw - minSide) / 2;
+                const sy = (ih - minSide) / 2;
+                ctx.drawImage(img, sx, sy, minSide, minSide, dx, dy, size, size);
+            }
+        }
+
+        function downloadGlyphSheet() {
+            const canvas = document.createElement('canvas');
+            const totalSize = glyphCellSize * 16;
+            canvas.width = totalSize;
+            canvas.height = totalSize;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            // Render without grid lines for export
+            glyphItems.forEach(item => {
+                if (item.slot >= 0 && item.slot < 256) {
+                    const col = item.slot % 16;
+                    const row = Math.floor(item.slot / 16);
+                    const dx = col * glyphCellSize;
+                    const dy = row * glyphCellSize;
+                    drawGlyphCell(ctx, item.originalImg, dx, dy, glyphCellSize, item.mode);
+                }
+            });
+
+            canvas.toBlob((blob) => {
+                downloadBlob(blob, `glyph_${glyphPrefix}.png`);
+                showToast(`Downloaded glyph_${glyphPrefix}.png!`);
+            }, 'image/png');
+        }
+
         // --- BRARCHIVE CORE (MAKER & CONVERTER) LOGIC ---
         const BRARCHIVE_MAGIC = [0x7D, 0x27, 0x25, 0xB1, 0xA0, 0x52, 0x70, 0x26];
         const makerEntries = [];
@@ -2121,6 +2271,8 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             renderLoadingMessages();
             renderSounds();
             renderMusic();
+            renderGlyphsList();
+            renderGlyphAtlas();
             renderMakerEntries();
             isDirty = false; // Fresh load starts clean
         };
