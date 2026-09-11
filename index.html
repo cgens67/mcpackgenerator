@@ -367,8 +367,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
             <div class="sidebar-link" onclick="requestSwitchView('glyphExtractView', 'glyphs to png')">glyphs to png</div>
             <div class="sidebar-link" onclick="requestSwitchView('brarchiveMakerView', 'brarchive maker')">brarchive maker</div>
             <div class="sidebar-link" onclick="requestSwitchView('brarchiveConverterView', 'brarchive converter')">brarchive converter</div>
-            <div class="sidebar-link" onclick="requestSwitchView('mcstructureMakerView', 'mcstructure generator')">mcstructure generator</div>
-            <div class="sidebar-link" onclick="requestSwitchView('mcstructureViewerView', 'mcstructure viewer')">mcstructure viewer</div>
             <div class="sidebar-link" onclick="requestSwitchView('faqView', 'FAQ')">FAQ</div>
             <div class="sidebar-link" onclick="requestSwitchView('aboutView', 'About')">About</div>
         </div>
@@ -802,141 +800,7 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
         </div>
     </div>
 
-    <!-- ==================== 10. MCSTRUCTURE GENERATOR VIEW ==================== -->
-    <div id="mcstructureMakerView" class="container children-spacing view-section">
-        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">mcstructure generator</h1>
-        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Create basic structures easily! Perfect for generating massive cubes, empty rooms, or hollow frames.</p>
-        
-        <div class="card" style="display: flex; gap: 10px; justify-content: center; background: #2a2b2c; border: 2px dashed #444; flex-wrap: wrap;">
-            <span style="color: #00ffba; font-size: 0.85rem; align-self: center; font-family: Minecraftia;">Quick Presets:</span>
-            <button class="small-btn small-btn-wh" onclick="applyStructurePreset('cube')">Solid Cube</button>
-            <button class="small-btn small-btn-wh" onclick="applyStructurePreset('room')">Empty Room</button>
-            <button class="small-btn small-btn-wh" onclick="applyStructurePreset('frame')">Wireframe Box</button>
-        </div>
-
-        <h2 class="section-title">Step 1: Naming & Block</h2>
-        <div class="card">
-            <div class="input-wrap" style="margin-bottom: 15px;">
-                <p>Filename <span class="required-badge">(required)</span></p>
-                <input type="text" id="mcstructureName" placeholder="e.g. house.mcstructure" value="box.mcstructure">
-            </div>
-            
-            <div class="input-wrap">
-                <p>Main Building Block (Identifier) <span class="required-badge">(required)</span></p>
-                <div style="display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
-                    <button class="small-btn small-btn-wh" onclick="document.getElementById('mcstructureBlock').value='minecraft:stone'; playSfx('click');">Stone</button>
-                    <button class="small-btn small-btn-wh" onclick="document.getElementById('mcstructureBlock').value='minecraft:glass'; playSfx('click');">Glass</button>
-                    <button class="small-btn small-btn-wh" onclick="document.getElementById('mcstructureBlock').value='minecraft:planks'; playSfx('click');">Wood</button>
-                    <button class="small-btn small-btn-wh" onclick="document.getElementById('mcstructureBlock').value='minecraft:dirt'; playSfx('click');">Dirt</button>
-                    <button class="small-btn small-btn-wh" onclick="document.getElementById('mcstructureBlock').value='minecraft:bedrock'; playSfx('click');">Bedrock</button>
-                </div>
-                <input type="text" id="mcstructureBlock" value="minecraft:stone" placeholder="e.g. minecraft:stone">
-            </div>
-        </div>
-
-        <h2 class="section-title">Step 2: Dimensions</h2>
-        <div class="card">
-            <p style="font-size: 0.85rem; color: #bbb; margin-bottom: 12px;">Set the outer bounding box size (Max ~60 million blocks).</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                <div class="input-wrap">
-                    <p>Width (X / East-West)</p>
-                    <input type="number" id="mcstructureX" value="16" min="1" max="1024">
-                </div>
-                <div class="input-wrap">
-                    <p>Height (Y / Up-Down)</p>
-                    <input type="number" id="mcstructureY" value="16" min="1" max="1024">
-                </div>
-                <div class="input-wrap">
-                    <p>Depth (Z / North-South)</p>
-                    <input type="number" id="mcstructureZ" value="16" min="1" max="1024">
-                </div>
-            </div>
-        </div>
-
-        <h2 class="section-title">Step 3: Shape & Internals</h2>
-        <div class="card">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div class="input-wrap">
-                    <p>Structure Shape</p>
-                    <div class="custom-dropdown" onclick="toggleDropdown(this)">
-                        <div class="dropdown-header">
-                            <span id="mcstructureModeDisplay">Solid (A completely filled block)</span>
-                            <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                        </div>
-                        <div class="dropdown-options">
-                            <div class="dropdown-option" onclick="setStructureMode('solid', 'Solid (A completely filled block)')">Solid (A completely filled block)</div>
-                            <div class="dropdown-option" onclick="setStructureMode('hollow', 'Hollow (Outer walls only, empty inside)')">Hollow (Outer walls only, empty inside)</div>
-                            <div class="dropdown-option" onclick="setStructureMode('frame', 'Wireframe (Only the corner edges)')">Wireframe (Only the corner edges)</div>
-                        </div>
-                    </div>
-                    <input type="hidden" id="mcstructureMode" value="solid">
-                </div>
-                
-                <div class="input-wrap">
-                    <p>Empty Space Behavior (For Hollow/Frame)</p>
-                    <div class="custom-dropdown" onclick="toggleDropdown(this)">
-                        <div class="dropdown-header">
-                            <span id="mcstructureEmptyDisplay">Keep existing blocks (Ignore / Safe)</span>
-                            <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
-                        </div>
-                        <div class="dropdown-options">
-                            <div class="dropdown-option" onclick="setStructureEmpty('void', 'Keep existing blocks (Ignore / Safe)')">Keep existing blocks (Ignore / Safe)</div>
-                            <div class="dropdown-option" onclick="setStructureEmpty('air', 'Overwrite with empty space (Air)')">Overwrite with empty space (Air)</div>
-                        </div>
-                    </div>
-                    <input type="hidden" id="mcstructureEmpty" value="void">
-                    <p style="font-size: 0.75rem; color: #bbb; margin-top: 6px;">"Keep existing" ensures trees/ground inside won't get deleted when placed.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="button-container" style="margin-top: 25px;">
-            <button class="mc-button mc-btn-gr" onclick="generateMcstructureAndDownload()">
-                <div class="mc-btn-con"><p>EXPORT .MCSTRUCTURE</p></div>
-            </button>
-        </div>
-    </div>
-
-    <!-- ==================== 11. MCSTRUCTURE VIEWER VIEW ==================== -->
-    <div id="mcstructureViewerView" class="container children-spacing view-section">
-        <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">mcstructure viewer</h1>
-        <p style="text-align: center; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem;">Inspect internal structure data, extract palettes, and view 2D cross-section layers directly in your browser.</p>
-
-        <!-- Dropzone -->
-        <div class="dropzone" id="structureViewerDropzone" onclick="document.getElementById('structureViewerFileInput').click()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dropzone-icon">
-                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <path d="M12 18v-6"></path>
-                <path d="M9 15h6"></path>
-            </svg>
-            <p style="color: #00ffba; font-size: 0.95rem; margin-bottom: 4px;">Click or Drag & Drop a .mcstructure file here</p>
-            <p style="color: #888; font-size: 0.75rem;">View dimensions, extract block palettes, and preview top-down layers</p>
-            <input type="file" id="structureViewerFileInput" accept=".mcstructure" style="display: none;" onchange="handleStructureViewerUpload(this.files)">
-        </div>
-
-        <div id="structureViewerResults" style="display: none;" class="children-spacing">
-            <h2 class="section-title">Structure Metadata</h2>
-            <div class="card" id="structureViewerMeta" style="font-size: 0.85rem; line-height: 1.8;"></div>
-
-            <h2 class="section-title">Palette (Unique Blocks)</h2>
-            <div class="card" style="max-height: 250px; overflow-y: auto; background-color: #212121; padding: 10px;" id="structureViewerPalette"></div>
-
-            <h2 class="section-title">Layer Viewer (Top-Down)</h2>
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <span id="structureViewerYLabel" style="color: #00ffba; font-family: Minecraftia; font-size: 0.9rem;">Y Layer: 0</span>
-                    <input type="range" id="structureViewerY" min="0" max="0" value="0" style="width: 60%; cursor: pointer;" oninput="renderStructureLayer()">
-                </div>
-                <div style="display: flex; justify-content: center; background: #1e1e1f; border: 2px solid #000; padding: 10px; background-image: repeating-linear-gradient(45deg, #242425 25%, transparent 25%, transparent 75%, #242425 75%, #242425), repeating-linear-gradient(45deg, #242425 25%, #1e1e1f 25%, #1e1e1f 75%, #242425 75%, #242425); background-position: 0 0, 10px 10px; background-size: 20px 20px; overflow-x: auto;">
-                    <canvas id="structureViewerCanvas" style="max-width: 100%; max-height: 400px; background: #272727; border: 2px solid #111; image-rendering: pixelated;"></canvas>
-                </div>
-                <p style="text-align: center; font-size: 0.75rem; color: #888; margin-top: 10px;">Top-down cross-section of the selected Y layer.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== 12. FAQ VIEW ==================== -->
+    <!-- ==================== 10. FAQ VIEW ==================== -->
     <div id="faqView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 0.5rem;">FAQ</h1>
         
@@ -1036,21 +900,98 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 </button>
                 <div class="faq-answer-wrapper">
                     <div class="faq-answer">
-                        <code>sounds.json</code> belongs in the <b>root directory</b> of your Resource Pack (<code>RP/sounds.json</code>) to define individual block/item sound event mappings. In contrast, <code>sound_definitions.json</code> belongs inside the <code>sounds/</code> folder (<code>RP/sounds/sound_definitions.json</code>) to define sound categories, audio file paths, volume, and pitch.
+                        <div class="faq-answer-inner">
+                            <code>sounds.json</code> belongs in the <b>root directory</b> of your Resource Pack (<code>RP/sounds.json</code>) to define individual block/item sound event mappings. In contrast, <code>sound_definitions.json</code> belongs inside the <code>sounds/</code> folder (<code>RP/sounds/sound_definitions.json</code>) to define sound categories, audio file paths, volume, and pitch.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 7. Pack Types -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What is the difference between a Resource Pack and a Behavior Pack?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <b>Resource Packs</b> (<code>resources</code>) change the visual and audio aspects of the game, including textures, models, UI, sounds, and custom fonts. <b>Behavior Packs</b> (<code>data</code>) modify how the game works, including entity behaviors, loot tables, recipes, and logic.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. Pack Icon -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">How do I change my pack's icon?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            To change the icon of your Resource or Behavior Pack, create a square image (usually 256x256 pixels), name it exactly <code>pack_icon.png</code>, and place it directly in the <b>root directory</b> of your pack alongside the <code>manifest.json</code>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. Min Engine Version -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What does "Min engine version" mean in the manifest?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            The minimum engine version specifies the lowest version of Minecraft Bedrock Edition required to run your pack (e.g., <code>1.20.80</code>). It ensures that players have the necessary game features and underlying code required for your custom content to function correctly.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10. Custom Biome Music -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">Can I play custom music in specific biomes?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Yes! Using the <b>music definitions</b> generator, you can map custom sound events (defined in <code>sound_definitions.json</code>) to trigger when a player enters specific biomes. You just need to ensure the biome key matches the one defined in the game or your behavior pack.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 11. Subpacks -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span class="faq-question-text">What are subpacks and why should I use them?</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 8 4"><path d="M0 0h8v1H7v1H6v1H5v1H3V3H2V2H1V1H0V0z"/></svg>
+                </button>
+                <div class="faq-answer-wrapper">
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Subpacks allow you to bundle multiple variations of a Resource Pack into a single file. Players can choose which version (e.g., different resolutions, dark mode UI, or alternate textures) they want to use via a slider in the pack settings menu.
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ==================== 13. ABOUT VIEW ==================== -->
+    <!-- ==================== 11. ABOUT VIEW ==================== -->
     <div id="aboutView" class="container children-spacing view-section">
         <h1 style="font-family: 'RFB Store set Loud'; font-size: 3rem; text-align: center; color: white; margin-bottom: 1rem;">About</h1>
         
         <div class="card" style="margin-top: 20px;">
             <h3 class="info-heading" style="margin-top: 0;">mcpack generator</h3>
             <p class="info-text">
-                A rapid, web-based toolkit designed to create and manage essential Minecraft Bedrock Edition files, including <code>manifest.json</code>, <code>splashes.json</code>, <code>loading_messages.json</code>, <code>sound_definitions.json</code>, <code>music_definitions.json</code>, custom font <code>glyph_XX.png</code> atlases, glyph decompiler tools, Bedrock Archive <code>.brarchive</code> bundles, and <code>.mcstructure</code> NBT generators.
+                A rapid, web-based toolkit designed to create and manage essential Minecraft Bedrock Edition files, including <code>manifest.json</code>, <code>splashes.json</code>, <code>loading_messages.json</code>, <code>sound_definitions.json</code>, <code>music_definitions.json</code>, custom font <code>glyph_XX.png</code> atlases, glyph decompiler tools, and Bedrock Archive <code>.brarchive</code> bundles.
             </p>
         </div>
     </div>
@@ -2562,518 +2503,6 @@ textarea::placeholder{font-family:Minecraftia,unifont;font-size:.75rem;line-heig
                 });
                 showToast(`Downloading files individually...`);
             }
-        }
-
-        // --- MCSTRUCTURE MAKER NBT ENCODER LOGIC ---
-        function setStructureMode(val, display, desc) {
-            document.getElementById('mcstructureMode').value = val;
-            document.getElementById('mcstructureModeDisplay').innerText = display;
-            document.getElementById('modeDesc').innerText = desc;
-        }
-
-        function setStructureEmpty(val, display, desc) {
-            document.getElementById('mcstructureEmpty').value = val;
-            document.getElementById('mcstructureEmptyDisplay').innerText = display;
-            document.getElementById('emptyDesc').innerText = desc;
-        }
-
-        function applyStructurePreset(preset) {
-            if(preset === 'cube') {
-                setStructureMode('solid', 'Solid (A completely filled block)', 'Generates a completely solid block using the primary block.');
-            } else if(preset === 'room') {
-                setStructureMode('hollow', 'Hollow (Outer walls only, empty inside)', 'Generates the outer shell, leaving the inside empty.');
-                setStructureEmpty('air', 'Overwrite with empty space (Air)', 'Empty areas inside the structure WILL overwrite existing blocks with air.');
-            } else if(preset === 'frame') {
-                setStructureMode('frame', 'Wireframe (Only the corner edges)', 'Generates only the corner edges of the bounding box.');
-                setStructureEmpty('void', 'Keep existing blocks (Ignore / Safe)', 'Empty areas inside the structure will NOT overwrite existing blocks in the world.');
-            }
-            playSfx('click');
-            showToast("Preset applied!");
-        }
-
-        class NBTEncoder {
-            constructor() {
-                this.buffer = new Uint8Array(1024 * 1024); // Start at 1MB
-                this.offset = 0;
-                this.textEncoder = new TextEncoder();
-            }
-            
-            ensureSize(size) {
-                if (this.offset + size > this.buffer.length) {
-                    let newSize = this.buffer.length * 2;
-                    while (newSize < this.offset + size) {
-                        newSize *= 2;
-                    }
-                    const newBuffer = new Uint8Array(newSize);
-                    newBuffer.set(this.buffer);
-                    this.buffer = newBuffer;
-                }
-            }
-
-            writeByte(val) {
-                this.ensureSize(1);
-                this.buffer[this.offset++] = val;
-            }
-
-            writeShort(val) {
-                this.ensureSize(2);
-                this.buffer[this.offset] = val & 0xFF;
-                this.buffer[this.offset + 1] = (val >> 8) & 0xFF;
-                this.offset += 2;
-            }
-
-            writeInt(val) {
-                this.ensureSize(4);
-                this.buffer[this.offset] = val & 0xFF;
-                this.buffer[this.offset + 1] = (val >> 8) & 0xFF;
-                this.buffer[this.offset + 2] = (val >> 16) & 0xFF;
-                this.buffer[this.offset + 3] = (val >> 24) & 0xFF;
-                this.offset += 4;
-            }
-
-            writeIntArrayPayload(intArray) {
-                const byteLength = intArray.length * 4;
-                this.ensureSize(byteLength);
-                
-                // Optimized bulk write based on platform endianness
-                const isLittleEndian = new Uint8Array(new Uint32Array([0x11223344]).buffer)[0] === 0x44;
-                if (isLittleEndian) {
-                    this.buffer.set(new Uint8Array(intArray.buffer, intArray.byteOffset, byteLength), this.offset);
-                    this.offset += byteLength;
-                } else {
-                    for (let i = 0; i < intArray.length; i++) {
-                        this.writeInt(intArray[i]);
-                    }
-                }
-            }
-            
-            writeString(str) {
-                const bytes = this.textEncoder.encode(str);
-                this.writeShort(bytes.length);
-                this.ensureSize(bytes.length);
-                this.buffer.set(bytes, this.offset);
-                this.offset += bytes.length;
-            }
-
-            writeNamedTag(type, name, writePayload) {
-                this.writeByte(type);
-                this.writeString(name);
-                writePayload();
-            }
-
-            writeEnd() {
-                this.writeByte(0);
-            }
-        }
-
-        function generateMcstructureAndDownload() {
-            let filename = document.getElementById('mcstructureName').value.trim() || 'structure.mcstructure';
-            if (!filename.endsWith('.mcstructure')) filename += '.mcstructure';
-            
-            let sizeX = parseInt(document.getElementById('mcstructureX').value) || 1;
-            let sizeY = parseInt(document.getElementById('mcstructureY').value) || 1;
-            let sizeZ = parseInt(document.getElementById('mcstructureZ').value) || 1;
-            
-            sizeX = Math.max(1, Math.min(1024, sizeX));
-            sizeY = Math.max(1, Math.min(1024, sizeY));
-            sizeZ = Math.max(1, Math.min(1024, sizeZ));
-
-            const blockName = document.getElementById('mcstructureBlock').value.trim() || 'minecraft:air';
-            const fillMode = document.getElementById('mcstructureMode').value;
-            const emptySpace = document.getElementById('mcstructureEmpty').value;
-
-            let useAir = emptySpace === 'air';
-            
-            const paletteList = [ blockName ];
-            let airIndex = -1;
-            if (fillMode !== 'solid' && useAir && blockName !== 'minecraft:air') {
-                paletteList.push('minecraft:air');
-                airIndex = 1;
-            } else if (fillMode !== 'solid' && useAir && blockName === 'minecraft:air') {
-                airIndex = 0;
-            }
-
-            const vol = sizeX * sizeY * sizeZ;
-            
-            if (vol > 60000000) {
-                showToast("Structure too large! Maximum volume is ~60 million blocks.");
-                return;
-            }
-
-            const indicesLayer0 = new Int32Array(vol);
-            const indicesLayer1 = new Int32Array(vol);
-            indicesLayer1.fill(-1);
-
-            for (let x = 0; x < sizeX; x++) {
-                for (let y = 0; y < sizeY; y++) {
-                    for (let z = 0; z < sizeZ; z++) {
-                        let placeBlock = false;
-                        
-                        if (fillMode === 'solid') {
-                            placeBlock = true;
-                        } else if (fillMode === 'hollow') {
-                            if (x === 0 || x === sizeX - 1 || y === 0 || y === sizeY - 1 || z === 0 || z === sizeZ - 1) placeBlock = true;
-                        } else if (fillMode === 'frame') {
-                            let edges = 0;
-                            if (x === 0 || x === sizeX - 1) edges++;
-                            if (y === 0 || y === sizeY - 1) edges++;
-                            if (z === 0 || z === sizeZ - 1) edges++;
-                            if (edges >= 2) placeBlock = true;
-                        }
-
-                        const index = (x * sizeY * sizeZ) + (y * sizeZ) + z;
-                        
-                        if (placeBlock) {
-                            indicesLayer0[index] = 0;
-                        } else {
-                            indicesLayer0[index] = useAir ? airIndex : -1;
-                        }
-                    }
-                }
-            }
-
-            const encoder = new NBTEncoder();
-            
-            encoder.writeNamedTag(10, "", () => {
-                encoder.writeNamedTag(3, "format_version", () => encoder.writeInt(1));
-                
-                encoder.writeNamedTag(9, "size", () => {
-                    encoder.writeByte(3); // inner type Int
-                    encoder.writeInt(3); // len 3
-                    encoder.writeInt(sizeX);
-                    encoder.writeInt(sizeY);
-                    encoder.writeInt(sizeZ);
-                });
-                
-                encoder.writeNamedTag(9, "structure_world_origin", () => {
-                    encoder.writeByte(3); // inner type Int
-                    encoder.writeInt(3); // len 3
-                    encoder.writeInt(0);
-                    encoder.writeInt(0);
-                    encoder.writeInt(0);
-                });
-                
-                encoder.writeNamedTag(10, "structure", () => {
-                    encoder.writeNamedTag(9, "block_indices", () => {
-                        encoder.writeByte(9); // inner type List
-                        encoder.writeInt(2); // len 2
-                        
-                        // First layer
-                        encoder.writeByte(3); // deep inner type Int
-                        encoder.writeInt(vol);
-                        encoder.writeIntArrayPayload(indicesLayer0);
-
-                        // Second layer
-                        encoder.writeByte(3);
-                        encoder.writeInt(vol);
-                        encoder.writeIntArrayPayload(indicesLayer1);
-                    });
-                    
-                    encoder.writeNamedTag(9, "entities", () => {
-                        encoder.writeByte(10); // inner type Compound
-                        encoder.writeInt(0); // empty
-                    });
-                    
-                    encoder.writeNamedTag(10, "palette", () => {
-                        encoder.writeNamedTag(10, "default", () => {
-                            encoder.writeNamedTag(9, "block_palette", () => {
-                                encoder.writeByte(10);
-                                encoder.writeInt(paletteList.length);
-                                
-                                for (let i = 0; i < paletteList.length; i++) {
-                                    encoder.writeNamedTag(8, "name", () => encoder.writeString(paletteList[i]));
-                                    encoder.writeNamedTag(10, "states", () => { encoder.writeEnd(); });
-                                    encoder.writeNamedTag(3, "version", () => encoder.writeInt(18153472));
-                                    encoder.writeEnd();
-                                }
-                            });
-                            
-                            encoder.writeNamedTag(10, "block_position_data", () => { encoder.writeEnd(); });
-                            encoder.writeEnd();
-                        });
-                        encoder.writeEnd();
-                    });
-                    
-                    encoder.writeEnd();
-                });
-                encoder.writeEnd();
-            });
-
-            const outBuffer = encoder.buffer.subarray(0, encoder.offset);
-            const blob = new Blob([outBuffer], { type: 'application/octet-stream' });
-            downloadBlob(blob, filename);
-            showToast(`Generated ${filename}!`);
-        }
-
-        // --- MCSTRUCTURE VIEWER LOGIC ---
-        class NBTReader {
-            constructor(buffer) {
-                this.buffer = new Uint8Array(buffer);
-                this.view = new DataView(this.buffer.buffer, this.buffer.byteOffset, this.buffer.byteLength);
-                this.offset = 0;
-                this.textDecoder = new TextDecoder("utf-8");
-
-                // Scan forward to skip any prefixed BEDROCK version headers safely.
-                // We are looking for the root Compound Tag (0x0A) with a valid length.
-                let found = false;
-                for (let i = 0; i < Math.min(this.buffer.length, 256); i++) {
-                    if (this.buffer[i] === 10) {
-                        if (i + 2 < this.buffer.length) {
-                            const nameLen = this.buffer[i+1] | (this.buffer[i+2] << 8);
-                            if (i + 3 + nameLen <= this.buffer.length) {
-                                this.offset = i;
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (!found) this.offset = 0;
-            }
-
-            ensure(bytes) {
-                if (this.offset + bytes > this.buffer.length) {
-                    throw new Error("Unexpected end of file (EOF)");
-                }
-            }
-
-            readByte() { this.ensure(1); const v = this.view.getInt8(this.offset); this.offset += 1; return v; }
-            readShort() { this.ensure(2); const v = this.view.getInt16(this.offset, true); this.offset += 2; return v; }
-            readInt() { this.ensure(4); const v = this.view.getInt32(this.offset, true); this.offset += 4; return v; }
-            readLong() {
-                this.ensure(8);
-                const low = this.view.getUint32(this.offset, true);
-                const high = this.view.getUint32(this.offset + 4, true);
-                this.offset += 8;
-                return (BigInt(high) << 32n | BigInt(low)).toString(); 
-            }
-            readFloat() { this.ensure(4); const v = this.view.getFloat32(this.offset, true); this.offset += 4; return v; }
-            readDouble() { this.ensure(8); const v = this.view.getFloat64(this.offset, true); this.offset += 8; return v; }
-            readByteArray() {
-                const len = this.readInt();
-                if (len < 0) throw new Error("Negative array length");
-                this.ensure(len);
-                const arr = this.buffer.slice(this.offset, this.offset + len);
-                this.offset += len;
-                return arr;
-            }
-            readIntArray() {
-                const len = this.readInt();
-                if (len < 0) throw new Error("Negative int array length");
-                const byteLen = len * 4;
-                this.ensure(byteLen);
-                const isLE = new Uint8Array(new Uint32Array([0x11223344]).buffer)[0] === 0x44;
-                
-                if (isLE) {
-                    const arr = new Int32Array(this.buffer.buffer, this.buffer.byteOffset + this.offset, len);
-                    this.offset += byteLen;
-                    return arr;
-                } else {
-                    const arr = new Int32Array(len);
-                    for(let i=0; i<len; i++) arr[i] = this.readInt();
-                    return arr;
-                }
-            }
-            readString() {
-                this.ensure(2);
-                const len = this.view.getUint16(this.offset, true);
-                this.offset += 2;
-                this.ensure(len);
-                const str = this.textDecoder.decode(this.buffer.subarray(this.offset, this.offset + len));
-                this.offset += len;
-                return str;
-            }
-
-            readRoot() {
-                const type = this.readByte();
-                if (type !== 10) throw new Error(`Expected Root Compound tag (10), got ${type}.`);
-                this.readString(); // Name of root
-                return this.readTag(10);
-            }
-
-            readTag(type) {
-                switch(type) {
-                    case 1: return this.readByte();
-                    case 2: return this.readShort();
-                    case 3: return this.readInt();
-                    case 4: return this.readLong();
-                    case 5: return this.readFloat();
-                    case 6: return this.readDouble();
-                    case 7: return this.readByteArray();
-                    case 8: return this.readString();
-                    case 9:
-                        const listType = this.readByte();
-                        const listLen = this.readInt();
-                        if (listLen < 0) throw new Error("Negative list length");
-                        
-                        if (listType === 3) {
-                            const byteLen = listLen * 4;
-                            this.ensure(byteLen);
-                            const isLE = new Uint8Array(new Uint32Array([0x11223344]).buffer)[0] === 0x44;
-                            if (isLE) {
-                                const arr = new Int32Array(this.buffer.buffer, this.buffer.byteOffset + this.offset, listLen);
-                                this.offset += byteLen;
-                                return arr;
-                            } else {
-                                const arr = new Int32Array(listLen);
-                                for(let i=0; i<listLen; i++) arr[i] = this.readInt();
-                                return arr;
-                            }
-                        } else {
-                            const list = [];
-                            for(let i=0; i<listLen; i++) list.push(this.readTag(listType));
-                            return list;
-                        }
-                    case 10:
-                        const comp = {};
-                        while(true) {
-                            this.ensure(1);
-                            const nextType = this.readByte();
-                            if (nextType === 0) break;
-                            const name = this.readString();
-                            comp[name] = this.readTag(nextType);
-                        }
-                        return comp;
-                    case 11: return this.readIntArray();
-                    default:
-                        throw new Error(`Unknown/Unsupported NBT Tag Type: ${type} at offset ${this.offset}`);
-                }
-            }
-        }
-
-        let currentViewerData = null;
-
-        const structureViewerDrop = document.getElementById('structureViewerDropzone');
-        structureViewerDrop.addEventListener('dragover', (e) => { e.preventDefault(); structureViewerDrop.classList.add('dragover'); });
-        structureViewerDrop.addEventListener('dragleave', () => structureViewerDrop.classList.remove('dragover'));
-        structureViewerDrop.addEventListener('drop', (e) => {
-            e.preventDefault();
-            structureViewerDrop.classList.remove('dragover');
-            if (e.dataTransfer.files) handleStructureViewerUpload(e.dataTransfer.files);
-        });
-
-        async function handleStructureViewerUpload(files) {
-            if (!files || files.length === 0) return;
-            const file = files[0];
-            const buffer = await file.arrayBuffer();
-
-            try {
-                const reader = new NBTReader(buffer);
-                const root = reader.readRoot();
-                displayStructureData(root, file.name);
-            } catch(e) {
-                showToast("Error parsing file. See viewer for details.");
-                console.error("NBT Parse Error:", e);
-                document.getElementById("structureViewerMeta").innerHTML = `
-                    <div style="background: #5a1818; padding: 12px; border: 2px solid #b02e26; border-radius: 4px;">
-                        <div style="color: #ffff55; margin-bottom: 5px;"><b>Failed to parse structure file!</b></div>
-                        <div style="color: #ccc; font-family: ui-sans-serif, system-ui, sans-serif;">Reason: ${escapeHtml(e.message)}</div>
-                        <div style="color: #888; font-size: 0.75rem; margin-top: 8px; font-family: ui-sans-serif, system-ui, sans-serif;">This usually happens if the file is corrupted, compressed (e.g. GZIP), or exported from an incompatible tool. mcpack generator only supports raw Bedrock Little-Endian NBT.</div>
-                    </div>
-                `;
-                document.getElementById("structureViewerPalette").innerHTML = "";
-                document.getElementById("structureViewerResults").style.display = "flex";
-            }
-        }
-
-        function displayStructureData(root, filename) {
-            currentViewerData = root;
-            const size = root.size || [0,0,0];
-            const origin = root.structure_world_origin || [0,0,0];
-            const palette = root.structure?.palette?.default?.block_palette || [];
-            
-            document.getElementById("structureViewerMeta").innerHTML = `
-                <div style="margin-bottom: 5px;"><b>File:</b> ${escapeHtml(filename)}</div>
-                <div style="margin-bottom: 5px; color: #00ffba;"><b>Dimensions (X,Y,Z):</b> ${size[0]} × ${size[1]} × ${size[2]}</div>
-                <div style="margin-bottom: 5px;"><b>Origin Offset:</b> ${origin[0]}, ${origin[1]}, ${origin[2]}</div>
-                <div style="margin-bottom: 5px;"><b>Format Version:</b> ${root.format_version || "Unknown"}</div>
-                <div style="margin-bottom: 5px;"><b>Unique Blocks:</b> ${palette.length}</div>
-            `;
-
-            const pList = document.getElementById("structureViewerPalette");
-            pList.innerHTML = palette.map((p, i) => {
-                const name = typeof p.name === 'string' ? p.name : JSON.stringify(p.name);
-                const color = getBlockColor(name);
-                return `<div style="display: flex; align-items: center; gap: 10px; font-size: 0.8rem; padding: 6px; border-bottom: 2px solid #313233;">
-                    <div style="width: 12px; height: 12px; background-color: ${color}; border: 1px solid #000;"></div>
-                    <div><span style="color: #00ffba; margin-right: 5px;">[${i}]</span> ${escapeHtml(name)}</div>
-                </div>`;
-            }).join("");
-
-            const slider = document.getElementById("structureViewerY");
-            slider.max = Math.max(0, size[1] - 1);
-            slider.value = 0;
-            
-            renderStructureLayer();
-            
-            document.getElementById("structureViewerResults").style.display = "flex";
-            showToast("Structure loaded!");
-        }
-
-        function renderStructureLayer() {
-            if(!currentViewerData) return;
-            const root = currentViewerData;
-            const size = root.size;
-            if(!size || size.length < 3) return;
-
-            const layer = parseInt(document.getElementById("structureViewerY").value);
-            document.getElementById("structureViewerYLabel").innerText = `Y Layer: ${layer}`;
-
-            const canvas = document.getElementById("structureViewerCanvas");
-            const ctx = canvas.getContext("2d");
-            
-            const cw = size[0];
-            const ch = size[2];
-            canvas.width = cw;
-            canvas.height = ch;
-
-            ctx.clearRect(0, 0, cw, ch);
-
-            const blockIndicesList = root.structure?.block_indices;
-            if(!blockIndicesList || blockIndicesList.length === 0) return;
-            const indicesLayer0 = blockIndicesList[0];
-            
-            const palette = root.structure?.palette?.default?.block_palette || [];
-
-            for(let x = 0; x < size[0]; x++) {
-                for(let z = 0; z < size[2]; z++) {
-                    const idx = (x * size[1] * size[2]) + (layer * size[2]) + z;
-                    const blockId = indicesLayer0[idx];
-                    
-                    if(blockId !== undefined && blockId >= 0 && blockId < palette.length) {
-                        const blockName = palette[blockId].name;
-                        if(blockName !== "minecraft:air" && blockName !== "minecraft:structure_void") {
-                            ctx.fillStyle = getBlockColor(blockName);
-                            ctx.fillRect(x, z, 1, 1);
-                        }
-                    }
-                }
-            }
-        }
-
-        function getBlockColor(name) {
-            if (name.includes('stone') || name.includes('andesite') || name.includes('cobble') || name.includes('gravel')) return '#7d7d7d';
-            if (name.includes('dirt') || name.includes('podzol')) return '#593d29';
-            if (name.includes('grass')) return '#4f8c2e';
-            if (name.includes('wood') || name.includes('log') || name.includes('plank')) return '#87653c';
-            if (name.includes('leaves')) return '#315e19';
-            if (name.includes('water')) return '#2b4bf4';
-            if (name.includes('lava')) return '#d65115';
-            if (name.includes('sand')) return '#d9d191';
-            if (name.includes('glass')) return '#9ec8de';
-            if (name.includes('iron')) return '#d8d8d8';
-            if (name.includes('gold')) return '#fada5e';
-            if (name.includes('diamond')) return '#60ebd9';
-            if (name.includes('emerald')) return '#17dd62';
-            if (name.includes('redstone')) return '#ff0000';
-            
-            // Hash fallback for specific color matching
-            let hash = 0;
-            for(let i=0; i<name.length; i++) {
-                hash = name.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
-            return "#" + "000000".substring(0, 6 - c.length) + c;
         }
 
         // --- Initialization ---
